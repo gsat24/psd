@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitur - Pesantren Smart Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="src/tw-config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+<body class="font-sans text-gray-800 bg-white">
+
+    <!-- Navbar -->
+    <nav class="absolute top-0 left-0 w-full z-20 py-6">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="index.html">
+                    <img src="src/logo.png" alt="Pesantren Smart Digital Logo" class="h-16 w-auto"> 
+                </a>
+            </div>
+
+            <!-- Links -->
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-white">
+                <a href="index.html" class="hover:text-psd-yellow transition">Home</a>
+                <a href="features.html" class="text-psd-yellow transition">Fitur</a>
+                <a href="#" class="hover:text-psd-yellow transition">Berita</a>
+                <a href="#" class="hover:text-psd-yellow transition">Tentang Kami</a>
+                <a href="#" class="hover:text-psd-yellow transition">Kontak</a>
+            </div>
+
+            <!-- Social Icons -->
+            <div class="flex space-x-4 text-white">
+                <a href="#" class="hover:text-psd-yellow transition">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465C9.673 2.013 10.03 2 12.315 2zm-1.01 1.945c-2.26 0-2.615.01-3.65.058-1.027.047-1.583.219-1.954.363-.483.189-.828.414-1.19.776-.362.362-.587.707-.776 1.19-.144.37-.316.927-.363 1.954-.047 1.035-.058 1.39-.058 3.65v.982c0 2.26.01 2.615.058 3.65.047 1.027.219 1.583.363 1.954.189.483.414.828.776 1.19.362.362.707.587 1.19.776.37.144.927.316 1.954.363 1.035.047 1.39.058 3.65.058h.982c2.26 0 2.615-.01 3.65-.058 1.027-.047 1.583-.219 1.954-.363.483-.189.828-.414 1.19-.776.362-.362.587-.707.776-1.19.144-.37.316-.927.363-1.954.047-1.035.058-1.39.058-3.65v-.982c0-2.26-.01-2.615-.058-3.65-.047-1.027-.219-1.583-.363-1.954-.189-.483-.414-.828-.776-1.19-.362-.362-.707-.587-1.19-.776-.37-.144-.927-.316-1.954-.363-1.035-.047-1.39-.058-3.65-.058L11.305 3.945z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M12.315 6.87a5.445 5.445 0 100 10.89 5.445 5.445 0 000-10.89zm0 1.945a3.5 3.5 0 110 7 3.5 3.5 0 010-7z" clip-rule="evenodd" />
+                        <path d="M17.755 5.255a1.295 1.295 0 100 2.59 1.295 1.295 0 000-2.59z" />
+                    </svg>
+                </a>
+                <a href="#" class="hover:text-psd-yellow transition">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08.13.17.25.26.37.21.28.43.55.69.79.94.9 2.15 1.3 3.44 1.26.12 0 .25.01.37 0 .14-.01.29-.02.43-.03.01 1.43.01 2.87.01 4.31-.22-.04-.45-.09-.67-.12-1.28-.19-2.45-.63-3.48-1.46-.06-.05-.13-.09-.22-.16v6.2c-.01 3.03-.98 5.76-2.92 8.05-1.85 2.18-4.28 3.48-7.14 3.76-1.21.12-2.42.06-3.61-.17-1.63-.32-3.1-.98-4.38-2.02-1.39-1.13-2.38-2.58-2.88-4.27-.05-.16-.09-.32-.13-.49-.11-.53-.17-1.07-.12-1.61.16-1.57.81-2.95 1.9-4.08 1.15-1.19 2.58-1.91 4.2-2.12.38-.05.77-.07 1.16-.06V12.4c-.65.06-1.29.2-1.89.5-1.19.6-1.92 1.6-2.09 2.92-.09.73.01 1.45.31 2.13.43.99 1.17 1.7 2.15 2.08.82.32 1.68.39 2.54.2 1.16-.25 2.13-.81 2.9-1.7 1.05-1.22 1.58-2.67 1.57-4.26V4.6c1.39.46 2.67 1.18 3.78 2.16.12.11.23.23.36.36V.02h-.03z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg py-32 relative overflow-hidden text-white">
+        <div class="absolute bottom-0 w-full">
+            <svg viewBox="0 0 1440 320" class="w-full h-auto text-white fill-current">
+                <path fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h1 class="text-4xl lg:text-5xl font-bold mb-6 uppercase leading-tight max-w-4xl mx-auto">
+                Dapatkan Kemudahan Dalam Satu Genggaman dengan Pesantren Smart Digital
+            </h1>
+            <p class="text-xl text-gray-100 max-w-2xl mx-auto mb-8">
+                Satu Aplikasi Untuk Semua Kebutuhan Pesantren
+            </p>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-2xl mx-auto">
+                <form id="searchForm" onsubmit="return false;" class="relative">
+                    <input type="text" id="featureSearch" placeholder="Cari fitur yang anda butuhkan..." class="w-full pl-12 pr-4 py-4 rounded-full border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-psd-green focus:border-transparent transition duration-300">
+                    <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="py-12 bg-white pb-32">
+        <div class="container mx-auto px-6">
+            <div id="featuresGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Fitur akan di-render di sini oleh JavaScript -->
+            </div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-20">
+                <div class="text-gray-400 mb-4">
+                    <svg class="w-20 h-20 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800">Fitur tidak ditemukan</h3>
+                <p class="text-gray-500">Coba kata kunci lain.</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const features = [
+            { id: '01', title: 'Kartu Santri', desc: 'Kartu santri digital/fisik dengan teknologi QR Code untuk absensi dan transaksi cashless di kantin.', icon: 'card' },
+            { id: '02', title: 'Aplikasi Wali Santri', desc: 'Aplikasi mobile khusus wali santri untuk memantau perkembangan anak secara praktis dari rumah.', icon: 'parent' },
+            { id: '03', title: 'Aplikasi Pegawai', desc: 'Sistem manajemen untuk memudahkan administrasi dan operasional harian seluruh pegawai pesantren.', icon: 'staff' },
+            { id: '04', title: 'Aplikasi Guru dan ustadz', desc: 'Platform khusus pengajar untuk mengelola jadwal, materi, dan penilaian santri secara digital.', icon: 'teacher' },
+            { id: '05', title: 'Arsip', desc: 'Penyimpanan dokumen penting pesantren secara digital yang aman dan mudah diakses kapan saja.', icon: 'archive' },
+            { id: '06', title: 'Master Data dari Pendaftaran hingga Alumni', desc: 'Pengelolaan data terpadu mulai dari proses PSB, data santri aktif, hingga database alumni.', icon: 'database' },
+            { id: '07', title: 'Mitra Usaha Pesantren', desc: 'Sistem integrasi untuk unit usaha pesantren seperti kantin, koperasi, dan toko atribut.', icon: 'shop' },
+            { id: '08', title: 'Manajemen Santri', desc: 'Kelola data santri mulai dari pendaftaran, biodata lengkap, hingga riwayat akademik.', icon: 'student' },
+            { id: '09', title: 'Prestasi dan Pelanggaran Santri', desc: 'Catat poin prestasi dan pelanggaran santri dengan sistem yang objektif dan transparan.', icon: 'star' },
+            { id: '10', title: 'Rapot digital', desc: 'Penyusunan dan distribusi rapot hasil belajar santri secara online yang cepat dan akurat.', icon: 'report' },
+            { id: '11', title: 'Manajemen Keuangan Yayasan', desc: 'Sistem pelaporan keuangan yayasan yang komprehensif, transparan, dan akuntabel.', icon: 'money' },
+            { id: '12', title: 'Monitoring Pengajar', desc: 'Pantau kinerja dan kehadiran guru serta ustadz untuk menjaga kualitas pendidikan.', icon: 'monitor' },
+            { id: '13', title: 'Absensi', desc: 'Sistem absensi modern untuk santri dan pegawai dengan notifikasi real-time.', icon: 'clock' },
+            { id: '14', title: 'Artikel Pesantren', desc: 'Media publikasi kegiatan, berita, dan karya tulis islami dari lingkungan pesantren.', icon: 'news' },
+            { id: '15', title: 'Tanya Ustadz', desc: 'Fitur interaktif untuk konsultasi agama antara wali santri/masyarakat dengan ustadz.', icon: 'chat' },
+            { id: '16', title: 'Broadcast ke Wali Santri', desc: 'Kirim pengumuman penting secara massal dan cepat langsung ke smartphone wali santri.', icon: 'broadcast' },
+            { id: '17', title: 'Payment Point', desc: 'Kemudahan pembayaran biaya pesantren melalui berbagai kanal perbankan dan e-wallet.', icon: 'payment' },
+            { id: '18', title: 'Surat', desc: 'Sistem persuratan digital untuk administrasi yang lebih rapi, cepat, dan paperless.', icon: 'mail' },
+            { id: '19', title: 'Monitor aktivitas santri', desc: 'Pantau seluruh aktivitas harian santri mulai dari bangun tidur hingga istirahat kembali.', icon: 'activity' },
+            { id: '20', title: 'Aplikasi Gerbang Pesantren', desc: 'Sistem keamanan gerbang untuk memonitor keluar masuknya santri dan tamu pesantren.', icon: 'gate' }
+        ];
+
+        const icons = {
+            card: `<rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8" cy="10" r="2" fill="currentColor"/>`,
+            parent: `<rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="18" r="1.2" fill="currentColor"/>`,
+            staff: `<path d="M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm6 8H6a1 1 0 0 1-1-1c0-3.314 4.03-5 7-5s7 1.686 7 5a1 1 0 0 1-1 1Z"/>`,
+            teacher: `<path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm10 12h-8v-2h8v2zm0-4h-8v-2h8v2zm0-4h-8V9h8v2zm0-4h-8V5h8v2zm4 12h-2v-2h2v2zm0-4h-2v-2h2v2z"/>`,
+            archive: `<path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.47 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h10.14l.82 1H5.12z"/>`,
+            database: `<path d="M12 2C6.48 2 2 4.01 2 6.5s4.48 4.5 10 4.5 10-2.01 10-4.5S17.52 2 12 2zm0 18c-5.52 0-10-2.01-10-4.5V18c0 2.49 4.48 4.5 10 4.5s10-2.01 10-4.5v-2.5c0 2.49-4.48 4.5-10 4.5zm0-9c-5.52 0-10-2.01-10-4.5V12c0 2.49 4.48 4.5 10 4.5s10-2.01 10-4.5v-2.5c0 2.49-4.48 4.5-10 4.5z"/>`,
+            shop: `<path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>`,
+            student: `<path d="M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm6 8H6a1 1 0 0 1-1-1c0-3.314 4.03-5 7-5s7 1.686 7 5a1 1 0 0 1-1 1Z"/>`,
+            star: `<path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>`,
+            report: `<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>`,
+            money: `<path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>`,
+            monitor: `<path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/>`,
+            clock: `<path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>`,
+            news: `<path d="M20 5H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 12H4v-2h7v2zm9 0h-7v-2h7v2zm0-4H4v-2h16v2zm0-4H4V7h16v2z"/>`,
+            chat: `<path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/>`,
+            broadcast: `<path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 11c-.46 0-.91-.19-1.24-.53L12 10.71l-7.7 7.76c-.33.34-.78.53-1.24.53-.94 0-1.7-.76-1.7-1.7 0-.46.19-.91.53-1.24l9.17-9.24c.66-.67 1.74-.67 2.41 0l9.17 9.24c.34.33.53.78.53 1.24 0 .94-.76 1.7-1.7 1.7z"/>`,
+            payment: `<path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>`,
+            mail: `<path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>`,
+            activity: `<path d="M13.5 1.5c-5 0-9 4-9 9s4 9 9 9 9-4 9-9-4-9-9-9zM13 14h-2v-2h2v2zm0-4h-2V6h2v4z"/>`,
+            gate: `<path d="M19 19V5h-2V3H7v2H5v14H3v2h18v-2h-2zm-2 0H7V5h10v14zm-3-8h-2v2h2v-2z"/>`
+        };
+
+        function renderFeatures(filter = '') {
+            console.log('Rendering features with filter:', filter);
+            const grid = document.getElementById('featuresGrid');
+            const empty = document.getElementById('emptyState');
+            
+            if (!grid || !empty) {
+                console.error('Grid or Empty state element not found');
+                return;
+            }
+
+            const filtered = features.filter(f => 
+                f.title.toLowerCase().includes(filter.toLowerCase()) || 
+                f.desc.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            empty.classList.add('hidden');
+
+            grid.innerHTML = filtered.map(f => `
+                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer">
+                    <div class="absolute inset-0 bg-psd-green opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0">
+                        <svg class="absolute bottom-0 left-0 w-full h-full text-white opacity-20" viewBox="0 0 1440 320" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128" />
+                        </svg>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-8">
+                            <div class="text-psd-green group-hover:text-psd-yellow transition-colors duration-300">
+                                <svg class="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+                                    ${icons[f.icon]}
+                                </svg>
+                            </div>
+                            <div class="text-3xl font-bold text-gray-100 group-hover:text-white opacity-50 group-hover:opacity-100 transition-all duration-300">${f.id}.</div>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 uppercase group-hover:text-white transition-colors duration-300">${f.title}</h3>
+                        <p class="text-gray-600 text-base leading-relaxed group-hover:text-white transition-colors duration-300">${f.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('featureSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    renderFeatures(e.target.value);
+                });
+            }
+            // Initial render
+            renderFeatures();
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="bg-[#0A5C4F] text-white pt-20 pb-10">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                
+                <!-- Column 1: Brand -->
+                <div>
+                    <div class="flex items-center mb-6">
+                        <h3 class="text-2xl font-bold text-white uppercase tracking-wider">PSD</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed mb-6">
+                        Platform manajemen pesantren digital terintegrasi untuk modernisasi pendidikan islam di Indonesia.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-psd-yellow hover:text-psd-green transition duration-300">
+                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path></svg>
+                        </a>
+                         <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-psd-yellow hover:text-psd-green transition duration-300">
+                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div>
+                    <h4 class="text-lg font-bold text-white uppercase mb-6">Menu Pintas</h4>
+                    <ul class="space-y-4">
+                        <li><a href="index.html" class="text-gray-300 hover:text-psd-yellow transition">Beranda</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-psd-yellow transition">Tentang Kami</a></li>
+                        <li><a href="features.html" class="text-gray-300 hover:text-psd-yellow transition">Fitur Unggulan</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-psd-yellow transition">Berita</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-psd-yellow transition">Kontak</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Solusi -->
+                <div>
+                     <h4 class="text-lg font-bold text-white uppercase mb-6">Solusi Kami</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-gray-300 hover:text-psd-yellow transition">Manajemen Santri</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-psd-yellow transition">Sistem Keuangan</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-psd-yellow transition">Aplikasi Wali Santri</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-psd-yellow transition">Donasi Online</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Contact -->
+                <div>
+                    <h4 class="text-lg font-bold text-white uppercase mb-6">Hubungi Kami</h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-psd-yellow mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span class="text-gray-300">Jl. Pesantren No. 123, Kota Santri, Indonesia</span>
+                        </li>
+                         <li class="flex items-center">
+                            <svg class="w-6 h-6 text-psd-yellow mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span class="text-gray-300">info@pesantrensmart.com</span>
+                        </li>
+                         <li class="flex items-center">
+                            <svg class="w-6 h-6 text-psd-yellow mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <span class="text-gray-300">+62 812 3456 7890</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 pt-8 text-center">
+                <p class="text-gray-400 text-sm">
+                    &copy; 2024 Pesantren Smart Digital. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+    <script src="src/main.js" defer></script>
+    </body>
+</html>
