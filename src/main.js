@@ -28,7 +28,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     },
-    { threshold: 0.2 }
+    { threshold: 0.1 }
   );
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  const observeElements = () => {
+    document.querySelectorAll('.fade-up:not(.in-view)').forEach(el => observer.observe(el));
+  };
+
+  observeElements();
+
+  // Watch for dynamic elements
+  const mutationObserver = new MutationObserver(() => {
+    observeElements();
+  });
+
+  mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+  // Mobile Menu Logic
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const closeMenuBtn = document.getElementById('closeMenuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.remove('translate-x-full');
+    });
+  }
+
+  if (closeMenuBtn && mobileMenu) {
+    closeMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.add('translate-x-full');
+    });
+  }
+
+  // Close menu on link click
+  const mobileLinks = mobileMenu?.querySelectorAll('a');
+  mobileLinks?.forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.add('translate-x-full');
+    });
+  });
 });

@@ -30,8 +30,17 @@
                 <a href="#" class="hover:text-psd-yellow transition">Kontak</a>
             </div>
 
+            <!-- Hamburger Menu (Mobile) -->
+            <div class="md:hidden flex items-center">
+                <button id="mobileMenuBtn" class="text-white focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="menuIcon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+
             <!-- Social Icons -->
-            <div class="flex space-x-4">
+            <div class="hidden md:flex space-x-4">
                 <a href="#" class="hover:text-psd-yellow transition">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465C9.673 2.013 10.03 2 12.315 2zm-1.01 1.945c-2.26 0-2.615.01-3.65.058-1.027.047-1.583.219-1.954.363-.483.189-.828.414-1.19.776-.362.362-.587.707-.776 1.19-.144.37-.316.927-.363 1.954-.047 1.035-.058 1.39-.058 3.65v.982c0 2.26.01 2.615.058 3.65.047 1.027.219 1.583.363 1.954.189.483.414.828.776 1.19.362.362.707.587 1.19.776.37.144.927.316 1.954.363 1.035.047 1.39.058 3.65.058h.982c2.26 0 2.615-.01 3.65-.058 1.027-.047 1.583-.219 1.954-.363.483-.189.828-.414 1.19-.776.362-.362.587-.707.776-1.19.144-.37.316-.927.363-1.954.047-1.035.058-1.39.058-3.65v-.982c0-2.26-.01-2.615-.058-3.65-.047-1.027-.219-1.583-.363-1.954-.189-.483-.414-.828-.776-1.19-.362-.362-.707-.587-1.19-.776-.37-.144-.927-.316-1.954-.363-1.035-.047-1.39-.058-3.65-.058L11.305 3.945z" clip-rule="evenodd" />
@@ -47,6 +56,35 @@
             </div>
         </div>
     </nav>
+    
+    <!-- Mobile Menu Drawer -->
+    <div id="mobileMenu" class="fixed inset-0 bg-[#0A5C4F] z-50 transform translate-x-full transition-transform duration-300 md:hidden">
+        <div class="flex flex-col h-full p-8">
+            <div class="flex justify-between items-center mb-12">
+                <img src="src/logo.png" alt="Logo" class="h-12 w-auto">
+                <button id="closeMenuBtn" class="text-white">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex flex-col space-y-6 text-xl font-medium text-white">
+                <a href="index.html" class="hover:text-psd-yellow transition">Home</a>
+                <a href="features.html" class="hover:text-psd-yellow transition">Fitur</a>
+                <a href="#" class="hover:text-psd-yellow transition">Berita</a>
+                <a href="#" class="hover:text-psd-yellow transition">Tentang Kami</a>
+                <a href="#" class="hover:text-psd-yellow transition">Kontak</a>
+            </div>
+            <div class="mt-auto flex space-x-6">
+                <a href="#" class="text-white hover:text-psd-yellow transition">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/></svg>
+                </a>
+                <a href="#" class="text-white hover:text-psd-yellow transition">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08.13.17.25.26.37.21.28.43.55.69.79.94.9 2.15 1.3 3.44 1.26.12 0 .25.01.37 0 .14-.01.29-.02.43-.03.01 1.43.01 2.87.01 4.31-.22-.04-.45-.09-.67-.12-1.28-.19-2.45-.63-3.48-1.46-.06-.05-.13-.09-.22-.16v6.2c-.01 3.03-.98 5.76-2.92 8.05-1.85 2.18-4.28 3.48-7.14 3.76-1.21.12-2.42.06-3.61-.17-1.63-.32-3.1-.98-4.38-2.02-1.39-1.13-2.38-2.58-2.88-4.27-.05-.16-.09-.32-.13-.49-.11-.53-.17-1.07-.12-1.61.16-1.57.81-2.95 1.9-4.08 1.15-1.19 2.58-1.91 4.2-2.12.38-.05.77-.07 1.16-.06V12.4c-.65.06-1.29.2-1.89.5-1.19.6-1.92 1.6-2.09 2.92-.09.73.01 1.45.31 2.13.43.99 1.17 1.7 2.15 2.08.82.32 1.68.39 2.54.2 1.16-.25 2.13-.81 2.9-1.7 1.05-1.22 1.58-2.67 1.57-4.26V4.6c1.39.46 2.67 1.18 3.78 2.16.12.11.23.23.36.36V.02h-.03z"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero-bg min-h-screen relative flex items-center overflow-hidden pt-20">
