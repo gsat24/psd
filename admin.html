@@ -303,10 +303,12 @@
         const loginError = document.getElementById('login-error');
         const changePasswordForm = document.getElementById('change-password-form');
 
-        function checkAuth() {
+        async function checkAuth() {
             if (isLoggedIn()) {
                 loginOverlay.classList.add('hidden');
-                renderNewsTable();
+                await renderNewsTable();
+                await renderFeedbackTable();
+                await populateCompanyInfo();
             } else {
                 loginOverlay.classList.remove('hidden');
             }
@@ -318,8 +320,7 @@
             const pass = document.getElementById('login-password').value;
             
             if (login(user, pass)) {
-                loginError.classList.add('hidden');
-                checkAuth();
+                window.location.reload();
             } else {
                 loginError.classList.remove('hidden');
             }
@@ -344,11 +345,11 @@
             }
         });
 
-        window.onload = () => {
-            checkAuth();
+        window.onload = async () => {
+            await checkAuth();
         };
 
-        function openNewsModal(newsId) {
+        async function openNewsModal(newsId) {
             const modal = document.getElementById('newsModal');
             const modalTitle = document.getElementById('modalTitle');
             const editIdInput = document.getElementById('edit-news-id');
@@ -357,7 +358,8 @@
             
             if (newsId) {
                 // Edit Mode
-                const newsItem = getNews().find(item => item.id == newsId);
+                const news = await getNews();
+                const newsItem = news.find(item => item.id == newsId);
                 if (newsItem) {
                     modalTitle.innerText = 'Edit Berita';
                     editIdInput.value = newsId;
@@ -466,9 +468,9 @@
             }
         }
 
-        function renderFeedbackTable() {
+        async function renderFeedbackTable() {
             const tbody = document.getElementById('feedback-list');
-            const feedback = getFeedback();
+            const feedback = await getFeedback();
             tbody.innerHTML = feedback.map(f => `
                 <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
                     <td class="px-6 py-4 font-medium text-gray-800">
@@ -484,8 +486,8 @@
             `).join('');
         }
 
-        function populateCompanyInfo() {
-            const info = getCompanyInfo();
+        async function populateCompanyInfo() {
+            const info = await getCompanyInfo();
             if (info) {
                 document.getElementById('comp-email').value = info.email || '';
                 document.getElementById('comp-phone').value = info.phone || '';
@@ -515,9 +517,7 @@
             alert('Informasi perusahaan berhasil diperbarui!');
         }
 
-        window.onload = async () => {
-            await renderNewsTable();
-        };
+
     </script>
 </body>
 </html>

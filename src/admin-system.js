@@ -6,6 +6,9 @@ const SUPABASE_ANON_KEY = 'sb_secret_7OTmCCC9gav9jjHWvIaZRw_oLqbkXcX';
 let supabase = null;
 if (typeof supabasejs !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY) {
     supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('Supabase initialized successfully');
+} else {
+    console.warn('Supabase not initialized, falling back to LocalStorage');
 }
 
 const DB_KEYS = {
@@ -191,3 +194,9 @@ async function syncCompanyInfo() {
     if (socialFB) socialFB.href = info.social.facebook;
     if (socialTikTok) socialTikTok.href = info.social.tiktok;
 }
+
+// Initialize database and sync UI
+initDB();
+document.addEventListener('DOMContentLoaded', () => {
+    syncCompanyInfo();
+});
