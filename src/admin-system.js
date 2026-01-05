@@ -123,20 +123,24 @@ window.initDB = function() {
 };
 
 window.getNews = async function() {
-    if (window.supabaseInstance) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { data, error } = await window.supabaseInstance.from('news').select('*').order('id', { ascending: false });
             if (error) throw error;
             return data;
         } catch (err) {
             console.error('Failed to get news from Supabase:', err);
+            if (err.message === 'TypeError: Load failed' || err.message.includes('hostname')) {
+                window.isSupabaseError = true;
+                console.warn('Network Error: Supabase Hostname tidak ditemukan. Beralih sepenuhnya ke LocalStorage.');
+            }
         }
     }
     return JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
 };
 
 window.saveNewsToDB = async function(newsItem) {
-    if (window.supabaseInstance) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { error } = await window.supabaseInstance.from('news').upsert([newsItem]);
             if (error) throw error;
@@ -157,7 +161,7 @@ window.saveNewsToDB = async function(newsItem) {
 };
 
 window.deleteNewsFromDB = async function(id) {
-    if (window.supabaseInstance) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { error } = await window.supabaseInstance.from('news').delete().eq('id', id);
             if (error) throw error;
@@ -171,7 +175,7 @@ window.deleteNewsFromDB = async function(id) {
 };
 
 window.getFeedback = async function() {
-    if (window.supabaseInstance) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { data, error } = await window.supabaseInstance.from('feedback').select('*').order('id', { ascending: false });
             if (error) throw error;
@@ -188,7 +192,7 @@ window.saveFeedbackToDB = async function(name, email, subject, message) {
         name, email, subject, message,
         date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
     };
-    if (window.supabaseInstance) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { error } = await window.supabaseInstance.from('feedback').insert([newFeedback]);
             if (error) throw error;
@@ -203,7 +207,7 @@ window.saveFeedbackToDB = async function(name, email, subject, message) {
 };
 
 window.getCompanyInfo = async function() {
-    if (window.supabaseInstance) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { data, error } = await window.supabaseInstance.from('company').select('*').eq('id', 1).single();
             if (error) throw error;
@@ -216,7 +220,7 @@ window.getCompanyInfo = async function() {
 };
 
 window.updateCompanyInfoInDB = async function(info) {
-    if (window.supabaseInstance) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { error } = await window.supabaseInstance.from('company').update(info).eq('id', 1);
             if (error) throw error;
@@ -251,13 +255,14 @@ window.syncCompanyInfo = async function() {
 };
 
 // 2. SUPABASE INITIALIZATION
-const SUPABASE_URL = 'https://ayzpxozlytuzpxjqyvsw.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_secret_7OTmCCC9gav9jjHWvIaZRw_oLqbkXcX';
+const SUPABASE_URL = 'https://tcorbpybtgxhtwarfwyf.supabase.co'; 
+const SUPABASE_ANON_KEY = 'sb_publishable_u3hZyGYv3X_tj6saDtjFtQ_ylo7zl7j';
 
 window.supabaseInstance = null;
+window.isSupabaseError = false;
 
 function initSupabase() {
-    console.log('Initializing Supabase...');
+    console.log('Initializing Supabase with URL:', SUPABASE_URL);
     try {
         const sbClient = window.supabase;
         if (sbClient && SUPABASE_URL && SUPABASE_ANON_KEY) {
@@ -268,7 +273,6 @@ function initSupabase() {
     } catch (e) {
         console.error('Supabase initialization error:', e);
     }
-    console.warn('Supabase fallback to LocalStorage');
     return false;
 }
 
