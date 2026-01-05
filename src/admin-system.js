@@ -45,6 +45,11 @@ function initDB() {
         };
         localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(mockCompany));
     }
+
+    if (!localStorage.getItem(DB_KEYS.AUTH)) {
+        const defaultAuth = { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' }; // password: admin
+        localStorage.setItem(DB_KEYS.AUTH, JSON.stringify(defaultAuth));
+    }
 }
 
 // --- Authentication Functions ---
@@ -53,13 +58,42 @@ function isLoggedIn() {
 }
 
 function login(username, password) {
-    const authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH)) || { username: 'admin', passwordHash: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9' };
-    const inputHash = CryptoJS.SHA256(password).toString();
-    if (username === authData.username && inputHash === authData.passwordHash) {
-        sessionStorage.setItem(DB_KEYS.SESSION, 'true');
-        return true;
+    console.log('Attempting login for:', username);
+    try {
+        const storedAuth = localStorage.getItem(DB_KEYS.AUTH);
+        const authData = storedAuth ? JSON.parse(storedAuth) : { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' };
+        
+        if (typeof CryptoJS === 'undefined') {
+            console.error('CryptoJS is not loaded!');
+            alert('Error: Sistem keamanan (CryptoJS) tidak termuat. Periksa koneksi internet Anda.');
+            return false;
+        }
+
+        const inputHash = CryptoJS.SHA256(password).toString();
+        if (username === authData.username && inputHash === authData.passwordHash) {
+            sessionStorage.setItem(DB_KEYS.SESSION, 'true');
+            console.log('Login successful');
+            return true;
+        }
+        console.warn('Login failed: Invalid credentials');
+        return false;
+    } catch (e) {
+        console.error('Login error:', e);
+        return false;
     }
-    return false;
+}
+
+function updateAdminPassword(newPassword) {
+    try {
+        const authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH)) || { username: 'admin' };
+        const newHash = CryptoJS.SHA256(newPassword).toString();
+        authData.passwordHash = newHash;
+        localStorage.setItem(DB_KEYS.AUTH, JSON.stringify(authData));
+        return true;
+    } catch (e) {
+        console.error('Update password error:', e);
+        return false;
+    }
 }
 
 function logout() {
