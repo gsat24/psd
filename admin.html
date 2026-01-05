@@ -311,13 +311,14 @@
         }
 
         window.onload = async () => {
-            console.log('Admin Page Loaded');
+            console.log('Admin Page window.onload started');
             
             // Ensure Database is initialized before anything else
-            if (typeof initDB === 'function') {
-                initDB();
+            if (typeof window.initDB === 'function') {
+                console.log('Calling initDB() from window.onload');
+                window.initDB();
             } else {
-                console.error('initDB function not found! Check admin-system.js load order.');
+                console.error('window.initDB function not found! Check admin-system.js load order.');
             }
             
             const loginForm = document.getElementById('login-form');
@@ -325,43 +326,58 @@
             const changePasswordForm = document.getElementById('change-password-form');
 
             if (loginForm) {
+                console.log('Login form found, attaching submit listener');
                 loginForm.addEventListener('submit', (e) => {
                     e.preventDefault();
-                    console.log('Login form submitted');
+                    console.log('Login form submit event captured!');
+                    
                     const user = document.getElementById('login-username').value;
                     const pass = document.getElementById('login-password').value;
                     
-                    if (login(user, pass)) {
-                        window.location.reload();
+                    console.log('Attempting login with user:', user);
+                    
+                    if (typeof window.login === 'function') {
+                        if (window.login(user, pass)) {
+                            console.log('Login success, reloading page...');
+                            window.location.reload();
+                        } else {
+                            console.warn('Login failed according to window.login');
+                            if (loginError) loginError.classList.remove('hidden');
+                        }
                     } else {
-                        if (loginError) loginError.classList.remove('hidden');
+                        console.error('window.login function not found!');
+                        alert('Sistem login belum siap. Silakan refresh halaman.');
                     }
                 });
             } else {
-                console.error('Login form not found!');
+                console.error('Login form with id "login-form" NOT found in DOM!');
             }
 
             if (changePasswordForm) {
-                changePasswordForm.addEventListener('submit', (e) => {
+                changePasswordForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const newPass = document.getElementById('new-password').value;
                     const confirmPass = document.getElementById('confirm-password').value;
-                    
+
                     if (newPass !== confirmPass) {
-                        return alert('Konfirmasi password tidak cocok!');
+                        alert('Password tidak cocok!');
+                        return;
                     }
-                    
-                    if (newPass.length < 6) {
-                        return alert('Password minimal 6 karakter!');
-                    }
-                    
-                    if (updateAdminPassword(newPass)) {
-                        alert('Password berhasil diperbarui! Silakan login kembali.');
-                        logout();
+
+                    if (typeof window.updateAdminPassword === 'function') {
+                        if (window.updateAdminPassword(newPass)) {
+                            alert('Password berhasil diperbarui!');
+                            changePasswordForm.reset();
+                        } else {
+                            alert('Gagal memperbarui password.');
+                        }
+                    } else {
+                        console.error('window.updateAdminPassword not found');
                     }
                 });
             }
 
+            console.log('Calling checkAuth() from window.onload');
             await checkAuth();
         };
 

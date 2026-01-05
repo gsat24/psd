@@ -1,4 +1,5 @@
 // Simple Data Management System using Supabase & localStorage (Hybrid)
+console.log('admin-system.js loading...');
 
 const SUPABASE_URL = 'https://ayzpxozlytuzpxjqyvsw.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_secret_7OTmCCC9gav9jjHWvIaZRw_oLqbkXcX';
@@ -7,14 +8,17 @@ let supabase = null;
 
 // Initialize Supabase Client safely
 function initSupabase() {
+    console.log('Initializing Supabase...');
     try {
-        // Try both possible variable names from the CDN
-        const sbClient = window.supabase || (typeof supabasejs !== 'undefined' ? supabasejs : null);
+        // The Supabase CDN provides 'supabase' (lowercase)
+        const sbClient = window.supabase;
         
         if (sbClient && SUPABASE_URL && SUPABASE_ANON_KEY) {
             supabase = sbClient.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             console.log('Supabase initialized successfully');
             return true;
+        } else {
+            console.warn('Supabase client not found in window.supabase');
         }
     } catch (e) {
         console.error('Supabase initialization error:', e);
@@ -23,8 +27,12 @@ function initSupabase() {
     return false;
 }
 
-// Run initialization
-initSupabase();
+// Run initialization immediately
+try {
+    initSupabase();
+} catch (e) {
+    console.error('Immediate initSupabase call failed:', e);
+}
 
 const DB_KEYS = {
     NEWS: 'psd_news',
@@ -36,49 +44,57 @@ const DB_KEYS = {
 
 // Initialize with mock data if empty
 window.initDB = function() {
-    console.log('Initializing Database...');
-    if (!localStorage.getItem(DB_KEYS.NEWS)) {
-        const mockNews = [
-            {
-                id: 1,
-                title: 'Implementasi Sistem Digital di Pesantren Modern',
-                date: '05 Jan 2026',
-                summary: 'Langkah besar menuju digitalisasi pendidikan islam di Indonesia mulai menunjukkan hasil yang signifikan dengan sistem manajemen terpadu.',
-                content: `<p>Digitalisasi di lingkungan pesantren...</p>`,
-                image: 'src/berita1.webp'
-            }
-        ];
-        localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(mockNews));
-    }
+    console.log('initDB() called');
+    try {
+        if (!localStorage.getItem(DB_KEYS.NEWS)) {
+            const mockNews = [
+                {
+                    id: 1,
+                    title: 'Implementasi Sistem Digital di Pesantren Modern',
+                    date: '05 Jan 2026',
+                    summary: 'Langkah besar menuju digitalisasi pendidikan islam di Indonesia mulai menunjukkan hasil yang signifikan dengan sistem manajemen terpadu.',
+                    content: `<p>Digitalisasi di lingkungan pesantren...</p>`,
+                    image: 'src/berita1.webp'
+                }
+            ];
+            localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(mockNews));
+        }
 
-    if (!localStorage.getItem(DB_KEYS.COMPANY)) {
-        const mockCompany = {
-            name: 'Pesantren Smart Digital',
-            email: 'info@pesantrensmart.com',
-            phone: '+62 812-3456-7890',
-            address: 'Jl. Pesantren No. 123, Indonesia',
-            social: { instagram: '#', facebook: '#', tiktok: '#' }
-        };
-        localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(mockCompany));
-    }
+        if (!localStorage.getItem(DB_KEYS.COMPANY)) {
+            const mockCompany = {
+                name: 'Pesantren Smart Digital',
+                email: 'info@pesantrensmart.com',
+                phone: '+62 812-3456-7890',
+                address: 'Jl. Pesantren No. 123, Indonesia',
+                social: { instagram: '#', facebook: '#', tiktok: '#' }
+            };
+            localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(mockCompany));
+        }
 
-    // ALWAYS reset auth in development if login fails
-    const defaultAuth = { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' }; // password: admin
-    localStorage.setItem(DB_KEYS.AUTH, JSON.stringify(defaultAuth));
-    console.log('Auth Reset to default (admin/admin)');
+        // ALWAYS reset auth in development if login fails
+        const defaultAuth = { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' }; // password: admin
+        localStorage.setItem(DB_KEYS.AUTH, JSON.stringify(defaultAuth));
+        console.log('Auth Reset to default (admin/admin)');
+    } catch (e) {
+        console.error('initDB error:', e);
+    }
 };
 
 // --- Authentication Functions ---
 window.isLoggedIn = function() {
-    return sessionStorage.getItem(DB_KEYS.SESSION) === 'true';
+    const session = sessionStorage.getItem(DB_KEYS.SESSION) === 'true';
+    console.log('isLoggedIn check:', session);
+    return session;
 };
 
 window.login = function(username, password) {
-    console.log('Attempting login for:', username);
+    console.log('login() called for:', username);
     try {
         const storedAuth = localStorage.getItem(DB_KEYS.AUTH);
         const authData = storedAuth ? JSON.parse(storedAuth) : { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' };
         
+        console.log('Comparing against stored username:', authData.username);
+
         if (typeof CryptoJS === 'undefined') {
             console.error('CryptoJS is not loaded!');
             alert('Error: Sistem keamanan (CryptoJS) tidak termuat. Periksa koneksi internet Anda.');
@@ -86,11 +102,14 @@ window.login = function(username, password) {
         }
 
         const inputHash = CryptoJS.SHA256(password).toString();
+        console.log('Input password hashed');
+
         if (username === authData.username && inputHash === authData.passwordHash) {
             sessionStorage.setItem(DB_KEYS.SESSION, 'true');
-            console.log('Login successful');
+            console.log('Login successful! Session set.');
             return true;
         }
+        
         console.warn('Login failed: Invalid credentials');
         return false;
     } catch (e) {
@@ -100,6 +119,7 @@ window.login = function(username, password) {
 };
 
 window.updateAdminPassword = function(newPassword) {
+    console.log('updateAdminPassword() called');
     try {
         const authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH)) || { username: 'admin' };
         const newHash = CryptoJS.SHA256(newPassword).toString();
@@ -113,12 +133,14 @@ window.updateAdminPassword = function(newPassword) {
 };
 
 window.logout = function() {
+    console.log('logout() called');
     sessionStorage.removeItem(DB_KEYS.SESSION);
     window.location.reload();
 };
 
 // --- Data Functions ---
 window.getNews = async function() {
+    console.log('getNews() called');
     if (supabase) {
         try {
             const { data, error } = await supabase.from('news').select('*').order('id', { ascending: false });
@@ -132,7 +154,7 @@ window.getNews = async function() {
 };
 
 window.saveNews = async function(newsItem) {
-    console.log('Attempting to save news:', newsItem);
+    console.log('saveNews() called:', newsItem);
     if (supabase) {
         try {
             const { error } = await supabase.from('news').upsert([newsItem]);
@@ -156,6 +178,7 @@ window.saveNews = async function(newsItem) {
 };
 
 window.deleteNews = async function(id) {
+    console.log('deleteNews() called for ID:', id);
     if (supabase) {
         try {
             const { error } = await supabase.from('news').delete().eq('id', id);
@@ -171,6 +194,7 @@ window.deleteNews = async function(id) {
 };
 
 window.getFeedback = async function() {
+    console.log('getFeedback() called');
     if (supabase) {
         try {
             const { data, error } = await supabase.from('feedback').select('*').order('id', { ascending: false });
@@ -184,12 +208,11 @@ window.getFeedback = async function() {
 };
 
 window.saveFeedback = async function(name, email, subject, message) {
+    console.log('saveFeedback() called');
     const newFeedback = {
         name, email, subject, message,
         date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
     };
-
-    console.log('Attempting to save feedback:', newFeedback);
 
     if (supabase) {
         try {
@@ -208,6 +231,7 @@ window.saveFeedback = async function(name, email, subject, message) {
 };
 
 window.getCompanyInfo = async function() {
+    console.log('getCompanyInfo() called');
     if (supabase) {
         try {
             const { data, error } = await supabase.from('company').select('*').eq('id', 1).single();
@@ -221,7 +245,7 @@ window.getCompanyInfo = async function() {
 };
 
 window.updateCompanyInfo = async function(info) {
-    console.log('Attempting to update company info:', info);
+    console.log('updateCompanyInfo() called');
     if (supabase) {
         try {
             const { error } = await supabase.from('company').update(info).eq('id', 1);
@@ -238,28 +262,36 @@ window.updateCompanyInfo = async function(info) {
 
 // Sync function for UI
 window.syncCompanyInfo = async function() {
-    const info = await getCompanyInfo();
-    if (!info) return;
+    console.log('syncCompanyInfo() called');
+    try {
+        const info = await getCompanyInfo();
+        if (!info) return;
 
-    const emailEl = document.getElementById('footer-email');
-    const phoneEl = document.getElementById('footer-phone');
-    const addrEl = document.getElementById('footer-address');
+        const emailEl = document.getElementById('footer-email');
+        const phoneEl = document.getElementById('footer-phone');
+        const addrEl = document.getElementById('footer-address');
 
-    if (emailEl) emailEl.innerText = info.email;
-    if (phoneEl) phoneEl.innerText = info.phone;
-    if (addrEl) addrEl.innerText = info.address;
+        if (emailEl) emailEl.innerText = info.email;
+        if (phoneEl) phoneEl.innerText = info.phone;
+        if (addrEl) addrEl.innerText = info.address;
 
-    // Social Links
-    const socialInsta = document.getElementById('footer-social-instagram');
-    const socialFB = document.getElementById('footer-social-facebook');
-    const socialTikTok = document.getElementById('footer-social-tiktok');
+        // Social Links
+        const socialInsta = document.getElementById('footer-social-instagram');
+        const socialFB = document.getElementById('footer-social-facebook');
+        const socialTikTok = document.getElementById('footer-social-tiktok');
 
-    if (socialInsta) socialInsta.href = info.social.instagram;
-    if (socialFB) socialFB.href = info.social.facebook;
-    if (socialTikTok) socialTikTok.href = info.social.tiktok;
+        if (socialInsta) socialInsta.href = info.social.instagram;
+        if (socialFB) socialFB.href = info.social.facebook;
+        if (socialTikTok) socialTikTok.href = info.social.tiktok;
+    } catch (e) {
+        console.error('syncCompanyInfo error:', e);
+    }
 };
 
 // Initialize database and sync UI
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded in admin-system.js');
     syncCompanyInfo();
 });
+
+console.log('admin-system.js fully loaded and functions attached to window.');
