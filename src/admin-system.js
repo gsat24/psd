@@ -4,12 +4,27 @@ const SUPABASE_URL = 'https://ayzpxozlytuzpxjqyvsw.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_secret_7OTmCCC9gav9jjHWvIaZRw_oLqbkXcX';
 
 let supabase = null;
-if (typeof supabasejs !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY) {
-    supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log('Supabase initialized successfully');
-} else {
+
+// Initialize Supabase Client safely
+function initSupabase() {
+    try {
+        // Try both possible variable names from the CDN
+        const sbClient = window.supabase || (typeof supabasejs !== 'undefined' ? supabasejs : null);
+        
+        if (sbClient && SUPABASE_URL && SUPABASE_ANON_KEY) {
+            supabase = sbClient.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('Supabase initialized successfully');
+            return true;
+        }
+    } catch (e) {
+        console.error('Supabase initialization error:', e);
+    }
     console.warn('Supabase not initialized, falling back to LocalStorage');
+    return false;
 }
+
+// Run initialization
+initSupabase();
 
 const DB_KEYS = {
     NEWS: 'psd_news',
@@ -20,7 +35,7 @@ const DB_KEYS = {
 };
 
 // Initialize with mock data if empty
-function initDB() {
+window.initDB = function() {
     console.log('Initializing Database...');
     if (!localStorage.getItem(DB_KEYS.NEWS)) {
         const mockNews = [
@@ -51,14 +66,14 @@ function initDB() {
     const defaultAuth = { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' }; // password: admin
     localStorage.setItem(DB_KEYS.AUTH, JSON.stringify(defaultAuth));
     console.log('Auth Reset to default (admin/admin)');
-}
+};
 
 // --- Authentication Functions ---
-function isLoggedIn() {
+window.isLoggedIn = function() {
     return sessionStorage.getItem(DB_KEYS.SESSION) === 'true';
-}
+};
 
-function login(username, password) {
+window.login = function(username, password) {
     console.log('Attempting login for:', username);
     try {
         const storedAuth = localStorage.getItem(DB_KEYS.AUTH);
@@ -82,9 +97,9 @@ function login(username, password) {
         console.error('Login error:', e);
         return false;
     }
-}
+};
 
-function updateAdminPassword(newPassword) {
+window.updateAdminPassword = function(newPassword) {
     try {
         const authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH)) || { username: 'admin' };
         const newHash = CryptoJS.SHA256(newPassword).toString();
@@ -95,110 +110,80 @@ function updateAdminPassword(newPassword) {
         console.error('Update password error:', e);
         return false;
     }
-}
+};
 
-function logout() {
+window.logout = function() {
     sessionStorage.removeItem(DB_KEYS.SESSION);
     window.location.reload();
-}
+};
 
-// --- ASYNC CRUD FUNCTIONS (SUPABASE READY) ---
-
-async function getNews() {
+// --- Data Functions ---
+window.getNews = async function() {
     if (supabase) {
-        const { data, error } = await supabase.from('news').select('*').order('created_at', { ascending: false });
-        if (!error) return data;
+        try {
+            const { data, error } = await supabase.from('news').select('*').order('id', { ascending: false });
+            if (error) throw error;
+            return data;
+        } catch (err) {
+            console.error('Failed to get news from Supabase:', err);
+        }
     }
     return JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
-}
+};
 
-async function getNewsById(id) {
-    if (supabase) {
-        const { data, error } = await supabase.from('news').select('*').eq('id', id).single();
-        if (!error) return data;
-    }
-    const news = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
-    return news.find(item => item.id == id);
-}
-
-async function saveNewsItem(title, content, imageFile) {
-    const newItem = {
-        title,
-        content,
-        summary: content.replace(/<[^>]*>/g, '').substring(0, 150) + '...',
-        date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
-        image: imageFile || 'src/berita1.webp'
-    };
-
-    console.log('Attempting to save news item:', newItem);
-
+window.saveNews = async function(newsItem) {
+    console.log('Attempting to save news:', newsItem);
     if (supabase) {
         try {
-            const { data, error } = await supabase.from('news').insert([newItem]).select();
-            if (error) {
-                console.error('Supabase insert error:', error);
-                throw error;
-            }
-            console.log('Successfully saved to Supabase:', data);
-            return data[0];
+            const { error } = await supabase.from('news').upsert([newsItem]);
+            if (error) throw error;
+            console.log('News saved to Supabase');
         } catch (err) {
-            console.error('Failed to save to Supabase, falling back to LocalStorage:', err);
+            console.error('Failed to save news to Supabase:', err);
         }
     }
-
+    
     const news = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
-    newItem.id = Date.now();
-    news.unshift(newItem);
+    if (newsItem.id) {
+        const index = news.findIndex(n => n.id === newsItem.id);
+        if (index !== -1) news[index] = newsItem;
+        else news.unshift(newsItem);
+    } else {
+        newsItem.id = Date.now();
+        news.unshift(newsItem);
+    }
     localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(news));
-    console.log('Saved to LocalStorage (Fallback)');
-    return newItem;
-}
+};
 
-async function updateNewsItem(id, title, content, imageFile) {
-    const updatedItem = {
-        title,
-        content,
-        summary: content.replace(/<[^>]*>/g, '').substring(0, 150) + '...',
-        image: imageFile
-    };
-
-    console.log('Attempting to update news item ID:', id);
-
+window.deleteNews = async function(id) {
     if (supabase) {
         try {
-            const { data, error } = await supabase.from('news').update(updatedItem).eq('id', id).select();
-            if (error) {
-                console.error('Supabase update error:', error);
-                throw error;
-            }
-            console.log('Successfully updated in Supabase:', data);
-            return data[0];
+            const { error } = await supabase.from('news').delete().eq('id', id);
+            if (error) throw error;
+            console.log('News deleted from Supabase');
         } catch (err) {
-            console.error('Failed to update in Supabase, falling back to LocalStorage:', err);
+            console.error('Failed to delete news from Supabase:', err);
         }
     }
-
     const news = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
-    const index = news.findIndex(item => item.id == id);
-    if (index !== -1) {
-        news[index] = { ...news[index], ...updatedItem };
-        localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(news));
-        console.log('Updated in LocalStorage (Fallback)');
-        return news[index];
-    }
-    return null;
-}
+    const filtered = news.filter(n => n.id !== id);
+    localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(filtered));
+};
 
-async function deleteNewsItem(id) {
+window.getFeedback = async function() {
     if (supabase) {
-        await supabase.from('news').delete().eq('id', id);
+        try {
+            const { data, error } = await supabase.from('feedback').select('*').order('id', { ascending: false });
+            if (error) throw error;
+            return data;
+        } catch (err) {
+            console.error('Failed to get feedback from Supabase:', err);
+        }
     }
-    let news = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
-    news = news.filter(item => item.id !== id);
-    localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(news));
-}
+    return JSON.parse(localStorage.getItem(DB_KEYS.FEEDBACK)) || [];
+};
 
-async function saveFeedback(name, email, subject, message) {
+window.saveFeedback = async function(name, email, subject, message) {
     const newFeedback = {
         name, email, subject, message,
         date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -220,9 +205,9 @@ async function saveFeedback(name, email, subject, message) {
     newFeedback.id = Date.now();
     feedback.unshift(newFeedback);
     localStorage.setItem(DB_KEYS.FEEDBACK, JSON.stringify(feedback));
-}
+};
 
-async function getCompanyInfo() {
+window.getCompanyInfo = async function() {
     if (supabase) {
         try {
             const { data, error } = await supabase.from('company').select('*').eq('id', 1).single();
@@ -233,9 +218,9 @@ async function getCompanyInfo() {
         }
     }
     return JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
-}
+};
 
-async function updateCompanyInfo(info) {
+window.updateCompanyInfo = async function(info) {
     console.log('Attempting to update company info:', info);
     if (supabase) {
         try {
@@ -249,10 +234,10 @@ async function updateCompanyInfo(info) {
     const current = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
     const updated = { ...current, ...info };
     localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(updated));
-}
+};
 
 // Sync function for UI
-async function syncCompanyInfo() {
+window.syncCompanyInfo = async function() {
     const info = await getCompanyInfo();
     if (!info) return;
 
@@ -272,10 +257,9 @@ async function syncCompanyInfo() {
     if (socialInsta) socialInsta.href = info.social.instagram;
     if (socialFB) socialFB.href = info.social.facebook;
     if (socialTikTok) socialTikTok.href = info.social.tiktok;
-}
+};
 
 // Initialize database and sync UI
-// initDB() called from window.onload in admin.html for safety
 document.addEventListener('DOMContentLoaded', () => {
     syncCompanyInfo();
 });

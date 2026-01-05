@@ -10,7 +10,6 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>window.supabasejs = supabase;</script>
     <!-- CryptoJS for Encryption -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="src/admin-system.js"></script>
@@ -421,13 +420,19 @@
             if(!title || plainText.length === 0) return alert('Semua field harus diisi!');
             
             const onComplete = async (imageUrl) => {
+                const newsData = {
+                    title,
+                    content,
+                    summary: plainText.substring(0, 150) + '...',
+                    image: imageUrl || 'src/berita1.webp',
+                    date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+                };
+
                 if (editId) {
-                    // Update existing
-                    await updateNewsItem(editId, title, content, imageUrl);
-                } else {
-                    // Save new
-                    await saveNewsItem(title, content, imageUrl);
+                    newsData.id = parseInt(editId);
                 }
+
+                await saveNews(newsData);
                 await finishSave();
             };
 
@@ -480,7 +485,7 @@
 
         async function handleDeleteNews(id) {
             if(confirm('Hapus berita ini?')) {
-                await deleteNewsItem(id);
+                await deleteNews(id);
                 await renderNewsTable();
             }
         }
