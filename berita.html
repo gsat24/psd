@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kontak - Pesantren Smart Digital</title>
+    <title>Berita - Pesantren Smart Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="src/tw-config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -26,9 +26,9 @@
             <div class="hidden md:flex space-x-8 text-sm font-medium text-white">
                 <a href="index.html" class="hover:text-psd-yellow transition">Home</a>
                 <a href="features.html" class="hover:text-psd-yellow transition">Fitur</a>
-                <a href="berita.html" class="hover:text-psd-yellow transition">Berita</a>
+                <a href="berita.html" class="text-psd-yellow transition">Berita</a>
                 <a href="about.html" class="hover:text-psd-yellow transition">Tentang Kami</a>
-                <a href="contact.html" class="text-psd-yellow transition">Kontak</a>
+                <a href="contact.html" class="hover:text-psd-yellow transition">Kontak</a>
             </div>
 
             <!-- Hamburger Menu (Mobile) -->
@@ -99,76 +99,48 @@
 
         <div class="container mx-auto px-6 relative z-10 text-center">
             <h1 class="text-3xl md:text-5xl font-bold mb-6 uppercase leading-tight max-w-4xl mx-auto">
-                Hubungi Kami
+                Berita & Artikel
             </h1>
             <p class="text-gray-200 text-base md:text-lg max-w-2xl mx-auto">
-                Punya pertanyaan atau ingin bergabung menjadi mitra kami? Jangan ragu untuk menghubungi tim kami.
+                Update terbaru seputar kegiatan pesantren, teknologi pendidikan, dan informasi penting lainnya.
             </p>
         </div>
     </section>
 
-    <!-- Content Section -->
+    <!-- News Grid Section -->
     <section class="py-20 bg-white">
         <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <!-- Informasi Kontak (Kiri) -->
-                <div class="fade-up space-y-8 lg:order-1">
-                    <h2 class="text-3xl font-bold text-psd-green mb-8 uppercase">Informasi Kontak</h2>
-                    <div class="flex items-start space-x-6">
-                        <div class="bg-psd-yellow p-4 rounded-2xl text-psd-green">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800 text-lg">Alamat</h4>
-                            <p class="text-gray-600" id="contact-address">Jl. Pesantren No. 123, Jakarta Selatan, Indonesia</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-6">
-                        <div class="bg-psd-yellow p-4 rounded-2xl text-psd-green">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800 text-lg">Email</h4>
-                            <p class="text-gray-600" id="contact-email">info@pesantrensmart.digital</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-6">
-                        <div class="bg-psd-yellow p-4 rounded-2xl text-psd-green">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800 text-lg">WhatsApp</h4>
-                            <p class="text-gray-600" id="contact-phone">+62 813-6894-6818</p>
-                        </div>
+            <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- News Card 1 -->
+                <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300">
+                    <img src="src/berita1.webp" alt="Berita 1" class="w-full h-64 object-cover">
+                    <div class="p-8">
+                        <div class="text-psd-green text-sm font-semibold mb-2">05 Jan 2026</div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 hover:text-psd-green transition cursor-pointer">Implementasi Sistem Digital di Pesantren Modern</h3>
+                        <p class="text-gray-600 mb-6 line-clamp-3">
+                            Langkah besar menuju digitalisasi pendidikan islam di Indonesia mulai menunjukkan hasil yang signifikan...
+                        </p>
+                        <a href="#" class="text-psd-green font-bold flex items-center hover:translate-x-2 transition duration-300">
+                            Baca Selengkapnya
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
                     </div>
                 </div>
 
-                <!-- Contact Form (Kanan di Desktop) -->
-                <div class="fade-up lg:order-2">
-                    <h2 class="text-3xl font-bold text-psd-green mb-8 uppercase">Kirim Pesan</h2>
-                    <form id="contactForm" class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                                <input type="text" id="name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-psd-green focus:border-transparent outline-none transition" placeholder="Masukkan nama Anda">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Email</label>
-                                <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-psd-green focus:border-transparent outline-none transition" placeholder="email@contoh.com">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Subjek</label>
-                            <input type="text" id="subject" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-psd-green focus:border-transparent outline-none transition" placeholder="Apa yang ingin Anda tanyakan?">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Pesan</label>
-                            <textarea id="message" required rows="5" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-psd-green focus:border-transparent outline-none transition" placeholder="Tuliskan pesan Anda di sini..."></textarea>
-                        </div>
-                        <button type="submit" class="w-full bg-psd-green text-white font-bold py-4 rounded-xl hover:bg-opacity-90 transition duration-300 shadow-lg hover:shadow-xl">
-                            Kirim Pesan Sekarang
-                        </button>
-                    </form>
+                <!-- News Card 2 -->
+                <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300">
+                    <img src="src/berita2.webp" alt="Berita 2" class="w-full h-64 object-cover">
+                    <div class="p-8">
+                        <div class="text-psd-green text-sm font-semibold mb-2">02 Jan 2026</div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 hover:text-psd-green transition cursor-pointer">Pelatihan Manajemen Keuangan Digital Untuk Admin Pesantren</h3>
+                        <p class="text-gray-600 mb-6 line-clamp-3">
+                            Meningkatkan akuntabilitas dan transparansi keuangan pesantren melalui sistem manajemen yang terintegrasi...
+                        </p>
+                        <a href="#" class="text-psd-green font-bold flex items-center hover:translate-x-2 transition duration-300">
+                            Baca Selengkapnya
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -253,19 +225,31 @@
 
     <script src="src/admin-system.js"></script>
     <script>
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        function renderNews() {
+            const container = document.getElementById('news-container');
+            const news = getNews();
             
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-            
-            saveFeedback(name, email, subject, message);
-            
-            alert('Terima kasih! Pesan Anda telah terkirim.');
-            this.reset();
-        });
+            container.innerHTML = news.map(item => `
+                <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300">
+                    <img src="${item.image}" alt="${item.title}" class="w-full h-64 object-cover">
+                    <div class="p-8">
+                        <div class="text-psd-green text-sm font-semibold mb-2">${item.date}</div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 hover:text-psd-green transition cursor-pointer">
+                            <a href="berita-detail.html?id=${item.id}">${item.title}</a>
+                        </h3>
+                        <p class="text-gray-600 mb-6 line-clamp-3">
+                            ${item.summary || item.content.substring(0, 150) + '...'}
+                        </p>
+                        <a href="berita-detail.html?id=${item.id}" class="text-psd-green font-bold flex items-center hover:translate-x-2 transition duration-300">
+                            Baca Selengkapnya
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addEventListener('DOMContentLoaded', renderNews);
     </script>
     <script src="src/main.js"></script>
 </body>

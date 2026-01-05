@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="src/tw-config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="src/styles.css">
 </head>
 <body class="font-sans text-white">
@@ -25,7 +26,7 @@
             <div class="hidden md:flex space-x-8 text-sm font-medium">
                 <a href="index.html" class="hover:text-psd-yellow transition">Home</a>
                 <a href="features.html" class="hover:text-psd-yellow transition">Fitur</a>
-                <a href="#" class="hover:text-psd-yellow transition">Berita</a>
+                <a href="berita.html" class="hover:text-psd-yellow transition">Berita</a>
                 <a href="about.html" class="hover:text-psd-yellow transition">Tentang Kami</a>
                 <a href="contact.html" class="hover:text-psd-yellow transition">Kontak</a>
             </div>
@@ -41,17 +42,14 @@
 
             <!-- Social Icons -->
             <div class="hidden md:flex space-x-4">
-                <a href="#" class="hover:text-psd-yellow transition">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465C9.673 2.013 10.03 2 12.315 2zm-1.01 1.945c-2.26 0-2.615.01-3.65.058-1.027.047-1.583.219-1.954.363-.483.189-.828.414-1.19.776-.362.362-.587.707-.776 1.19-.144.37-.316.927-.363 1.954-.047 1.035-.058 1.39-.058 3.65v.982c0 2.26.01 2.615.058 3.65.047 1.027.219 1.583.363 1.954.189.483.414.828.776 1.19.362.362.707.587 1.19.776.37.144.927.316 1.954.363 1.035.047 1.39.058 3.65.058h.982c2.26 0 2.615-.01 3.65-.058 1.027-.047 1.583-.219 1.954-.363.483-.189.828-.414 1.19-.776.362-.362.587-.707.776-1.19.144-.37.316-.927.363-1.954.047-1.035.058-1.39.058-3.65v-.982c0-2.26-.01-2.615-.058-3.65-.047-1.027-.219-1.583-.363-1.954-.189-.483-.414-.828-.776-1.19-.362-.362-.707-.587-1.19-.776-.37-.144-.927-.316-1.954-.363-1.035-.047-1.39-.058-3.65-.058L11.305 3.945z" clip-rule="evenodd" />
-                        <path fill-rule="evenodd" d="M12.315 6.87a5.445 5.445 0 100 10.89 5.445 5.445 0 000-10.89zm0 1.945a3.5 3.5 0 110 7 3.5 3.5 0 010-7z" clip-rule="evenodd" />
-                        <path d="M17.755 5.255a1.295 1.295 0 100 2.59 1.295 1.295 0 000-2.59z" />
-                    </svg>
+                <a href="#" id="nav-social-instagram" class="hover:text-psd-yellow transition text-xl" target="_blank">
+                    <i class="fab fa-instagram"></i>
                 </a>
-                <a href="#" class="hover:text-psd-yellow transition">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08.13.17.25.26.37.21.28.43.55.69.79.94.9 2.15 1.3 3.44 1.26.12 0 .25.01.37 0 .14-.01.29-.02.43-.03.01 1.43.01 2.87.01 4.31-.22-.04-.45-.09-.67-.12-1.28-.19-2.45-.63-3.48-1.46-.06-.05-.13-.09-.22-.16v6.2c-.01 3.03-.98 5.76-2.92 8.05-1.85 2.18-4.28 3.48-7.14 3.76-1.21.12-2.42.06-3.61-.17-1.63-.32-3.1-.98-4.38-2.02-1.39-1.13-2.38-2.58-2.88-4.27-.05-.16-.09-.32-.13-.49-.11-.53-.17-1.07-.12-1.61.16-1.57.81-2.95 1.9-4.08 1.15-1.19 2.58-1.91 4.2-2.12.38-.05.77-.07 1.16-.06V12.4c-.65.06-1.29.2-1.89.5-1.19.6-1.92 1.6-2.09 2.92-.09.73.01 1.45.31 2.13.43.99 1.17 1.7 2.15 2.08.82.32 1.68.39 2.54.2 1.16-.25 2.13-.81 2.9-1.7 1.05-1.22 1.58-2.67 1.57-4.26V4.6c1.39.46 2.67 1.18 3.78 2.16.12.11.23.23.36.36V.02h-.03z"/>
-                    </svg>
+                <a href="#" id="nav-social-facebook" class="hover:text-psd-yellow transition text-xl" target="_blank">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="#" id="nav-social-tiktok" class="hover:text-psd-yellow transition text-xl" target="_blank">
+                    <i class="fab fa-tiktok"></i>
                 </a>
             </div>
         </div>
@@ -71,16 +69,19 @@
             <div class="flex flex-col space-y-6 text-xl font-medium text-white">
                 <a href="index.html" class="hover:text-psd-yellow transition">Home</a>
                 <a href="features.html" class="hover:text-psd-yellow transition">Fitur</a>
-                <a href="#" class="hover:text-psd-yellow transition">Berita</a>
+                <a href="berita.html" class="hover:text-psd-yellow transition">Berita</a>
                 <a href="about.html" class="hover:text-psd-yellow transition">Tentang Kami</a>
                 <a href="contact.html" class="hover:text-psd-yellow transition">Kontak</a>
             </div>
             <div class="mt-auto flex space-x-6">
-                <a href="#" class="text-white hover:text-psd-yellow transition">
-                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/></svg>
+                <a href="#" id="mobile-social-instagram" class="text-white hover:text-psd-yellow transition text-2xl" target="_blank">
+                    <i class="fab fa-instagram"></i>
                 </a>
-                <a href="#" class="text-white hover:text-psd-yellow transition">
-                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08.13.17.25.26.37.21.28.43.55.69.79.94.9 2.15 1.3 3.44 1.26.12 0 .25.01.37 0 .14-.01.29-.02.43-.03.01 1.43.01 2.87.01 4.31-.22-.04-.45-.09-.67-.12-1.28-.19-2.45-.63-3.48-1.46-.06-.05-.13-.09-.22-.16v6.2c-.01 3.03-.98 5.76-2.92 8.05-1.85 2.18-4.28 3.48-7.14 3.76-1.21.12-2.42.06-3.61-.17-1.63-.32-3.1-.98-4.38-2.02-1.39-1.13-2.38-2.58-2.88-4.27-.05-.16-.09-.32-.13-.49-.11-.53-.17-1.07-.12-1.61.16-1.57.81-2.95 1.9-4.08 1.15-1.19 2.58-1.91 4.2-2.12.38-.05.77-.07 1.16-.06V12.4c-.65.06-1.29.2-1.89.5-1.19.6-1.92 1.6-2.09 2.92-.09.73.01 1.45.31 2.13.43.99 1.17 1.7 2.15 2.08.82.32 1.68.39 2.54.2 1.16-.25 2.13-.81 2.9-1.7 1.05-1.22 1.58-2.67 1.57-4.26V4.6c1.39.46 2.67 1.18 3.78 2.16.12.11.23.23.36.36V.02h-.03z"/></svg>
+                <a href="#" id="mobile-social-facebook" class="text-white hover:text-psd-yellow transition text-2xl" target="_blank">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" id="mobile-social-tiktok" class="text-white hover:text-psd-yellow transition text-2xl" target="_blank">
+                    <i class="fab fa-tiktok"></i>
                 </a>
             </div>
         </div>
@@ -100,47 +101,46 @@
                 
                 <!-- Left: Text -->
                 <div class="lg:col-span-4 text-center lg:text-left">
-                    <h1 class="text-4xl lg:text-6xl font-bold leading-tight mb-4 uppercase">
+                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 uppercase">
                         Pesantren <br>
                         Smart <br>
                         Digital
                     </h1>
                     <!-- Yellow Underline -->
-                    <div class="w-32 h-2 bg-psd-yellow rounded-full mb-6 mx-auto lg:mx-0 relative">
-                         <!-- Use SVG for squiggle if needed, simple bar for now -->
-                         <svg width="200" height="20" viewBox="0 0 200 20" class="absolute -top-2 left-0 w-full h-auto text-psd-yellow fill-current">
-                            <path d="M5 10 Q 30 20, 55 10 T 105 10 T 155 10 T 195 10" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round" />
-                         </svg>
+                    <div class="mb-8 flex justify-center lg:justify-start">
+                        <svg width="120" height="12" viewBox="0 0 150 15" class="text-psd-yellow md:w-[150px] md:h-[15px]">
+                            <path d="M0 10c15 0 15-7 30-7s15 7 30 7 15-7 30-7 15 7 30 7 15-7 30-7" stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"/>
+                        </svg>
                     </div>
 
-                    <p class="text-gray-200 text-lg mb-8 max-w-md mx-auto lg:mx-0">
+                    <p class="text-gray-200 text-base md:text-lg mb-8 max-w-md mx-auto lg:mx-0">
                         Bergabunglah dengan revolusi digital dalam pengelolaan pesantren dan sekolah dengan aplikasi kami yang inovatif dan terpercaya.
                     </p>
                 </div>
 
                 <!-- Center: Image -->
                 <div class="lg:col-span-5 relative flex justify-center">
-                    <div class="bg-white rounded-full w-[350px] h-[350px] lg:w-[450px] lg:h-[450px] flex items-center justify-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0"></div>
-                    <img src="src/hero.png" alt="App Showcase" class="relative z-10 w-full max-w-sm lg:max-w-md transform hover:scale-105 transition duration-500">
+                    <div class="bg-white rounded-full w-[250px] h-[250px] md:w-[350px] md:h-[350px] lg:w-[450px] lg:h-[450px] flex items-center justify-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0"></div>
+                    <img src="src/hero.png" alt="App Showcase" class="relative z-10 w-full max-w-[250px] md:max-w-sm lg:max-w-md transform hover:scale-105 transition duration-500">
                 </div>
 
                 <!-- Right: Stats -->
-                <div class="lg:col-span-3 text-center lg:text-right space-y-8">
+                <div class="lg:col-span-3 text-center lg:text-right grid grid-cols-2 md:grid-cols-3 gap-6 lg:block lg:space-y-8 mt-12 lg:mt-0">
                     <div>
-                        <h3 class="text-lg text-gray-200 mb-1">Mitra Pesantren</h3>
-                        <div class="text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
+                        <h3 class="text-sm md:text-lg text-gray-200 mb-1">Mitra Pesantren</h3>
+                        <div class="text-2xl md:text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
                             <span class="counter" data-target="350">0</span>+
                         </div>
                     </div>
                     <div>
-                        <h3 class="text-lg text-gray-200 mb-1">Provinsi</h3>
-                        <div class="text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
+                        <h3 class="text-sm md:text-lg text-gray-200 mb-1">Provinsi</h3>
+                        <div class="text-2xl md:text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
                             <span class="counter" data-target="20">0</span>+
                         </div>
                     </div>
-                    <div>
-                        <h3 class="text-lg text-gray-200 mb-1">Wali Santri</h3>
-                        <div class="text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
+                    <div class="col-span-2 md:col-span-1">
+                        <h3 class="text-sm md:text-lg text-gray-200 mb-1">Wali Santri</h3>
+                        <div class="text-2xl md:text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
                             <span class="counter" data-target="500000">0</span>+
                         </div>
                     </div>
@@ -156,7 +156,7 @@
     
     
 
-    <section class="py-16 bg-white">
+    <section class="py-12 md:py-16 bg-white">
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 <div class="group rounded-[2rem] p-6 text-center shadow-md bg-white text-psd-green border border-gray-200 transition-all duration-300 hover:shadow-xl hover:bg-psd-green hover:text-white">
@@ -237,7 +237,7 @@
     
 
     <!-- Solusi Nyata Section -->
-    <section class="py-20 bg-white">
+    <section class="py-12 md:py-20 bg-white">
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 
@@ -569,42 +569,14 @@
                 Berita Terbaru
             </h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Berita 1 -->
-                <div class="rounded-xl overflow-hidden shadow-lg group cursor-pointer fade-up">
-                    <!-- Header -->
-                    <div class="bg-[#1B2C24] p-6 min-h-[100px] flex items-center justify-center text-center">
-                        <h3 class="text-white font-semibold text-sm uppercase leading-relaxed tracking-wide">
-                            BIMBINGAN TEKNIS SISTEM MANAJEMEN<br>PESANTREN DI PP AALIYAH
-                        </h3>
-                    </div>
-                    <!-- Image -->
-                    <div class="relative overflow-hidden h-[320px]">
-                         <img src="src/berita1.webp" alt="Berita 1" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                    </div>
-                    <!-- Footer -->
-                    <div class="bg-[#1B2C24] px-6 py-4 border-t border-gray-700">
-                        <span class="text-gray-400 text-xs uppercase tracking-wider font-semibold">UNCATEGORIZED</span>
-                    </div>
-                </div>
+            <div id="latest-news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <!-- Dynamic news cards will be injected here -->
+            </div>
 
-                <!-- Berita 2 -->
-                <div class="rounded-xl overflow-hidden shadow-lg group cursor-pointer fade-up">
-                    <!-- Header -->
-                    <div class="bg-[#1B2C24] p-6 min-h-[100px] flex items-center justify-center text-center">
-                        <h3 class="text-white font-semibold text-sm uppercase leading-relaxed tracking-wide">
-                            KUNJUNGAN & KERJASAMA PROGRAM REKTOR<br>UNIVERSITAS MAARIF LAMPUNG
-                        </h3>
-                    </div>
-                    <!-- Image -->
-                    <div class="relative overflow-hidden h-[320px]">
-                         <img src="src/berita2.webp" alt="Berita 2" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                    </div>
-                    <!-- Footer -->
-                    <div class="bg-[#1B2C24] px-6 py-4 border-t border-gray-700">
-                        <span class="text-gray-400 text-xs uppercase tracking-wider font-semibold">UNCATEGORIZED</span>
-                    </div>
-                </div>
+            <div class="text-center">
+                <a href="berita.html" class="inline-block bg-[#1B2C24] text-white font-bold py-4 px-10 rounded-full hover:bg-psd-green transition duration-300 shadow-lg uppercase tracking-wider text-sm">
+                    Lihat Semua Berita
+                </a>
             </div>
         </div>
     </section>
@@ -649,13 +621,14 @@
                         Platform manajemen pesantren digital terintegrasi untuk modernisasi pendidikan islam di Indonesia.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-psd-yellow hover:text-psd-green transition duration-300">
-                             <!-- Icon Facebook/Social -->
-                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path></svg>
+                        <a href="#" id="footer-social-facebook" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-psd-yellow hover:text-psd-green transition duration-300" target="_blank">
+                             <i class="fab fa-facebook-f"></i>
                         </a>
-                         <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-psd-yellow hover:text-psd-green transition duration-300">
-                             <!-- Icon Instagram -->
-                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        <a href="#" id="footer-social-instagram" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-psd-yellow hover:text-psd-green transition duration-300" target="_blank">
+                             <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" id="footer-social-tiktok" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-psd-yellow hover:text-psd-green transition duration-300" target="_blank">
+                             <i class="fab fa-tiktok"></i>
                         </a>
                     </div>
                 </div>
@@ -665,10 +638,10 @@
                     <h4 class="text-lg font-bold text-white uppercase mb-6">Menu Pintas</h4>
                     <ul class="space-y-4">
                         <li><a href="index.html" class="text-gray-300 hover:text-psd-yellow transition">Beranda</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-psd-yellow transition">Tentang Kami</a></li>
+                        <li><a href="about.html" class="text-gray-300 hover:text-psd-yellow transition">Tentang Kami</a></li>
                         <li><a href="features.html" class="text-gray-300 hover:text-psd-yellow transition">Fitur Unggulan</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-psd-yellow transition">Berita</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-psd-yellow transition">Kontak</a></li>
+                        <li><a href="berita.html" class="text-gray-300 hover:text-psd-yellow transition">Berita</a></li>
+                        <li><a href="contact.html" class="text-gray-300 hover:text-psd-yellow transition">Kontak</a></li>
                     </ul>
                 </div>
 
@@ -689,15 +662,15 @@
                     <ul class="space-y-4">
                         <li class="flex items-start">
                             <svg class="w-6 h-6 text-psd-yellow mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <span class="text-gray-300">Jl. Pesantren No. 123, Kota Santri, Indonesia</span>
+                            <span class="text-gray-300" id="footer-address">Jl. Pesantren No. 123, Kota Santri, Indonesia</span>
                         </li>
                          <li class="flex items-center">
                             <svg class="w-6 h-6 text-psd-yellow mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            <span class="text-gray-300">info@pesantrensmart.com</span>
+                            <span class="text-gray-300" id="footer-email">info@pesantrensmart.com</span>
                         </li>
                          <li class="flex items-center">
                             <svg class="w-6 h-6 text-psd-yellow mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                            <span class="text-gray-300">+62 812 3456 7890</span>
+                            <span class="text-gray-300" id="footer-phone">+62 812 3456 7890</span>
                         </li>
                     </ul>
                 </div>
@@ -710,6 +683,41 @@
             </div>
         </div>
     </footer>
+    <script src="src/admin-system.js"></script>
+    <script>
+        function loadLatestNews() {
+            const container = document.getElementById('latest-news-container');
+            const allNews = getNews();
+            
+            // Sort by date (descending) and take top 4
+            const latestNews = allNews
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 4);
+
+            if (latestNews.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500 italic">Belum ada berita terbaru.</div>';
+                return;
+            }
+
+            container.innerHTML = latestNews.map(news => `
+                <a href="berita-detail.html?id=${news.id}" class="rounded-xl overflow-hidden shadow-lg group cursor-pointer fade-up block">
+                    <!-- Header -->
+                    <div class="bg-[#1B2C24] p-6 min-h-[100px] flex items-center justify-center text-center">
+                        <h3 class="text-white font-semibold text-sm uppercase leading-relaxed tracking-wide line-clamp-2">
+                            ${news.title}
+                        </h3>
+                    </div>
+                    <!-- Image -->
+                    <div class="relative overflow-hidden h-[320px]">
+                         <img src="${news.image || 'src/berita1.webp'}" alt="${news.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // Run when window loads
+        window.addEventListener('load', loadLatestNews);
+    </script>
     <script src="src/main.js" defer></script>
     </body>
 </html>

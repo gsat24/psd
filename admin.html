@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Pesantren Smart Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="src/tw-config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CryptoJS for Encryption -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <!-- Quill.js Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .sidebar-active { background-color: rgba(255, 255, 255, 0.1); border-left: 4px solid #F4C430; }
+        /* Custom Quill Style */
+        .ql-editor { min-height: 200px; font-family: 'Poppins', sans-serif; }
+        .ql-toolbar.ql-snow { border-radius: 0.5rem 0.5rem 0 0; }
+        .ql-container.ql-snow { border-radius: 0 0 0.5rem 0.5rem; }
+    </style>
+</head>
+<body class="bg-gray-100 flex h-screen overflow-hidden">
+
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="fixed inset-0 bg-psd-green z-[100] flex items-center justify-center p-6">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md transform transition-all">
+            <div class="text-center mb-8">
+                <img src="src/logo.png" alt="Logo" class="h-16 w-auto mx-auto mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Admin Login</h2>
+                <p class="text-gray-500 text-sm">Silakan masuk untuk mengelola konten</p>
+            </div>
+            
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-psd-green focus:border-transparent outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-psd-green focus:border-transparent outline-none transition">
+                </div>
+                <button type="submit" class="w-full bg-psd-green text-white font-bold py-3 rounded-xl hover:bg-opacity-90 transition shadow-lg mt-2">
+                    Masuk Sekarang
+                </button>
+            </form>
+            <p id="login-error" class="text-red-500 text-sm text-center mt-4 hidden">Username atau password salah!</p>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-psd-green text-white flex-shrink-0 flex flex-col">
+        <div class="p-6">
+            <img src="src/logo.png" alt="Logo" class="h-12 w-auto mx-auto mb-4">
+            <h2 class="text-center font-bold text-lg uppercase tracking-wider">Admin Panel</h2>
+        </div>
+        
+        <nav class="flex-1 mt-6">
+            <a href="#" onclick="showSection('news')" class="sidebar-item flex items-center px-6 py-4 hover:bg-white/10 transition sidebar-active" id="nav-news">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                Kelola Berita
+            </a>
+            <a href="#" onclick="showSection('company')" class="sidebar-item flex items-center px-6 py-4 hover:bg-white/10 transition" id="nav-company">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                Info Perusahaan
+            </a>
+            <a href="#" onclick="showSection('feedback')" class="sidebar-item flex items-center px-6 py-4 hover:bg-white/10 transition" id="nav-feedback">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                Feedback Pesan
+            </a>
+            <a href="#" onclick="showSection('security')" class="sidebar-item flex items-center px-6 py-4 hover:bg-white/10 transition" id="nav-security">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                Keamanan
+            </a>
+        </nav>
+
+        <div class="p-6 mt-auto border-t border-white/10 space-y-4">
+            <button onclick="logout()" class="flex items-center text-sm text-red-300 hover:text-red-100 transition w-full">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                Logout
+            </button>
+            <a href="index.html" class="flex items-center text-sm text-gray-300 hover:text-white transition">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Kembali ke Web
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto bg-gray-50 p-10">
+        
+        <!-- Manage News Section -->
+        <section id="section-news" class="admin-section">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Kelola Berita</h1>
+                <button onclick="openNewsModal()" class="bg-psd-green text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition font-semibold">
+                    + Tambah Berita Baru
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Judul Berita</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Tanggal</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="news-list">
+                        <!-- News items will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Company Info Section -->
+        <section id="section-company" class="admin-section hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-8">Informasi Perusahaan</h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold mb-6 border-b pb-4">Identitas Visual</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Logo Perusahaan</label>
+                            <div class="flex items-center space-x-4">
+                                <img src="src/logo.png" id="preview-logo" class="h-16 w-auto bg-gray-100 p-2 rounded">
+                                <input type="file" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-psd-green/10 file:text-psd-green hover:file:bg-psd-green/20">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold mb-6 border-b pb-4">Sosial Media</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
+                            <input type="url" id="social-instagram" placeholder="https://instagram.com/..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Facebook URL</label>
+                            <input type="url" id="social-facebook" placeholder="https://facebook.com/..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">TikTok URL</label>
+                            <input type="url" id="social-tiktok" placeholder="https://tiktok.com/@..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold mb-6 border-b pb-4">Kontak & Alamat</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" id="comp-email" value="info@pesantrendigital.id" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Telepon</label>
+                            <input type="text" id="comp-phone" value="+62 812-3456-7890" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                            <textarea id="comp-address" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent" rows="3">Jl. Teknologi No. 45, Jakarta Selatan, Indonesia</textarea>
+                        </div>
+                        <button onclick="handleUpdateCompany()" class="bg-psd-green text-white px-6 py-2 rounded-lg font-semibold w-full mt-4 hover:bg-opacity-90 transition">Simpan Perubahan</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feedback Section -->
+        <section id="section-feedback" class="admin-section hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-8">Feedback & Pesan</h1>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Pengirim</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Pesan</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feedback-list">
+                        <!-- Feedback items will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Security Section -->
+        <section id="section-security" class="admin-section hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-8">Keamanan & Password</h1>
+            
+            <div class="max-w-md bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                <h3 class="text-lg font-semibold mb-6 border-b pb-4">Ganti Password Admin</h3>
+                <form id="change-password-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
+                        <input type="password" id="new-password" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password Baru</label>
+                        <input type="password" id="confirm-password" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                    </div>
+                    <button type="submit" class="w-full bg-psd-green text-white font-bold py-2 rounded-lg hover:bg-opacity-90 transition">
+                        Update Password
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- News Modal -->
+    <div id="newsModal" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-center justify-center p-6">
+        <div class="bg-white rounded-2xl max-w-2xl w-full flex flex-col shadow-2xl max-h-[90vh]">
+            <div class="p-8 border-b border-gray-100">
+                <h2 id="modalTitle" class="text-2xl font-bold">Tulis Berita Baru</h2>
+            </div>
+            
+            <div class="p-8 overflow-y-auto flex-1">
+                <div class="space-y-4">
+                    <input type="hidden" id="edit-news-id">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Judul Berita</label>
+                        <input type="text" id="news-title" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Foto Berita</label>
+                        <input type="file" id="news-image" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-psd-green/10 file:text-psd-green">
+                        <div id="image-preview-container" class="mt-2 hidden">
+                            <p class="text-xs text-gray-500 mb-1">Preview foto saat ini:</p>
+                            <img id="image-preview" src="" class="h-20 w-auto rounded border border-gray-200">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Isi Berita</label>
+                        <div id="editor-container" class="bg-white min-h-[300px]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 border-t border-gray-100 flex justify-end space-x-4">
+                <button onclick="closeNewsModal()" class="px-6 py-2 text-gray-600 font-semibold hover:text-gray-800 transition">Batal</button>
+                <button onclick="saveNews()" class="bg-psd-green text-white px-8 py-2 rounded-lg font-semibold hover:bg-[#084a40] transition">Publish Berita</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/admin-system.js"></script>
+    <script>
+        // Initialize Quill
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['link', 'blockquote', 'code-block'],
+                    ['clean']
+                ]
+            },
+            placeholder: 'Tulis isi berita di sini...'
+        });
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.admin-section').forEach(section => section.classList.add('hidden'));
+            document.getElementById('section-' + sectionId).classList.remove('hidden');
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('sidebar-active'));
+            document.getElementById('nav-' + sectionId).classList.add('sidebar-active');
+            
+            if (sectionId === 'news') renderNewsTable();
+            if (sectionId === 'feedback') renderFeedbackTable();
+            if (sectionId === 'company') populateCompanyInfo();
+        }
+
+        // --- Authentication Logic ---
+        
+        const loginOverlay = document.getElementById('login-overlay');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const changePasswordForm = document.getElementById('change-password-form');
+
+        function checkAuth() {
+            if (isLoggedIn()) {
+                loginOverlay.classList.add('hidden');
+                renderNewsTable();
+            } else {
+                loginOverlay.classList.remove('hidden');
+            }
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value;
+            const pass = document.getElementById('login-password').value;
+            
+            if (login(user, pass)) {
+                loginError.classList.add('hidden');
+                checkAuth();
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        changePasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newPass = document.getElementById('new-password').value;
+            const confirmPass = document.getElementById('confirm-password').value;
+            
+            if (newPass !== confirmPass) {
+                return alert('Konfirmasi password tidak cocok!');
+            }
+            
+            if (newPass.length < 6) {
+                return alert('Password minimal 6 karakter!');
+            }
+            
+            if (updateAdminPassword(newPass)) {
+                alert('Password berhasil diperbarui! Silakan login kembali.');
+                logout();
+            }
+        });
+
+        window.onload = () => {
+            checkAuth();
+        };
+
+        function openNewsModal(newsId) {
+            const modal = document.getElementById('newsModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const editIdInput = document.getElementById('edit-news-id');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
+            const imagePreview = document.getElementById('image-preview');
+            
+            if (newsId) {
+                // Edit Mode
+                const newsItem = getNews().find(item => item.id == newsId);
+                if (newsItem) {
+                    modalTitle.innerText = 'Edit Berita';
+                    editIdInput.value = newsId;
+                    document.getElementById('news-title').value = newsItem.title;
+                    quill.root.innerHTML = newsItem.content;
+                    
+                    if (newsItem.image) {
+                        imagePreview.src = newsItem.image;
+                        imagePreviewContainer.classList.remove('hidden');
+                    } else {
+                        imagePreviewContainer.classList.add('hidden');
+                    }
+                }
+            } else {
+                // New Mode
+                modalTitle.innerText = 'Tulis Berita Baru';
+                editIdInput.value = '';
+                document.getElementById('news-title').value = '';
+                quill.setContents([]);
+                imagePreviewContainer.classList.add('hidden');
+            }
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeNewsModal() {
+            document.getElementById('newsModal').classList.add('hidden');
+            // Reset fields
+            document.getElementById('news-title').value = '';
+            document.getElementById('edit-news-id').value = '';
+            document.getElementById('news-image').value = '';
+            quill.setContents([]);
+        }
+
+        function saveNews() {
+            const title = document.getElementById('news-title').value;
+            const content = quill.root.innerHTML;
+            const plainText = quill.getText().trim();
+            const fileInput = document.getElementById('news-image');
+            const editId = document.getElementById('edit-news-id').value;
+            
+            if(!title || plainText.length === 0) return alert('Semua field harus diisi!');
+            
+            const onComplete = (imageUrl) => {
+                if (editId) {
+                    // Update existing
+                    updateNewsItem(editId, title, content, imageUrl);
+                } else {
+                    // Save new
+                    saveNewsItem(title, content, imageUrl);
+                }
+                finishSave();
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    onComplete(e.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                // If editing and no new image, keep the old one
+                let existingImage = null;
+                if (editId) {
+                    const existingItem = getNews().find(item => item.id == editId);
+                    existingImage = existingItem ? existingItem.image : null;
+                }
+                onComplete(existingImage);
+            }
+        }
+
+        function finishSave() {
+            renderNewsTable();
+            closeNewsModal();
+            alert('Berita berhasil disimpan!');
+        }
+
+        function renderNewsTable() {
+            const news = getNews();
+            const tbody = document.getElementById('news-list');
+            tbody.innerHTML = news.map(item => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td class="px-6 py-4">
+                        <img src="${item.image}" class="h-12 w-12 rounded object-cover">
+                    </td>
+                    <td class="px-6 py-4 font-medium text-gray-800">${item.title}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${item.date}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            <button onclick="openNewsModal(${item.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </button>
+                            <button onclick="handleDeleteNews(${item.id})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function handleDeleteNews(id) {
+            if(confirm('Hapus berita ini?')) {
+                deleteNewsItem(id);
+                renderNewsTable();
+            }
+        }
+
+        function renderFeedbackTable() {
+            const tbody = document.getElementById('feedback-list');
+            const feedback = getFeedback();
+            tbody.innerHTML = feedback.map(f => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td class="px-6 py-4 font-medium text-gray-800">
+                        <div>${f.name}</div>
+                        <div class="text-xs text-gray-400 font-normal">${f.email}</div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-600 text-sm">
+                        <div class="font-bold mb-1">${f.subject}</div>
+                        <div class="truncate max-w-xs">${f.message}</div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${f.date}</td>
+                </tr>
+            `).join('');
+        }
+
+        function populateCompanyInfo() {
+            const info = getCompanyInfo();
+            if (info) {
+                document.getElementById('comp-email').value = info.email || '';
+                document.getElementById('comp-phone').value = info.phone || '';
+                document.getElementById('comp-address').value = info.address || '';
+                
+                // Populate Social Links
+                if (info.social) {
+                    document.getElementById('social-instagram').value = info.social.instagram || '';
+                    document.getElementById('social-facebook').value = info.social.facebook || '';
+                    document.getElementById('social-tiktok').value = info.social.tiktok || '';
+                }
+            }
+        }
+
+        function handleUpdateCompany() {
+            const info = {
+                email: document.getElementById('comp-email').value,
+                phone: document.getElementById('comp-phone').value,
+                address: document.getElementById('comp-address').value,
+                social: {
+                    instagram: document.getElementById('social-instagram').value,
+                    facebook: document.getElementById('social-facebook').value,
+                    tiktok: document.getElementById('social-tiktok').value
+                }
+            };
+            updateCompanyInfo(info);
+            alert('Informasi perusahaan berhasil diperbarui!');
+        }
+
+        window.onload = () => {
+            renderNewsTable();
+        };
+    </script>
+</body>
+</html>
