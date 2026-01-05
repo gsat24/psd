@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="src/styles.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="font-sans text-white">
 
@@ -100,7 +101,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 
                 <!-- Left: Text -->
-                <div class="lg:col-span-4 text-center lg:text-left">
+                <div class="lg:col-span-4 text-center lg:text-left" data-aos="fade-right">
                     <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 uppercase">
                         Pesantren <br>
                         Smart <br>
@@ -119,13 +120,13 @@
                 </div>
 
                 <!-- Center: Image -->
-                <div class="lg:col-span-5 relative flex justify-center">
+                <div class="lg:col-span-5 relative flex justify-center" data-aos="zoom-in">
                     <div class="bg-white rounded-full w-[250px] h-[250px] md:w-[350px] md:h-[350px] lg:w-[450px] lg:h-[450px] flex items-center justify-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0"></div>
                     <img src="src/hero.png" alt="App Showcase" class="relative z-10 w-full max-w-[250px] md:max-w-sm lg:max-w-md transform hover:scale-105 transition duration-500">
                 </div>
 
                 <!-- Right: Stats -->
-                <div class="lg:col-span-3 text-center lg:text-right grid grid-cols-2 md:grid-cols-3 gap-6 lg:block lg:space-y-8 mt-12 lg:mt-0">
+                <div class="lg:col-span-3 text-center lg:text-right grid grid-cols-2 md:grid-cols-3 gap-6 lg:block lg:space-y-8 mt-12 lg:mt-0" data-aos="fade-left">
                     <div>
                         <h3 class="text-sm md:text-lg text-gray-200 mb-1">Mitra Pesantren</h3>
                         <div class="text-2xl md:text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
@@ -244,7 +245,7 @@
                 <!-- Left Column -->
                 <div class="space-y-8 flex flex-col">
                     <!-- Text Header -->
-                    <div>
+                    <div data-aos="fade-up">
                         <h2 class="text-3xl lg:text-4xl font-bold text-psd-green mb-6 uppercase">
                             Solusi Nyata Untuk Pesantren
                         </h2>
@@ -254,7 +255,7 @@
                     </div>
 
                     <!-- Card 2: Penanganan Data Tunggakan -->
-                    <div class="group relative rounded-[2rem] overflow-hidden h-[400px] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500">
+                    <div class="group relative rounded-[2rem] overflow-hidden h-[400px] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500" data-aos="fade-up" data-aos-delay="100">
                         <div class="absolute inset-0 bg-gray-200"></div> <!-- Placeholder background -->
                         <img src="src/grid2bw.png" alt="Penanganan Data Tunggakan BW" class="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:opacity-0 group-hover:scale-110">
                         <img src="src/grid2color.png" alt="Penanganan Data Tunggakan Color" class="absolute inset-0 w-full h-full object-cover transition-all duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-110">
@@ -272,7 +273,7 @@
                     </div>
 
                     <!-- Card 4: Sistem Terintegrasi -->
-                    <div class="group relative rounded-[2rem] overflow-hidden h-[500px] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500">
+                    <div class="group relative rounded-[2rem] overflow-hidden h-[500px] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500" data-aos="fade-up" data-aos-delay="200">
                         <!-- Only one image for grid4 as requested -->
                         <img src="src/grid4.png" alt="Sistem Terintegrasi" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         
@@ -292,7 +293,7 @@
                 <!-- Right Column -->
                 <div class="space-y-8 flex flex-col">
                     <!-- Card 1: Pengelolaan Keuangan -->
-                    <div class="group relative rounded-[2rem] overflow-hidden h-[500px] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500">
+                    <div class="group relative rounded-[2rem] overflow-hidden h-[500px] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500" data-aos="fade-up" data-aos-delay="300">
                          <div class="absolute inset-0 bg-gray-200"></div>
                         <img src="src/grid1bw.png" alt="Pengelolaan Keuangan BW" class="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:opacity-0 group-hover:scale-110">
                         <img src="src/grid1color.png" alt="Pengelolaan Keuangan Color" class="absolute inset-0 w-full h-full object-cover transition-all duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-110">
@@ -303,14 +304,14 @@
                             </div>
                             <div class="bg-black px-4 py-3 rounded-br-lg">
                                 <p class="text-white text-sm leading-relaxed">
-                                    Memastikan setiap transaksi keuangan santri tercatat dengan baik dan efisien menjadi lebih mudah dengan fitur-fitur terintegrasi PSD.
+                                    Memastikan setiap transaksi keuangan santri tercatat dengan baik and efisien menjadi lebih mudah dengan fitur-fitur terintegrasi PSD.
                                 </p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Card 3: Update dan Komunikasi -->
-                    <div class="group relative rounded-[2rem] overflow-hidden h-[500px] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500">
+                    <div class="group relative rounded-[2rem] overflow-hidden h-[500px] cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500" data-aos="fade-up" data-aos-delay="400">
                          <div class="absolute inset-0 bg-gray-200"></div>
                         <img src="src/grid3bw.png" alt="Update dan Komunikasi BW" class="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:opacity-0 group-hover:scale-110">
                         <img src="src/grid3color.png" alt="Update dan Komunikasi Color" class="absolute inset-0 w-full h-full object-cover transition-all duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-110">
@@ -321,7 +322,7 @@
                             </div>
                             <div class="bg-black px-4 py-3 rounded-br-lg">
                                 <p class="text-white text-sm leading-relaxed">
-                                    Kabar pelanggaran santri yang tinggi seringkali menjadi kejutan bagi wali santri. Dengan PSD, komunikasi antara pondok pesantren dan orangtua menjadi lebih transparan dan terstruktur.
+                                    Kabar pelanggaran santri yang tinggi seringkali menjadi kejutan bagi wali santri. Dengan PSD, komunikasi antara pondok pesantren and orangtua menjadi lebih transparan and terstruktur.
                                 </p>
                             </div>
                         </div>
@@ -342,7 +343,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 
                 <!-- Left: Interactive Map -->
-                <div class="relative">
+                <div class="relative" data-aos="zoom-in">
                     <img src="src/map.png" alt="Peta Persebaran Pesantren" class="w-full h-auto">
                     
                     <!-- Hotspots -->
@@ -419,7 +420,7 @@
                 </div>
 
                 <!-- Right: Text Content -->
-                <div>
+                <div data-aos="fade-left">
                     <h2 class="text-3xl lg:text-4xl font-bold text-psd-green mb-6 uppercase leading-tight">
                         Dipercaya Sebagai<br>
                         Sistem Utama Banyak<br>
@@ -445,7 +446,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
-                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer">
+                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="200">
                      <div class="absolute inset-0 bg-psd-green opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0">
                        <svg class="absolute bottom-0 left-0 w-full h-full text-white opacity-20" viewBox="0 0 1440 320" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128" />
@@ -470,7 +471,7 @@
                     </div>
                 </div>
 
-                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer">
+                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="100">
                      <div class="absolute inset-0 bg-psd-green opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0">
                        <svg class="absolute bottom-0 left-0 w-full h-full text-white opacity-20" viewBox="0 0 1440 320" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128" />
@@ -496,7 +497,7 @@
                     </div>
                 </div>
 
-                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer">
+                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="0">
                      <div class="absolute inset-0 bg-psd-green opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0">
                        <svg class="absolute bottom-0 left-0 w-full h-full text-white opacity-20" viewBox="0 0 1440 320" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128" />
@@ -534,7 +535,7 @@
     <section class="py-20 bg-white">
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="w-full max-w-xl mx-auto rounded-xl overflow-hidden shadow-lg fade-up">
+                <div class="w-full max-w-xl mx-auto rounded-xl overflow-hidden shadow-lg fade-up" data-aos="fade-right">
                     <div class="relative pb-[56.25%] h-0">
                         <iframe 
                           class="absolute top-0 left-0 w-full h-full" 
@@ -547,7 +548,7 @@
                         </iframe>
                     </div>
                 </div>
-                <div>
+                <div data-aos="fade-left">
                     <h2 class="text-3xl lg:text-4xl font-bold text-psd-green uppercase mb-4 lg:text-left text-center">
                         Mengapa Memilih Pesantren Smart Digital?
                     </h2>
@@ -584,21 +585,21 @@
     <!-- CTA Section -->
     <section class="py-20 bg-gray-50 overflow-hidden">
         <div class="container mx-auto px-6">
-            <div class="flex flex-col lg:flex-row items-center justify-center">
+            <div class="flex flex-row items-center justify-center relative max-w-5xl mx-auto">
                 
-                <!-- Left Circle Content -->
-                <div class="bg-white rounded-full w-[350px] h-[350px] lg:w-[500px] lg:h-[500px] flex flex-col justify-center items-center text-center shadow-xl z-10 lg:-mr-20 mb-8 lg:mb-0 p-8 lg:p-16">
-                    <p class="text-psd-green font-semibold mb-4 text-sm lg:text-base">Siap transformasi pesantren anda?</p>
-                    <h2 class="text-2xl lg:text-4xl font-bold text-gray-800 uppercase mb-8 leading-tight">
+                <!-- Left Circle Content (White) -->
+                <div class="bg-white rounded-full w-[220px] h-[220px] md:w-[320px] md:h-[320px] lg:w-[450px] lg:h-[450px] flex flex-col justify-center items-center text-center shadow-xl z-10 -mr-16 md:-mr-20 lg:-mr-24 p-6 md:p-8 lg:p-12 -translate-y-6 md:-translate-y-10 lg:-translate-y-16 relative" data-aos="zoom-in">
+                    <p class="text-psd-green font-semibold mb-2 text-[8px] md:text-xs lg:text-sm">Siap transformasi pesantren anda?</p>
+                    <h2 class="text-[10px] md:text-xl lg:text-3xl font-bold text-gray-800 uppercase mb-3 md:mb-6 leading-tight">
                         KONSULTASIKAN BERSAMA TIM<br>AHLI KAMI, GRATIS!
                     </h2>
-                    <a href="#" class="bg-psd-green text-white font-bold py-3 px-8 rounded-full hover:bg-opacity-90 transition duration-300 shadow-lg text-sm lg:text-base">
+                    <a href="#" class="bg-psd-green text-white font-bold py-1.5 px-4 md:py-3 md:px-8 rounded-full hover:bg-opacity-90 transition duration-300 shadow-lg text-[8px] md:text-sm">
                         HUBUNGI KAMI
                     </a>
                 </div>
 
-                <!-- Right Circle Image -->
-                <div class="bg-psd-yellow rounded-full w-[350px] h-[350px] lg:w-[500px] lg:h-[500px] flex items-center justify-center overflow-hidden shadow-xl z-0 lg:-ml-20">
+                <!-- Right Circle Image (Yellow) -->
+                <div class="bg-psd-yellow rounded-full w-[240px] h-[240px] md:w-[350px] md:h-[350px] lg:w-[550px] lg:h-[550px] flex items-center justify-center overflow-hidden shadow-xl z-0" data-aos="zoom-in" data-aos-delay="200">
                     <img src="src/contact.png" alt="Contact Person" class="w-full h-full object-cover">
                 </div>
                 
@@ -684,7 +685,14 @@
         </div>
     </footer>
     <script src="src/admin-system.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
         function loadLatestNews() {
             const container = document.getElementById('latest-news-container');
             const allNews = getNews();
@@ -699,8 +707,8 @@
                 return;
             }
 
-            container.innerHTML = latestNews.map(news => `
-                <a href="berita-detail.html?id=${news.id}" class="rounded-xl overflow-hidden shadow-lg group cursor-pointer fade-up block">
+            container.innerHTML = latestNews.map((news, index) => `
+                <a href="berita-detail.html?id=${news.id}" class="rounded-xl overflow-hidden shadow-lg group cursor-pointer block" data-aos="fade-up" data-aos-delay="${index * 100}">
                     <!-- Header -->
                     <div class="bg-[#1B2C24] p-6 min-h-[100px] flex items-center justify-center text-center">
                         <h3 class="text-white font-semibold text-sm uppercase leading-relaxed tracking-wide line-clamp-2">
@@ -713,6 +721,11 @@
                     </div>
                 </a>
             `).join('');
+
+            // Refresh AOS
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
         }
 
         // Run when window loads

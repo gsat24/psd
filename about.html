@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="src/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="font-sans text-gray-800 bg-white">
 
@@ -95,12 +96,12 @@
             </svg>
         </div>
 
-        <div class="container mx-auto px-6 relative z-10 text-center">
+        <div class="container mx-auto px-6 relative z-10 text-center" data-aos="fade-up">
             <h1 class="text-3xl md:text-5xl font-bold mb-6 uppercase leading-tight max-w-4xl mx-auto">
                 Tentang Kami
             </h1>
-            <p class="text-gray-200 text-base md:text-lg max-w-2xl mx-auto">
-                Mengenal lebih dekat Pesantren Smart Digital dan komitmen kami dalam memajukan pendidikan islam melalui teknologi.
+            <p class="text-lg md:text-xl max-w-2xl mx-auto opacity-90 leading-relaxed">
+                Mengenal lebih dekat Pesantren Smart Digital dan komitmen kami untuk memajukan pendidikan islam.
             </p>
         </div>
     </section>
@@ -109,7 +110,7 @@
     <section class="py-20 bg-white">
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
-                <div class="fade-up">
+                <div data-aos="fade-right">
                     <h2 class="text-3xl font-bold text-psd-green mb-6 uppercase">Tentang Pesantren Smart Digital</h2>
                     <p class="text-gray-600 mb-6 leading-relaxed">
                         Pesantren Smart Digital (PSD) adalah solusi inovatif yang dirancang khusus untuk mendigitalisasi ekosistem pesantren. Kami membantu lembaga pendidikan Islam mengelola administrasi, keuangan, hingga pemantauan santri secara real-time dan terintegrasi.
@@ -135,16 +136,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="fade-up">
+                <div data-aos="fade-left">
                     <img src="src/grid1color.png" alt="Pesantren Smart Digital" class="rounded-[2rem] shadow-2xl w-full object-cover h-[400px]">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="fade-up order-2 lg:order-1">
+                <div class="order-2 lg:order-1" data-aos="fade-right">
                     <img src="src/grid2color.png" alt="PT. Digital Teknologi Perkasa" class="rounded-[2rem] shadow-2xl w-full object-cover h-[400px]">
                 </div>
-                <div class="fade-up order-1 lg:order-2">
+                <div class="order-1 lg:order-2" data-aos="fade-left">
                     <h2 class="text-3xl font-bold text-psd-green mb-6 uppercase">PT. Digital Teknologi Perkasa</h2>
                     <p class="text-gray-600 mb-4 leading-relaxed">
                         PT. Digital Teknologi Perkasa didirikan dengan semangat untuk menjembatani kesenjangan antara ide bisnis brilian dan realisasi teknologi. Dimulai dari proyek-proyek kecil, kami telah berkembang menjadi tim solid yang telah menyelesaikan puluhan proyek untuk berbagai sektor industri.
@@ -238,6 +239,14 @@
     </footer>
 
     <script src="src/admin-system.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+    </script>
     <script src="src/main.js"></script>
 </body>
 </html>

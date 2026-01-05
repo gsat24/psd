@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="src/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="font-sans text-gray-800 bg-white">
 
@@ -95,12 +96,12 @@
             </svg>
         </div>
 
-        <div class="container mx-auto px-6 relative z-10 text-center">
+        <div class="container mx-auto px-6 relative z-10 text-center" data-aos="fade-up">
             <h1 class="text-4xl lg:text-5xl font-bold mb-6 uppercase leading-tight max-w-4xl mx-auto">
                 Dapatkan Kemudahan Dalam Satu Genggaman dengan Pesantren Smart Digital
             </h1>
-            <p class="text-xl text-gray-100 max-w-2xl mx-auto mb-8">
-                Satu Aplikasi Untuk Semua Kebutuhan Pesantren
+            <p class="text-lg lg:text-xl max-w-3xl mx-auto opacity-90 leading-relaxed">
+                Kami hadir dengan fitur lengkap yang terintegrasi untuk mendukung digitalisasi ekosistem pesantren Anda secara menyeluruh.
             </p>
         </div>
     </section>
@@ -212,8 +213,9 @@
             grid.classList.remove('hidden');
             empty.classList.add('hidden');
 
-            grid.innerHTML = filtered.map(f => `
-                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer">
+            grid.innerHTML = filtered.map((f, index) => `
+                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer"
+                     data-aos="fade-up" data-aos-delay="${(index % 3) * 100}">
                     <div class="absolute inset-0 bg-psd-green opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0">
                         <svg class="absolute bottom-0 left-0 w-full h-full text-white opacity-20" viewBox="0 0 1440 320" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128" />
@@ -233,6 +235,11 @@
                     </div>
                 </div>
             `).join('');
+
+            // Re-initialize AOS to detect new elements
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -325,6 +332,14 @@
     </footer>
 
     <script src="src/admin-system.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+    </script>
     <script src="src/main.js" defer></script>
     </body>
 </html>

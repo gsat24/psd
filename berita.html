@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="src/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="font-sans text-gray-800 bg-white">
 
@@ -97,12 +98,12 @@
             </svg>
         </div>
 
-        <div class="container mx-auto px-6 relative z-10 text-center">
+        <div class="container mx-auto px-6 relative z-10 text-center" data-aos="fade-up">
             <h1 class="text-3xl md:text-5xl font-bold mb-6 uppercase leading-tight max-w-4xl mx-auto">
-                Berita & Artikel
+                Berita & Kegiatan
             </h1>
             <p class="text-gray-200 text-base md:text-lg max-w-2xl mx-auto">
-                Update terbaru seputar kegiatan pesantren, teknologi pendidikan, dan informasi penting lainnya.
+                Ikuti perkembangan terbaru, artikel edukasi, dan dokumentasi kegiatan di Pesantren Smart Digital.
             </p>
         </div>
     </section>
@@ -112,7 +113,7 @@
         <div class="container mx-auto px-6">
             <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 <!-- News Card 1 -->
-                <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300">
+                <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300" data-aos="fade-up">
                     <img src="src/berita1.webp" alt="Berita 1" class="w-full h-64 object-cover">
                     <div class="p-8">
                         <div class="text-psd-green text-sm font-semibold mb-2">05 Jan 2026</div>
@@ -128,7 +129,7 @@
                 </div>
 
                 <!-- News Card 2 -->
-                <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300">
+                <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300" data-aos="fade-up" data-aos-delay="100">
                     <img src="src/berita2.webp" alt="Berita 2" class="w-full h-64 object-cover">
                     <div class="p-8">
                         <div class="text-psd-green text-sm font-semibold mb-2">02 Jan 2026</div>
@@ -224,13 +225,27 @@
     </footer>
 
     <script src="src/admin-system.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof updateSocialLinks === 'function') updateSocialLinks();
+            if (typeof updateContactInfo === 'function') updateContactInfo();
+            renderNews();
+        });
+
         function renderNews() {
             const container = document.getElementById('news-container');
             const news = getNews();
             
-            container.innerHTML = news.map(item => `
-                <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300">
+            container.innerHTML = news.map((item, index) => `
+                <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300"
+                     data-aos="fade-up" data-aos-delay="${(index % 3) * 100}">
                     <img src="${item.image}" alt="${item.title}" class="w-full h-64 object-cover">
                     <div class="p-8">
                         <div class="text-psd-green text-sm font-semibold mb-2">${item.date}</div>
@@ -247,9 +262,14 @@
                     </div>
                 </div>
             `).join('');
+            
+            // Refresh AOS
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
         }
 
-        window.addEventListener('DOMContentLoaded', renderNews);
+
     </script>
     <script src="src/main.js"></script>
 </body>

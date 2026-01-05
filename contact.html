@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="src/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body class="font-sans text-gray-800 bg-white">
 
@@ -97,7 +98,7 @@
             </svg>
         </div>
 
-        <div class="container mx-auto px-6 relative z-10 text-center">
+        <div class="container mx-auto px-6 relative z-10 text-center" data-aos="fade-up">
             <h1 class="text-3xl md:text-5xl font-bold mb-6 uppercase leading-tight max-w-4xl mx-auto">
                 Hubungi Kami
             </h1>
@@ -112,7 +113,7 @@
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 <!-- Informasi Kontak (Kiri) -->
-                <div class="fade-up space-y-8 lg:order-1">
+                <div class="space-y-8 lg:order-1" data-aos="fade-right">
                     <h2 class="text-3xl font-bold text-psd-green mb-8 uppercase">Informasi Kontak</h2>
                     <div class="flex items-start space-x-6">
                         <div class="bg-psd-yellow p-4 rounded-2xl text-psd-green">
@@ -144,7 +145,7 @@
                 </div>
 
                 <!-- Contact Form (Kanan di Desktop) -->
-                <div class="fade-up lg:order-2">
+                <div class="lg:order-2" data-aos="fade-left">
                     <h2 class="text-3xl font-bold text-psd-green mb-8 uppercase">Kirim Pesan</h2>
                     <form id="contactForm" class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -265,6 +266,14 @@
             
             alert('Terima kasih! Pesan Anda telah terkirim.');
             this.reset();
+        });
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
         });
     </script>
     <script src="src/main.js"></script>
