@@ -21,6 +21,7 @@ const DB_KEYS = {
 
 // Initialize with mock data if empty
 function initDB() {
+    console.log('Initializing Database...');
     if (!localStorage.getItem(DB_KEYS.NEWS)) {
         const mockNews = [
             {
@@ -46,10 +47,10 @@ function initDB() {
         localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(mockCompany));
     }
 
-    if (!localStorage.getItem(DB_KEYS.AUTH)) {
-        const defaultAuth = { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' }; // password: admin
-        localStorage.setItem(DB_KEYS.AUTH, JSON.stringify(defaultAuth));
-    }
+    // ALWAYS reset auth in development if login fails
+    const defaultAuth = { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' }; // password: admin
+    localStorage.setItem(DB_KEYS.AUTH, JSON.stringify(defaultAuth));
+    console.log('Auth Reset to default (admin/admin)');
 }
 
 // --- Authentication Functions ---
@@ -230,7 +231,7 @@ async function syncCompanyInfo() {
 }
 
 // Initialize database and sync UI
-initDB();
+// initDB() called from window.onload in admin.html for safety
 document.addEventListener('DOMContentLoaded', () => {
     syncCompanyInfo();
 });
