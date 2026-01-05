@@ -300,7 +300,7 @@
         
         async function checkAuth() {
             const loginOverlay = document.getElementById('login-overlay');
-            if (isLoggedIn()) {
+            if (window.isLoggedIn && window.isLoggedIn()) {
                 if (loginOverlay) loginOverlay.classList.add('hidden');
                 await renderNewsTable();
                 await renderFeedbackTable();
@@ -312,14 +312,6 @@
 
         window.onload = async () => {
             console.log('Admin Page window.onload started');
-            
-            // Ensure Database is initialized before anything else
-            if (typeof window.initDB === 'function') {
-                console.log('Calling initDB() from window.onload');
-                window.initDB();
-            } else {
-                console.error('window.initDB function not found! Check admin-system.js load order.');
-            }
             
             const loginForm = document.getElementById('login-form');
             const loginError = document.getElementById('login-error');
@@ -336,6 +328,7 @@
                     
                     console.log('Attempting login with user:', user);
                     
+                    // Check window.login with a small delay if not found immediately
                     if (typeof window.login === 'function') {
                         if (window.login(user, pass)) {
                             console.log('Login success, reloading page...');
@@ -345,8 +338,8 @@
                             if (loginError) loginError.classList.remove('hidden');
                         }
                     } else {
-                        console.error('window.login function not found!');
-                        alert('Sistem login belum siap. Silakan refresh halaman.');
+                        console.error('window.login function not found at submission time!');
+                        alert('Sistem login sedang memuat. Silakan tunggu 1-2 detik dan coba lagi.');
                     }
                 });
             } else {
@@ -448,7 +441,9 @@
                     newsData.id = parseInt(editId);
                 }
 
-                await saveNews(newsData);
+                if (window.saveNewsToDB) {
+                    await window.saveNewsToDB(newsData);
+                }
                 await finishSave();
             };
 
@@ -501,7 +496,9 @@
 
         async function handleDeleteNews(id) {
             if(confirm('Hapus berita ini?')) {
-                await deleteNews(id);
+                if (window.deleteNewsFromDB) {
+                    await window.deleteNewsFromDB(id);
+                }
                 await renderNewsTable();
             }
         }
@@ -551,7 +548,9 @@
                     tiktok: document.getElementById('social-tiktok').value
                 }
             };
-            await updateCompanyInfo(info);
+            if (window.updateCompanyInfoInDB) {
+                await window.updateCompanyInfoInDB(info);
+            }
             alert('Informasi perusahaan berhasil diperbarui!');
         }
 
