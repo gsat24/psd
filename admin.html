@@ -253,6 +253,9 @@
         </div>
     </div>
 
+    <!-- Supabase Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.supabasejs = supabase;</script>
     <script src="src/admin-system.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -389,7 +392,7 @@
             quill.setContents([]);
         }
 
-        function saveNews() {
+        async function saveNews() {
             const title = document.getElementById('news-title').value;
             const content = quill.root.innerHTML;
             const plainText = quill.getText().trim();
@@ -398,42 +401,42 @@
             
             if(!title || plainText.length === 0) return alert('Semua field harus diisi!');
             
-            const onComplete = (imageUrl) => {
+            const onComplete = async (imageUrl) => {
                 if (editId) {
                     // Update existing
-                    updateNewsItem(editId, title, content, imageUrl);
+                    await updateNewsItem(editId, title, content, imageUrl);
                 } else {
                     // Save new
-                    saveNewsItem(title, content, imageUrl);
+                    await saveNewsItem(title, content, imageUrl);
                 }
-                finishSave();
+                await finishSave();
             };
 
             if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    onComplete(e.target.result);
+                reader.onload = async function(e) {
+                    await onComplete(e.target.result);
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
                 // If editing and no new image, keep the old one
                 let existingImage = null;
                 if (editId) {
-                    const existingItem = getNews().find(item => item.id == editId);
+                    const existingItem = (await getNews()).find(item => item.id == editId);
                     existingImage = existingItem ? existingItem.image : null;
                 }
-                onComplete(existingImage);
+                await onComplete(existingImage);
             }
         }
 
-        function finishSave() {
-            renderNewsTable();
+        async function finishSave() {
+            await renderNewsTable();
             closeNewsModal();
             alert('Berita berhasil disimpan!');
         }
 
-        function renderNewsTable() {
-            const news = getNews();
+        async function renderNewsTable() {
+            const news = await getNews();
             const tbody = document.getElementById('news-list');
             tbody.innerHTML = news.map(item => `
                 <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
@@ -456,10 +459,10 @@
             `).join('');
         }
 
-        function handleDeleteNews(id) {
+        async function handleDeleteNews(id) {
             if(confirm('Hapus berita ini?')) {
-                deleteNewsItem(id);
-                renderNewsTable();
+                await deleteNewsItem(id);
+                await renderNewsTable();
             }
         }
 
@@ -497,7 +500,7 @@
             }
         }
 
-        function handleUpdateCompany() {
+        async function handleUpdateCompany() {
             const info = {
                 email: document.getElementById('comp-email').value,
                 phone: document.getElementById('comp-phone').value,
@@ -508,12 +511,12 @@
                     tiktok: document.getElementById('social-tiktok').value
                 }
             };
-            updateCompanyInfo(info);
+            await updateCompanyInfo(info);
             alert('Informasi perusahaan berhasil diperbarui!');
         }
 
-        window.onload = () => {
-            renderNewsTable();
+        window.onload = async () => {
+            await renderNewsTable();
         };
     </script>
 </body>

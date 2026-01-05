@@ -223,7 +223,8 @@
             </div>
         </div>
     </footer>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.supabasejs = supabase;</script>
     <script src="src/admin-system.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -233,15 +234,15 @@
             offset: 100
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof updateSocialLinks === 'function') updateSocialLinks();
-            if (typeof updateContactInfo === 'function') updateContactInfo();
-            renderNews();
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (typeof updateSocialLinks === 'function') await updateSocialLinks();
+            if (typeof updateContactInfo === 'function') await updateContactInfo();
+            await renderNews();
         });
 
-        function renderNews() {
+        async function renderNews() {
             const container = document.getElementById('news-container');
-            const news = getNews();
+            const news = await getNews();
             
             container.innerHTML = news.map((item, index) => `
                 <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300"

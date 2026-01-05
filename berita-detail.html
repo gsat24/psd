@@ -216,7 +216,8 @@
             </div>
         </div>
     </footer>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.supabasejs = supabase;</script>
     <script src="src/admin-system.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -226,13 +227,13 @@
             offset: 100
         });
 
-        function loadDetail() {
+        async function loadDetail() {
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
             
             if(!id) return window.location.href = 'berita.html';
             
-            const item = getNewsById(id);
+            const item = await getNewsById(id);
             if(!item) return window.location.href = 'berita.html';
             
             // Render Header

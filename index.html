@@ -678,6 +678,11 @@
             </div>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Mapping Supabase client to a global variable for admin-system.js
+        window.supabasejs = supabase;
+    </script>
     <script src="src/admin-system.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -687,9 +692,9 @@
             offset: 100
         });
 
-        function loadLatestNews() {
+        async function loadLatestNews() {
             const container = document.getElementById('latest-news-container');
-            const allNews = getNews();
+            const allNews = await getNews();
             
             // Sort by date (descending) and take top 4
             const latestNews = allNews
