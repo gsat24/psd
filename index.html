@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="src/styles.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Supabase Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.supabasejs = supabase;</script>
+    <script src="src/admin-system.js"></script>
 </head>
 <body class="font-sans text-white">
 
@@ -678,12 +682,8 @@
             </div>
         </div>
     </footer>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Mapping Supabase client to a global variable for admin-system.js
-        window.supabasejs = supabase;
-    </script>
-    <script src="src/admin-system.js"></script>
+    <!-- Main JS -->
+    <script src="src/main.js" defer></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({
@@ -694,6 +694,8 @@
 
         async function loadLatestNews() {
             const container = document.getElementById('latest-news-container');
+            if (!container) return;
+
             const allNews = await getNews();
             
             // Sort by date (descending) and take top 4
@@ -730,6 +732,5 @@
         // Run when window loads
         window.addEventListener('load', loadLatestNews);
     </script>
-    <script src="src/main.js" defer></script>
-    </body>
+</body>
 </html>

@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="src/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Supabase Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>window.supabasejs = supabase;</script>
+    <script src="src/admin-system.js"></script>
 </head>
 <body class="font-sans text-gray-800 bg-white">
 
@@ -234,15 +238,16 @@
             offset: 100
         });
 
-        document.addEventListener('DOMContentLoaded', async function() {
-            if (typeof updateSocialLinks === 'function') await updateSocialLinks();
-            if (typeof updateContactInfo === 'function') await updateContactInfo();
-            await renderNews();
-        });
-
         async function renderNews() {
             const container = document.getElementById('news-container');
+            if (!container) return;
+            
             const news = await getNews();
+            
+            if (news.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-20 text-gray-500 italic">Belum ada berita yang diterbitkan.</div>';
+                return;
+            }
             
             container.innerHTML = news.map((item, index) => `
                 <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition duration-300"
@@ -270,8 +275,8 @@
             }
         }
 
-
+        // Run when window loads
+        window.addEventListener('load', renderNews);
     </script>
-    <script src="src/main.js"></script>
 </body>
 </html>
