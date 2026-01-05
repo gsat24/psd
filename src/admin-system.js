@@ -130,15 +130,27 @@ async function saveNewsItem(title, content, imageFile) {
         image: imageFile || 'src/berita1.webp'
     };
 
+    console.log('Attempting to save news item:', newItem);
+
     if (supabase) {
-        const { data, error } = await supabase.from('news').insert([newItem]).select();
-        if (!error) return data[0];
+        try {
+            const { data, error } = await supabase.from('news').insert([newItem]).select();
+            if (error) {
+                console.error('Supabase insert error:', error);
+                throw error;
+            }
+            console.log('Successfully saved to Supabase:', data);
+            return data[0];
+        } catch (err) {
+            console.error('Failed to save to Supabase, falling back to LocalStorage:', err);
+        }
     }
 
     const news = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
     newItem.id = Date.now();
     news.unshift(newItem);
     localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(news));
+    console.log('Saved to LocalStorage (Fallback)');
     return newItem;
 }
 
@@ -150,9 +162,20 @@ async function updateNewsItem(id, title, content, imageFile) {
         image: imageFile
     };
 
+    console.log('Attempting to update news item ID:', id);
+
     if (supabase) {
-        const { data, error } = await supabase.from('news').update(updatedItem).eq('id', id).select();
-        if (!error) return data[0];
+        try {
+            const { data, error } = await supabase.from('news').update(updatedItem).eq('id', id).select();
+            if (error) {
+                console.error('Supabase update error:', error);
+                throw error;
+            }
+            console.log('Successfully updated in Supabase:', data);
+            return data[0];
+        } catch (err) {
+            console.error('Failed to update in Supabase, falling back to LocalStorage:', err);
+        }
     }
 
     const news = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
@@ -160,6 +183,7 @@ async function updateNewsItem(id, title, content, imageFile) {
     if (index !== -1) {
         news[index] = { ...news[index], ...updatedItem };
         localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(news));
+        console.log('Updated in LocalStorage (Fallback)');
         return news[index];
     }
     return null;
@@ -180,8 +204,16 @@ async function saveFeedback(name, email, subject, message) {
         date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
     };
 
+    console.log('Attempting to save feedback:', newFeedback);
+
     if (supabase) {
-        await supabase.from('feedback').insert([newFeedback]);
+        try {
+            const { error } = await supabase.from('feedback').insert([newFeedback]);
+            if (error) throw error;
+            console.log('Feedback saved to Supabase');
+        } catch (err) {
+            console.error('Failed to save feedback to Supabase:', err);
+        }
     }
 
     const feedback = JSON.parse(localStorage.getItem(DB_KEYS.FEEDBACK)) || [];
@@ -192,15 +224,27 @@ async function saveFeedback(name, email, subject, message) {
 
 async function getCompanyInfo() {
     if (supabase) {
-        const { data, error } = await supabase.from('company').select('*').eq('id', 1).single();
-        if (!error) return data;
+        try {
+            const { data, error } = await supabase.from('company').select('*').eq('id', 1).single();
+            if (error) throw error;
+            return data;
+        } catch (err) {
+            console.error('Failed to get company info from Supabase:', err);
+        }
     }
     return JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
 }
 
 async function updateCompanyInfo(info) {
+    console.log('Attempting to update company info:', info);
     if (supabase) {
-        await supabase.from('company').update(info).eq('id', 1);
+        try {
+            const { error } = await supabase.from('company').update(info).eq('id', 1);
+            if (error) throw error;
+            console.log('Company info updated in Supabase');
+        } catch (err) {
+            console.error('Failed to update company info in Supabase:', err);
+        }
     }
     const current = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
     const updated = { ...current, ...info };
