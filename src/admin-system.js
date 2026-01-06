@@ -139,6 +139,20 @@ window.getNews = async function() {
     return JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
 };
 
+window.getNewsById = async function(id) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { data, error } = await window.supabaseInstance.from('news').select('*').eq('id', id).single();
+            if (error) throw error;
+            return data;
+        } catch (err) {
+            console.error('Failed to get news by ID from Supabase:', err);
+        }
+    }
+    const news = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
+    return news.find(n => n.id == id);
+};
+
 window.saveNewsToDB = async function(newsItem) {
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {

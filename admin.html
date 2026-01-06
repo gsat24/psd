@@ -456,8 +456,9 @@
             } else {
                 // If editing and no new image, keep the old one
                 let existingImage = null;
-                if (editId) {
-                    const existingItem = (await getNews()).find(item => item.id == editId);
+                if (editId && window.getNews) {
+                    const newsList = await window.getNews();
+                    const existingItem = newsList.find(item => item.id == editId);
                     existingImage = existingItem ? existingItem.image : null;
                 }
                 await onComplete(existingImage);
@@ -471,27 +472,32 @@
         }
 
         async function renderNewsTable() {
-            const news = await getNews();
+            let news = [];
+            if (window.getNews) {
+                news = await window.getNews();
+            }
             const tbody = document.getElementById('news-list');
-            tbody.innerHTML = news.map(item => `
-                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
-                    <td class="px-6 py-4">
-                        <img src="${item.image}" class="h-12 w-12 rounded object-cover">
-                    </td>
-                    <td class="px-6 py-4 font-medium text-gray-800">${item.title}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500">${item.date}</td>
-                    <td class="px-6 py-4">
-                        <div class="flex space-x-2">
-                            <button onclick="openNewsModal(${item.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                            </button>
-                            <button onclick="handleDeleteNews(${item.id})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+            if (tbody) {
+                tbody.innerHTML = news.map(item => `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <img src="${item.image}" class="h-12 w-12 rounded object-cover">
+                        </td>
+                        <td class="px-6 py-4 font-medium text-gray-800">${item.title}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${item.date}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex space-x-2">
+                                <button onclick="openNewsModal(${item.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                </button>
+                                <button onclick="handleDeleteNews(${item.id})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
         }
 
         async function handleDeleteNews(id) {
@@ -505,7 +511,12 @@
 
         async function renderFeedbackTable() {
             const tbody = document.getElementById('feedback-list');
-            const feedback = await getFeedback();
+            if (!tbody) return;
+            
+            let feedback = [];
+            if (window.getFeedback) {
+                feedback = await window.getFeedback();
+            }
             tbody.innerHTML = feedback.map(f => `
                 <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
                     <td class="px-6 py-4 font-medium text-gray-800">
@@ -522,17 +533,20 @@
         }
 
         async function populateCompanyInfo() {
-            const info = await getCompanyInfo();
+            let info = null;
+            if (window.getCompanyInfo) {
+                info = await window.getCompanyInfo();
+            }
             if (info) {
-                document.getElementById('comp-email').value = info.email || '';
-                document.getElementById('comp-phone').value = info.phone || '';
-                document.getElementById('comp-address').value = info.address || '';
+                if (document.getElementById('comp-email')) document.getElementById('comp-email').value = info.email || '';
+                if (document.getElementById('comp-phone')) document.getElementById('comp-phone').value = info.phone || '';
+                if (document.getElementById('comp-address')) document.getElementById('comp-address').value = info.address || '';
                 
                 // Populate Social Links
                 if (info.social) {
-                    document.getElementById('social-instagram').value = info.social.instagram || '';
-                    document.getElementById('social-facebook').value = info.social.facebook || '';
-                    document.getElementById('social-tiktok').value = info.social.tiktok || '';
+                    if (document.getElementById('social-instagram')) document.getElementById('social-instagram').value = info.social.instagram || '';
+                    if (document.getElementById('social-facebook')) document.getElementById('social-facebook').value = info.social.facebook || '';
+                    if (document.getElementById('social-tiktok')) document.getElementById('social-tiktok').value = info.social.tiktok || '';
                 }
             }
         }
