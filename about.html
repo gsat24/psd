@@ -57,12 +57,12 @@
     </nav>
 
     <!-- Mobile Menu Drawer -->
-    <div id="menuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
+    <div id="menuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden opacity-0 transition-opacity duration-300"></div>
     <div id="mobileMenu" class="fixed top-0 right-0 w-3/4 max-w-[300px] h-full bg-[#0A5C4F] z-50 transform translate-x-full transition-transform duration-300 md:hidden shadow-2xl">
         <div class="flex flex-col h-full p-6">
             <div class="flex justify-between items-center mb-10">
                 <img src="src/logo.png" alt="Logo" class="h-10 w-auto">
-                <button id="closeMenuBtn" class="text-white hover:text-psd-yellow p-2 transition-colors duration-200">
+                <button id="closeMenuBtn" class="text-white hover:text-psd-yellow p-2 transition-colors duration-200" aria-label="Close Menu">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -101,7 +101,7 @@
             <h1 class="text-3xl md:text-5xl font-bold mb-6 uppercase leading-tight max-w-4xl mx-auto">
                 Tentang Kami
             </h1>
-            <p class="text-lg md:text-xl max-w-2xl mx-auto opacity-90 leading-relaxed">
+            <p class="text-base md:text-xl max-w-2xl mx-auto opacity-90 leading-relaxed">
                 Mengenal lebih dekat Pesantren Smart Digital dan komitmen kami untuk memajukan pendidikan islam.
             </p>
         </div>
@@ -112,7 +112,7 @@
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
                 <div data-aos="fade-right">
-                    <h2 class="text-3xl font-bold text-psd-green mb-6 uppercase">Tentang Pesantren Smart Digital</h2>
+                    <h2 class="text-2xl md:text-3xl font-bold text-psd-green mb-6 uppercase">Tentang Pesantren Smart Digital</h2>
                     <p class="text-gray-600 mb-6 leading-relaxed">
                         Pesantren Smart Digital (PSD) adalah solusi inovatif yang dirancang khusus untuk mendigitalisasi ekosistem pesantren. Kami membantu lembaga pendidikan Islam mengelola administrasi, keuangan, hingga pemantauan santri secara real-time dan terintegrasi.
                     </p>
@@ -147,7 +147,7 @@
                     <img src="src/grid2color.png" alt="PT. Digital Teknologi Perkasa" class="rounded-[2rem] shadow-2xl w-full object-cover h-[400px]">
                 </div>
                 <div class="order-1 lg:order-2" data-aos="fade-left">
-                    <h2 class="text-3xl font-bold text-psd-green mb-6 uppercase">PT. Digital Teknologi Perkasa</h2>
+                    <h2 class="text-2xl md:text-3xl font-bold text-psd-green mb-6 uppercase">PT. Digital Teknologi Perkasa</h2>
                     <p class="text-gray-600 mb-4 leading-relaxed">
                         PT. Digital Teknologi Perkasa didirikan dengan semangat untuk menjembatani kesenjangan antara ide bisnis brilian dan realisasi teknologi. Dimulai dari proyek-proyek kecil, kami telah berkembang menjadi tim solid yang telah menyelesaikan puluhan proyek untuk berbagai sektor industri.
                     </p>

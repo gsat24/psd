@@ -52,36 +52,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const toggleMenu = (show) => {
     if (show) {
-      mobileMenu.classList.remove('translate-x-full');
+      mobileMenu?.classList.remove('translate-x-full');
       menuOverlay?.classList.remove('hidden');
-      setTimeout(() => menuOverlay?.classList.add('opacity-100'), 10);
+      setTimeout(() => {
+        menuOverlay?.classList.add('opacity-100');
+        menuOverlay?.classList.remove('opacity-0');
+      }, 10);
       document.body.style.overflow = 'hidden';
     } else {
-      mobileMenu.classList.add('translate-x-full');
+      mobileMenu?.classList.add('translate-x-full');
+      menuOverlay?.classList.add('opacity-0');
       menuOverlay?.classList.remove('opacity-100');
-      setTimeout(() => menuOverlay?.classList.add('hidden'), 300);
+      setTimeout(() => {
+        menuOverlay?.classList.add('hidden');
+      }, 300);
       document.body.style.overflow = '';
     }
   };
 
-  if (mobileMenuBtn && mobileMenu) {
+  if (mobileMenuBtn) {
     mobileMenuBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
       toggleMenu(true);
     });
   }
 
-  if (closeMenuBtn && mobileMenu) {
+  if (closeMenuBtn) {
     closeMenuBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
       toggleMenu(false);
     });
   }
 
   // Close menu on overlay click
-  menuOverlay?.addEventListener('click', () => {
-    toggleMenu(false);
-  });
+  if (menuOverlay) {
+    menuOverlay.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleMenu(false);
+    });
+  }
 
   // Close menu on link click
   const mobileLinks = mobileMenu?.querySelectorAll('a');
@@ -89,5 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', () => {
       toggleMenu(false);
     });
+  });
+
+  // Close menu on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !mobileMenu?.classList.contains('translate-x-full')) {
+      toggleMenu(false);
+    }
   });
 });

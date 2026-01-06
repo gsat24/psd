@@ -65,12 +65,12 @@
     </nav>
 
     <!-- Mobile Menu Drawer -->
-    <div id="menuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
+    <div id="menuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden opacity-0 transition-opacity duration-300"></div>
     <div id="mobileMenu" class="fixed top-0 right-0 w-3/4 max-w-[300px] h-full bg-[#0A5C4F] z-50 transform translate-x-full transition-transform duration-300 md:hidden shadow-2xl">
         <div class="flex flex-col h-full p-6">
             <div class="flex justify-between items-center mb-10">
                 <img src="src/logo.png" alt="Logo" class="h-10 w-auto">
-                <button id="closeMenuBtn" class="text-white hover:text-psd-yellow p-2 transition-colors duration-200">
+                <button id="closeMenuBtn" class="text-white hover:text-psd-yellow p-2 transition-colors duration-200" aria-label="Close Menu">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -122,7 +122,7 @@
                 </div>
 
                 <div class="p-8 md:p-16">
-                    <div id="news-content-body" class="prose prose-lg max-w-none text-gray-700 leading-relaxed ql-editor">
+                    <div id="news-content-body" class="prose prose-base md:prose-lg max-w-none text-gray-700 leading-relaxed ql-editor">
                         <!-- Body content dynamic -->
                     </div>
                     
@@ -243,8 +243,8 @@
             // Render Header
             document.getElementById('news-header').innerHTML = `
                 <div class="text-psd-yellow text-sm font-semibold mb-4 tracking-widest uppercase">${item.date}</div>
-                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6 max-w-4xl">${item.title}</h1>
-                <p class="text-xl text-gray-200 max-w-2xl font-light">${item.summary || ''}</p>
+                <h1 class="text-3xl md:text-6xl font-bold leading-tight mb-6 max-w-4xl">${item.title}</h1>
+                <p class="text-lg md:text-xl text-gray-200 max-w-2xl font-light">${item.summary || ''}</p>
             `;
 
             // Render Featured Image

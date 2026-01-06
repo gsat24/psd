@@ -60,12 +60,12 @@
     </nav>
     
     <!-- Mobile Menu Drawer -->
-    <div id="menuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
+    <div id="menuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden opacity-0 transition-opacity duration-300"></div>
     <div id="mobileMenu" class="fixed top-0 right-0 w-3/4 max-w-[300px] h-full bg-[#0A5C4F] z-50 transform translate-x-full transition-transform duration-300 md:hidden shadow-2xl">
         <div class="flex flex-col h-full p-6">
             <div class="flex justify-between items-center mb-10">
                 <img src="src/logo.png" alt="Logo" class="h-10 w-auto">
-                <button id="closeMenuBtn" class="text-white hover:text-psd-yellow p-2 transition-colors duration-200">
+                <button id="closeMenuBtn" class="text-white hover:text-psd-yellow p-2 transition-colors duration-200" aria-label="Close Menu">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -118,7 +118,7 @@
                         </svg>
                     </div>
 
-                    <p class="text-gray-200 text-base md:text-lg mb-8 max-w-md mx-auto lg:mx-0 leading-relaxed">
+                    <p class="text-gray-200 text-sm md:text-lg mb-8 max-w-md mx-auto lg:mx-0 leading-relaxed">
                         Solusi manajemen digital terintegrasi untuk meningkatkan efisiensi operasional, transparansi administrasi, dan kemudahan komunikasi di lingkungan pesantren dan sekolah.
                     </p>
                 </div>
@@ -133,19 +133,19 @@
                 <div class="lg:col-span-3 text-center lg:text-right grid grid-cols-2 md:grid-cols-3 gap-6 lg:block lg:space-y-8 mt-12 lg:mt-0" data-aos="fade-left">
                     <div>
                         <h3 class="text-sm md:text-lg text-gray-200 mb-1">Mitra Pesantren</h3>
-                        <div class="text-2xl md:text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
+                        <div class="text-xl md:text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
                             <span class="counter" data-target="350">0</span>+
                         </div>
                     </div>
                     <div>
                         <h3 class="text-sm md:text-lg text-gray-200 mb-1">Provinsi</h3>
-                        <div class="text-2xl md:text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
+                        <div class="text-xl md:text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
                             <span class="counter" data-target="20">0</span>+
                         </div>
                     </div>
                     <div class="col-span-2 md:col-span-1">
                         <h3 class="text-sm md:text-lg text-gray-200 mb-1">Wali Santri</h3>
-                        <div class="text-2xl md:text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
+                        <div class="text-xl md:text-4xl lg:text-5xl font-bold flex justify-center lg:justify-end">
                             <span class="counter" data-target="500000">0</span>+
                         </div>
                     </div>
@@ -244,11 +244,11 @@
                 <div class="space-y-8 flex flex-col">
                     <!-- Text Header -->
                     <div data-aos="fade-up">
-                        <h2 class="text-3xl lg:text-4xl font-bold text-psd-green mb-6 uppercase">
-                            Solusi Nyata Untuk Pesantren
+                        <h2 class="text-2xl lg:text-4xl font-bold text-psd-green mb-6 uppercase">
+                            Solusi Digital Cerdas Untuk Pesantren Modern
                         </h2>
-                        <p class="text-gray-600 text-lg leading-relaxed">
-                            Apakah Anda mengalami kendala dalam mengelola pesantren Anda? PSD hadir untuk membantu mengatasi seluruh masalah-masalah pesantren.
+                        <p class="text-gray-600 text-sm md:text-lg leading-relaxed">
+                            Masih terjebak dengan manajemen manual yang rumit? PSD hadir mentransformasi tata kelola pesantren Anda menjadi lebih efisien, transparan, dan terintegrasi. Saatnya tinggalkan cara lama dan fokus pada pengembangan santri dengan dukungan teknologi digital terbaik.
                         </p>
                     </div>
 
@@ -260,11 +260,11 @@
                         
                         <div class="absolute bottom-8 left-8 right-8 flex flex-col items-start space-y-2 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                             <div class="bg-black px-4 py-2">
-                                <h3 class="text-white font-bold uppercase text-lg">Penanganan Data Tunggakan</h3>
+                                <h3 class="text-white font-bold uppercase text-lg">Kendali Penuh Data Tunggakan</h3>
                             </div>
                             <div class="bg-black px-4 py-3 rounded-br-lg">
                                 <p class="text-white text-sm leading-relaxed">
-                                    Mengelola data tunggakan SPP tidak perlu lagi menjadi beban berat menjelang ujian akhir semester dengan bantuan sistem PSD yang otomatis dan terintegrasi.
+                                    Akhiri kerumitan penagihan manual. Sistem otomatis PSD memastikan data tunggakan SPP akurat dan tertata rapi, memudahkan sekolah saat musim ujian tiba.
                                 </p>
                             </div>
                         </div>
@@ -277,11 +277,11 @@
                         
                         <div class="absolute bottom-8 left-8 right-8 flex flex-col items-start space-y-2 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                             <div class="bg-black px-4 py-2">
-                                <h3 class="text-white font-bold uppercase text-lg">Sistem Terintegrasi</h3>
+                                <h3 class="text-white font-bold uppercase text-lg">Ekosistem Digital Terpadu</h3>
                             </div>
                             <div class="bg-black px-4 py-3 rounded-br-lg">
                                 <p class="text-white text-sm leading-relaxed">
-                                    Terintegrasi mulai dari kesantrian, akademik, kepegawaian dan lainnya dalam satu sistem untuk semua unit di Yayasan. Sehingga pengelolaan lebih efisien.
+                                    Hubungkan seluruh unit Yayasan dalam satu platform. Mulai dari akademik hingga kepegawaian, semua terkelola dalam satu dashboard yang efisien dan sinkron.
                                 </p>
                             </div>
                         </div>
@@ -298,11 +298,11 @@
                         
                         <div class="absolute bottom-8 left-8 right-8 flex flex-col items-start space-y-2 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                             <div class="bg-black px-4 py-2">
-                                <h3 class="text-white font-bold uppercase text-lg">Pengelolaan Keuangan Yang Efisien</h3>
+                                <h3 class="text-white font-bold uppercase text-lg">Optimasi Keuangan Real-Time</h3>
                             </div>
                             <div class="bg-black px-4 py-3 rounded-br-lg">
                                 <p class="text-white text-sm leading-relaxed">
-                                    Memastikan setiap transaksi keuangan santri tercatat dengan baik and efisien menjadi lebih mudah dengan fitur-fitur terintegrasi PSD.
+                                    Wujudkan transparansi finansial yang sempurna. Catat setiap transaksi santri secara instan dan akurat dengan fitur keuangan terintegrasi yang tanpa celah.
                                 </p>
                             </div>
                         </div>
@@ -316,11 +316,11 @@
                         
                         <div class="absolute bottom-8 left-8 right-8 flex flex-col items-start space-y-2 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                             <div class="bg-black px-4 py-2">
-                                <h3 class="text-white font-bold uppercase text-lg">Update dan Komunikasi Dengan Wali Santri</h3>
+                                <h3 class="text-white font-bold uppercase text-lg">Jembatan Komunikasi Wali Santri</h3>
                             </div>
                             <div class="bg-black px-4 py-3 rounded-br-lg">
                                 <p class="text-white text-sm leading-relaxed">
-                                    Kabar pelanggaran santri yang tinggi seringkali menjadi kejutan bagi wali santri. Dengan PSD, komunikasi antara pondok pesantren and orangtua menjadi lebih transparan and terstruktur.
+                                    Bangun kepercayaan orang tua melalui laporan real-time. Informasi kedisiplinan dan perkembangan santri tersampaikan secara transparan dan terstruktur.
                                 </p>
                             </div>
                         </div>
@@ -419,12 +419,12 @@
 
                 <!-- Right: Text Content -->
                 <div data-aos="fade-left">
-                    <h2 class="text-3xl lg:text-4xl font-bold text-psd-green mb-6 uppercase leading-tight">
+                    <h2 class="text-2xl lg:text-4xl font-bold text-psd-green mb-6 uppercase leading-tight">
                         Dipercaya Sebagai<br>
                         Sistem Utama Banyak<br>
                         Yayasan
                     </h2>
-                    <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                    <p class="text-gray-600 text-sm md:text-lg leading-relaxed mb-6">
                         PSD Telah dipercaya dan digunakan sebagai sistem manajemen utama ratusan yayasan tersebar dari Aceh hingga Papua di seluruh Indonesia.
                     </p>
                 </div>
@@ -442,9 +442,9 @@
                 </a>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
                 
-                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="200">
+                <div class="fade-up group bg-white border border-gray-100 rounded-[1rem] md:rounded-[2rem] p-4 md:p-8 relative overflow-hidden h-full min-h-[200px] md:min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="200">
                      <div class="absolute inset-0 bg-psd-green opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0">
                        <svg class="absolute bottom-0 left-0 w-full h-full text-white opacity-20" viewBox="0 0 1440 320" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128" />
@@ -453,23 +453,23 @@
                        </svg>
                    </div>
                     <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-8">
+                        <div class="flex justify-between items-start mb-2 md:mb-8">
                             <div class="text-gray-800 group-hover:text-psd-yellow transition-colors duration-300">
-                                <svg class="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-8 h-8 md:w-16 md:h-16" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm6 8H6a1 1 0 0 1-1-1c0-3.314 4.03-5 7-5s7 1.686 7 5a1 1 0 0 1-1 1Z"/>
                                     <path d="M5 10a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm14 0a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" opacity=".6"/>
                                 </svg>
                             </div>
-                            <div class="text-3xl font-bold text-gray-200 group-hover:text-white opacity-50 group-hover:opacity-100 transition-all duration-300">
+                            <div class="text-lg md:text-3xl font-bold text-gray-200 group-hover:text-white opacity-50 group-hover:opacity-100 transition-all duration-300">
                                 01.
                             </div>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-4 uppercase group-hover:text-white transition-colors duration-300">Manajemen Santri</h3>
-                        <p class="text-gray-600 text-base leading-relaxed group-hover:text-white transition-colors duration-300">Dengan PSD, kini manajemen santri ada dalam genggaman anda. mengelola data hingga ribuan santri tanpa repot</p>
+                        <h3 class="text-sm md:text-2xl font-bold text-gray-800 mb-1 md:mb-4 uppercase group-hover:text-white transition-colors duration-300">Manajemen Santri</h3>
+                        <p class="text-sm md:text-base leading-relaxed text-gray-600 group-hover:text-white transition-colors duration-300 line-clamp-3 md:line-clamp-none">Dengan PSD, kini manajemen santri ada dalam genggaman anda. mengelola data hingga ribuan santri tanpa repot</p>
                     </div>
                 </div>
 
-                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="100">
+                <div class="fade-up group bg-white border border-gray-100 rounded-[1rem] md:rounded-[2rem] p-4 md:p-8 relative overflow-hidden h-full min-h-[200px] md:min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="100">
                      <div class="absolute inset-0 bg-psd-green opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0">
                        <svg class="absolute bottom-0 left-0 w-full h-full text-white opacity-20" viewBox="0 0 1440 320" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128" />
@@ -478,24 +478,24 @@
                        </svg>
                    </div>
                     <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-8">
+                        <div class="flex justify-between items-start mb-2 md:mb-8">
                             <div class="text-gray-800 group-hover:text-psd-yellow transition-colors duration-300">
-                                <svg class="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-8 h-8 md:w-16 md:h-16" viewBox="0 0 24 24" fill="currentColor">
                                     <rect x="3" y="4" width="18" height="14" rx="2"/>
                                     <circle cx="8" cy="10" r="3" fill="white"/>
                                     <path d="M13 11h6v2h-6Zm-5 3h11v1H8Z" fill="white"/>
                                 </svg>
                             </div>
-                            <div class="text-3xl font-bold text-gray-200 group-hover:text-white opacity-50 group-hover:opacity-100 transition-all duration-300">
+                            <div class="text-lg md:text-3xl font-bold text-gray-200 group-hover:text-white opacity-50 group-hover:opacity-100 transition-all duration-300">
                                 02.
                             </div>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-4 uppercase group-hover:text-white transition-colors duration-300">Kartu Santri</h3>
-                        <p class="text-gray-600 text-base leading-relaxed group-hover:text-white transition-colors duration-300">Satu kartu untuk semua, dengan kartu santri yang terintegrasi dengan PSD, santri bisa apapun mulai dari absensi, izin keluar, hingga pembayaran di kantin dan mitra pondok.</p>
+                        <h3 class="text-sm md:text-2xl font-bold text-gray-800 mb-1 md:mb-4 uppercase group-hover:text-white transition-colors duration-300">Kartu Santri</h3>
+                        <p class="text-sm md:text-base leading-relaxed text-gray-600 group-hover:text-white transition-colors duration-300 line-clamp-3 md:line-clamp-none">Satu kartu untuk semua, dengan kartu santri yang terintegrasi dengan PSD, santri bisa apapun mulai dari absensi, izin keluar, hingga pembayaran di kantin dan mitra pondok.</p>
                     </div>
                 </div>
 
-                <div class="fade-up group bg-white border border-gray-100 rounded-[2rem] p-8 relative overflow-hidden h-full min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="0">
+                <div class="fade-up group bg-white border border-gray-100 rounded-[1rem] md:rounded-[2rem] p-4 md:p-8 relative overflow-hidden h-full min-h-[200px] md:min-h-[400px] flex flex-col justify-between hover:shadow-2xl hover:border-transparent transition-all duration-500 cursor-pointer" data-aos="fade-up" data-aos-delay="0">
                      <div class="absolute inset-0 bg-psd-green opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0">
                        <svg class="absolute bottom-0 left-0 w-full h-full text-white opacity-20" viewBox="0 0 1440 320" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128" />
@@ -504,20 +504,20 @@
                        </svg>
                    </div>
                     <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-8">
+                        <div class="flex justify-between items-start mb-2 md:mb-8">
                             <div class="text-gray-800 group-hover:text-psd-yellow transition-colors duration-300">
-                                <svg class="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+                                <svg class="w-8 h-8 md:w-16 md:h-16" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 3 6 7v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7l-6-4Z"/>
                                     <path d="M9 9h6v2H9zm0 4h6v2H9z" opacity=".8"/>
                                     <circle cx="12" cy="17" r="1.5"/>
                                 </svg>
                             </div>
-                            <div class="text-3xl font-bold text-gray-200 group-hover:text-white opacity-50 group-hover:opacity-100 transition-all duration-300">
+                            <div class="text-lg md:text-3xl font-bold text-gray-200 group-hover:text-white opacity-50 group-hover:opacity-100 transition-all duration-300">
                                 03.
                             </div>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-4 uppercase group-hover:text-white transition-colors duration-300">Manajemen Keuangan</h3>
-                        <p class="text-gray-600 text-base leading-relaxed group-hover:text-white transition-colors duration-300">Mengelola keuangan yayasan kini tidak perlu bingung lagi, dengan PSD semua transaksi keuangan tercatat dengan baik dan efisien</p>
+                        <h3 class="text-sm md:text-2xl font-bold text-gray-800 mb-1 md:mb-4 uppercase group-hover:text-white transition-colors duration-300">Manajemen Keuangan</h3>
+                        <p class="text-sm md:text-base leading-relaxed text-gray-600 group-hover:text-white transition-colors duration-300 line-clamp-3 md:line-clamp-none">Mengelola keuangan yayasan kini tidak perlu bingung lagi, dengan PSD semua transaksi keuangan tercatat dengan baik dan efisien</p>
                     </div>
                 </div>
 
@@ -587,11 +587,11 @@
                 
                 <!-- Left Circle Content (White) -->
                 <div class="bg-white rounded-full w-[220px] h-[220px] md:w-[320px] md:h-[320px] lg:w-[450px] lg:h-[450px] flex flex-col justify-center items-center text-center shadow-xl z-10 -mr-16 md:-mr-20 lg:-mr-24 p-6 md:p-8 lg:p-12 -translate-y-6 md:-translate-y-10 lg:-translate-y-16 relative" data-aos="zoom-in">
-                    <p class="text-psd-green font-semibold mb-2 text-[8px] md:text-xs lg:text-sm">Siap transformasi pesantren anda?</p>
-                    <h2 class="text-[10px] md:text-xl lg:text-3xl font-bold text-gray-800 uppercase mb-3 md:mb-6 leading-tight">
+                    <p class="text-psd-green font-semibold mb-2 text-xs md:text-xs lg:text-sm">Siap transformasi pesantren anda?</p>
+                    <h2 class="text-sm md:text-xl lg:text-3xl font-bold text-gray-800 uppercase mb-3 md:mb-6 leading-tight">
                         KONSULTASIKAN BERSAMA TIM<br>AHLI KAMI, GRATIS!
                     </h2>
-                    <a href="https://wa.me/6281234567890" target="_blank" class="bg-psd-green text-white font-bold py-1.5 px-4 md:py-3 md:px-8 rounded-full hover:bg-opacity-90 transition duration-300 shadow-lg text-[8px] md:text-sm">
+                    <a href="https://wa.me/6281234567890" target="_blank" class="bg-psd-green text-white font-bold py-1.5 px-4 md:py-3 md:px-8 rounded-full hover:bg-opacity-90 transition duration-300 shadow-lg text-xs md:text-sm">
                         HUBUNGI KAMI
                     </a>
                 </div>
