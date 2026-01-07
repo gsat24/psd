@@ -106,9 +106,17 @@ window.initDB = function() {
                 email: 'info@pesantrensmart.com',
                 phone: '+62 812-3456-7890',
                 address: 'Jl. Pesantren No. 123, Indonesia',
+                playstore_url: '#',
                 social: { instagram: '#', facebook: '#', tiktok: '#' }
             };
             localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(mockCompany));
+        } else {
+            // Ensure playstore_url exists in existing data
+            const current = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
+            if (current && !current.hasOwnProperty('playstore_url')) {
+                current.playstore_url = '#';
+                localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(current));
+            }
         }
 
         // Initialize auth if not exists
@@ -206,18 +214,35 @@ window.saveFeedbackToDB = async function(name, email, subject, message) {
         name, email, subject, message,
         date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
     };
+    
+    let success = true;
+    let errorMsg = null;
+
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { error } = await window.supabaseInstance.from('feedback').insert([newFeedback]);
             if (error) throw error;
+            console.log('Feedback saved to Supabase successfully');
         } catch (err) {
             console.error('Failed to save feedback to Supabase:', err);
+            success = false;
+            errorMsg = err.message;
         }
+    } else {
+        console.warn('Supabase not available, feedback only saved locally');
     }
-    const feedback = JSON.parse(localStorage.getItem(DB_KEYS.FEEDBACK)) || [];
-    newFeedback.id = Date.now();
-    feedback.unshift(newFeedback);
-    localStorage.setItem(DB_KEYS.FEEDBACK, JSON.stringify(feedback));
+
+    try {
+        const feedback = JSON.parse(localStorage.getItem(DB_KEYS.FEEDBACK)) || [];
+        newFeedback.id = Date.now();
+        feedback.unshift(newFeedback);
+        localStorage.setItem(DB_KEYS.FEEDBACK, JSON.stringify(feedback));
+    } catch (e) {
+        console.error('Failed to save feedback to LocalStorage:', e);
+        success = false;
+    }
+
+    return { success, error: errorMsg };
 };
 
 window.getCompanyInfo = async function() {
@@ -236,13 +261,20 @@ window.getCompanyInfo = async function() {
 window.updateCompanyInfoInDB = async function(info) {
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
-            const { error } = await window.supabaseInstance.from('company').update(info).eq('id', 1);
+            // Include all fields in the update
+            const { error } = await window.supabaseInstance.from('company').update({
+                email: info.email,
+                phone: info.phone,
+                address: info.address,
+                playstore_url: info.playstore_url,
+                social: info.social
+            }).eq('id', 1);
             if (error) throw error;
         } catch (err) {
             console.error('Failed to update company info in Supabase:', err);
         }
     }
-    const current = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
+    const current = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY)) || {};
     const updated = { ...current, ...info };
     localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(updated));
 };
@@ -263,6 +295,9 @@ window.syncCompanyInfo = async function() {
         if (socialInsta) socialInsta.href = info.social?.instagram || '#';
         if (socialFB) socialFB.href = info.social?.facebook || '#';
         if (socialTikTok) socialTikTok.href = info.social?.tiktok || '#';
+        
+        const playStoreLink = document.getElementById('footer-playstore-link');
+        if (playStoreLink) playStoreLink.href = info.playstore_url || '#';
     } catch (e) {
         console.error('syncCompanyInfo error:', e);
     }
@@ -282,6 +317,19 @@ function initSupabase() {
         if (sbClient && SUPABASE_URL && SUPABASE_ANON_KEY) {
             window.supabaseInstance = sbClient.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             console.log('Supabase initialized successfully');
+            
+            // Test connection
+            window.supabaseInstance.from('news').select('count', { count: 'exact', head: true })
+                .then(({ error }) => {
+                    if (error) {
+                        console.warn('Supabase connection test failed (possibly table missing or permissions):', error.message);
+                        // We don't set isSupabaseError = true here yet, 
+                        // only if it's a network/hostname error later.
+                    } else {
+                        console.log('Supabase connection test successful');
+                    }
+                });
+                
             return true;
         }
     } catch (e) {

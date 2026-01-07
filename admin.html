@@ -152,6 +152,10 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">TikTok URL</label>
                             <input type="url" id="social-tiktok" placeholder="https://tiktok.com/@..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
                         </div>
+                        <div class="pt-4 border-t">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Play Store URL</label>
+                            <input type="url" id="playstore-url" placeholder="https://play.google.com/store/apps/details?id=..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                        </div>
                     </div>
                 </div>
 
@@ -541,6 +545,7 @@
                 if (document.getElementById('comp-email')) document.getElementById('comp-email').value = info.email || '';
                 if (document.getElementById('comp-phone')) document.getElementById('comp-phone').value = info.phone || '';
                 if (document.getElementById('comp-address')) document.getElementById('comp-address').value = info.address || '';
+                if (document.getElementById('playstore-url')) document.getElementById('playstore-url').value = info.playstore_url || '';
                 
                 // Populate Social Links
                 if (info.social) {
@@ -556,6 +561,7 @@
                 email: document.getElementById('comp-email').value,
                 phone: document.getElementById('comp-phone').value,
                 address: document.getElementById('comp-address').value,
+                playstore_url: document.getElementById('playstore-url').value,
                 social: {
                     instagram: document.getElementById('social-instagram').value,
                     facebook: document.getElementById('social-facebook').value,

@@ -192,7 +192,7 @@
 
                     <!-- Play Store Button -->
                     <div class="mb-8">
-                        <a href="#" class="inline-flex items-center bg-black text-white px-4 py-2 rounded-lg border border-gray-700 hover:bg-gray-900 transition duration-300">
+                        <a href="#" id="footer-playstore-link" class="inline-flex items-center bg-black text-white px-4 py-2 rounded-lg border border-gray-700 hover:bg-gray-900 transition duration-300">
                             <i class="fab fa-google-play text-xl mr-3"></i>
                             <div class="text-left">
                                 <div class="text-[8px] uppercase leading-none">Tersedia di</div>
@@ -268,7 +268,7 @@
     <script>window.supabasejs = supabase;</script>
     <script src="src/admin-system.js"></script>
     <script>
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const name = document.getElementById('name').value;
@@ -276,12 +276,30 @@
             const subject = document.getElementById('subject').value;
             const message = document.getElementById('message').value;
             
-            if (window.saveFeedbackToDB) {
-                window.saveFeedbackToDB(name, email, subject, message);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = 'Mengirim...';
+            submitBtn.disabled = true;
+
+            try {
+                if (window.saveFeedbackToDB) {
+                    const result = await window.saveFeedbackToDB(name, email, subject, message);
+                    if (result.success) {
+                        alert('Terima kasih! Pesan Anda telah terkirim.');
+                        this.reset();
+                    } else {
+                        alert('Maaf, terjadi kesalahan saat mengirim pesan. Silakan coba lagi nanti.');
+                    }
+                } else {
+                    alert('Sistem pengiriman pesan sedang tidak tersedia.');
+                }
+            } catch (err) {
+                console.error('Submit error:', err);
+                alert('Terjadi kesalahan sistem. Silakan coba lagi.');
+            } finally {
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
             }
-            
-            alert('Terima kasih! Pesan Anda telah terkirim.');
-            this.reset();
         });
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
