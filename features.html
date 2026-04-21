@@ -143,29 +143,14 @@
         </div>
     </section>
 
-    <script>
-        const features = [
-            { id: '01', title: 'Kartu Santri', desc: 'Kartu santri digital/fisik dengan teknologi QR Code untuk absensi dan transaksi cashless di kantin.', icon: 'card' },
-            { id: '02', title: 'Aplikasi Wali Santri', desc: 'Aplikasi mobile khusus wali santri untuk memantau perkembangan anak secara praktis dari rumah.', icon: 'parent' },
-            { id: '03', title: 'Aplikasi Pegawai', desc: 'Sistem manajemen untuk memudahkan administrasi dan operasional harian seluruh pegawai pesantren.', icon: 'staff' },
-            { id: '04', title: 'Aplikasi Guru dan ustadz', desc: 'Platform khusus pengajar untuk mengelola jadwal, materi, dan penilaian santri secara digital.', icon: 'teacher' },
-            { id: '05', title: 'Arsip', desc: 'Penyimpanan dokumen penting pesantren secara digital yang aman dan mudah diakses kapan saja.', icon: 'archive' },
-            { id: '06', title: 'Master Data dari Pendaftaran hingga Alumni', desc: 'Pengelolaan data terpadu mulai dari proses PSB, data santri aktif, hingga database alumni.', icon: 'database' },
-            { id: '07', title: 'Mitra Usaha Pesantren', desc: 'Sistem integrasi untuk unit usaha pesantren seperti kantin, koperasi, dan toko atribut.', icon: 'shop' },
-            { id: '08', title: 'Manajemen Santri', desc: 'Kelola data santri mulai dari pendaftaran, biodata lengkap, hingga riwayat akademik.', icon: 'student' },
-            { id: '09', title: 'Prestasi dan Pelanggaran Santri', desc: 'Catat poin prestasi dan pelanggaran santri dengan sistem yang objektif dan transparan.', icon: 'star' },
-            { id: '10', title: 'Rapot digital', desc: 'Penyusunan dan distribusi rapot hasil belajar santri secara online yang cepat dan akurat.', icon: 'report' },
-            { id: '11', title: 'Manajemen Keuangan Yayasan', desc: 'Sistem pelaporan keuangan yayasan yang komprehensif, transparan, dan akuntabel.', icon: 'money' },
-            { id: '12', title: 'Monitoring Pengajar', desc: 'Pantau kinerja dan kehadiran guru serta ustadz untuk menjaga kualitas pendidikan.', icon: 'monitor' },
-            { id: '13', title: 'Absensi', desc: 'Sistem absensi modern untuk santri dan pegawai dengan notifikasi real-time.', icon: 'clock' },
-            { id: '14', title: 'Artikel Pesantren', desc: 'Media publikasi kegiatan, berita, dan karya tulis islami dari lingkungan pesantren.', icon: 'news' },
-            { id: '15', title: 'Tanya Ustadz', desc: 'Fitur interaktif untuk konsultasi agama antara wali santri/masyarakat dengan ustadz.', icon: 'chat' },
-            { id: '16', title: 'Broadcast ke Wali Santri', desc: 'Kirim pengumuman penting secara massal dan cepat langsung ke smartphone wali santri.', icon: 'broadcast' },
-            { id: '17', title: 'Payment Point', desc: 'Kemudahan pembayaran biaya pesantren melalui berbagai kanal perbankan dan e-wallet.', icon: 'payment' },
-            { id: '18', title: 'Surat', desc: 'Sistem persuratan digital untuk administrasi yang lebih rapi, cepat, dan paperless.', icon: 'mail' },
-            { id: '19', title: 'Monitor aktivitas santri', desc: 'Pantau seluruh aktivitas harian santri mulai dari bangun tidur hingga istirahat kembali.', icon: 'activity' },
-            { id: '20', title: 'Aplikasi Gerbang Pesantren', desc: 'Sistem keamanan gerbang untuk memonitor keluar masuknya santri dan tamu pesantren.', icon: 'gate' }
-        ];
+        let allFeatures = [];
+
+        async function loadFeatures() {
+            if (window.getFeatures) {
+                allFeatures = await window.getFeatures();
+                renderFeatures();
+            }
+        }
 
         const icons = {
             card: `<rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8" cy="10" r="2" fill="currentColor"/>`,
@@ -187,22 +172,20 @@
             payment: `<path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>`,
             mail: `<path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>`,
             activity: `<path d="M13.5 1.5c-5 0-9 4-9 9s4 9 9 9 9-4 9-9-4-9-9-9zM13 14h-2v-2h2v2zm0-4h-2V6h2v4z"/>`,
-            gate: `<path d="M19 19V5h-2V3H7v2H5v14H3v2h18v-2h-2zm-2 0H7V5h10v14zm-3-8h-2v2h2v-2z"/>`
+            gate: `<path d="M19 19V5h-2V3H7v2H5v14H3v2h18v-2h-2zm-2 0H7V5h10v14zm-3-8h-2v2h2v-2z"/>`,
+            users: `<path d="M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm6 8H6a1 1 0 0 1-1-1c0-3.314 4.03-5 7-5s7 1.686 7 5a1 1 0 0 1-1 1Z"/>`,
+            'credit-card': `<path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>`,
+            clock: `<path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>`
         };
 
         function renderFeatures(filter = '') {
-            console.log('Rendering features with filter:', filter);
             const grid = document.getElementById('featuresGrid');
             const empty = document.getElementById('emptyState');
-            
-            if (!grid || !empty) {
-                console.error('Grid or Empty state element not found');
-                return;
-            }
+            if (!grid || !empty) return;
 
-            const filtered = features.filter(f => 
+            const filtered = allFeatures.filter(f => 
                 f.title.toLowerCase().includes(filter.toLowerCase()) || 
-                f.desc.toLowerCase().includes(filter.toLowerCase())
+                (f.description && f.description.toLowerCase().includes(filter.toLowerCase()))
             );
 
             if (filtered.length === 0) {
@@ -226,34 +209,29 @@
                         <div class="flex justify-between items-start mb-2 md:mb-8">
                             <div class="text-psd-green group-hover:text-psd-yellow transition-colors duration-300">
                                 <svg class="w-8 h-8 md:w-16 md:h-16" viewBox="0 0 24 24" fill="currentColor">
-                                    ${icons[f.icon]}
+                                    ${icons[f.icon] || icons['star']}
                                 </svg>
                             </div>
-                            <div class="text-lg md:text-3xl font-bold text-gray-100 group-hover:text-white opacity-50 group-hover:opacity-100 transition-all duration-300">${f.id}.</div>
+                            <div class="text-lg md:text-3xl font-bold text-gray-100 group-hover:text-white opacity-50 group-hover:opacity-100 transition-all duration-300">0${index+1}.</div>
                         </div>
                         <h3 class="text-sm md:text-2xl font-bold text-gray-800 mb-1 md:mb-4 uppercase group-hover:text-white transition-colors duration-300">${f.title}</h3>
-                        <p class="text-sm md:text-base leading-relaxed text-gray-600 group-hover:text-white transition-colors duration-300 line-clamp-3 md:line-clamp-none">${f.desc}</p>
+                        <p class="text-sm md:text-base leading-relaxed text-gray-600 group-hover:text-white transition-colors duration-300 line-clamp-3 md:line-clamp-none">${f.description || ''}</p>
                     </div>
                 </div>
             `).join('');
 
-            // Re-initialize AOS to detect new elements
-            if (typeof AOS !== 'undefined') {
-                AOS.refresh();
-            }
+            if (typeof AOS !== 'undefined') AOS.refresh();
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('load', () => {
             const searchInput = document.getElementById('featureSearch');
             if (searchInput) {
                 searchInput.addEventListener('input', (e) => {
                     renderFeatures(e.target.value);
                 });
             }
-            // Initial render
-            renderFeatures();
+            loadFeatures();
         });
-    </script>
 
     <!-- Footer -->
     <footer class="bg-[#0A5C4F] text-white pt-20 pb-10">

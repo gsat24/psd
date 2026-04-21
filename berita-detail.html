@@ -271,7 +271,29 @@
             document.getElementById('news-content-body').innerHTML = item.content;
             
             // Update Title Tag
-            document.title = `${item.title} - Pesantren Smart Digital`;
+            document.title = item.meta_title ? item.meta_title : `${item.title} - Pesantren Smart Digital`;
+
+            // Update Meta Description
+            if (item.meta_description) {
+                let metaDesc = document.querySelector('meta[name="description"]');
+                if (!metaDesc) {
+                    metaDesc = document.createElement('meta');
+                    metaDesc.name = 'description';
+                    document.head.appendChild(metaDesc);
+                }
+                metaDesc.content = item.meta_description;
+            }
+
+            // Update Meta Keywords
+            if (item.meta_keywords) {
+                let metaKeywords = document.querySelector('meta[name="keywords"]');
+                if (!metaKeywords) {
+                    metaKeywords = document.createElement('meta');
+                    metaKeywords.name = 'keywords';
+                    document.head.appendChild(metaKeywords);
+                }
+                metaKeywords.content = item.meta_keywords;
+            }
         }
 
         window.onload = loadDetail;

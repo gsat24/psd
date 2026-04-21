@@ -7,7 +7,12 @@ const DB_KEYS = {
     FEEDBACK: 'psd_feedback',
     COMPANY: 'psd_company',
     AUTH: 'psd_auth_v2',
-    SESSION: 'psd_session'
+    SESSION: 'psd_session',
+    SEO: 'psd_seo',
+    FEATURES: 'psd_features',
+    TESTIMONIALS: 'psd_testimonials',
+    FAQ: 'psd_faq',
+    ANALYTICS: 'psd_analytics'
 };
 
 // 1. ATTACH ALL FUNCTIONS TO WINDOW IMMEDIATELY
@@ -107,16 +112,54 @@ window.initDB = function() {
                 phone: '+62 812-3456-7890',
                 address: 'Jl. Pesantren No. 123, Indonesia',
                 playstore_url: '#',
-                social: { instagram: '#', facebook: '#', tiktok: '#' }
+                social: { instagram: '#', facebook: '#', tiktok: '#' },
+                hero_headline: 'Solusi Digital Cerdas Untuk Pesantren Modern',
+                hero_subheadline: 'PSD hadir mentransformasi tata kelola pesantren Anda menjadi lebih efisien, transparan, dan terintegrasi.',
+                whatsapp_number: '6281368946818'
             };
             localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(mockCompany));
         } else {
-            // Ensure playstore_url exists in existing data
             const current = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
-            if (current && !current.hasOwnProperty('playstore_url')) {
-                current.playstore_url = '#';
-                localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(current));
-            }
+            let updated = false;
+            if (current && !current.hasOwnProperty('playstore_url')) { current.playstore_url = '#'; updated = true; }
+            if (current && !current.hasOwnProperty('hero_headline')) { current.hero_headline = 'Solusi Digital Cerdas Untuk Pesantren Modern'; updated = true; }
+            if (current && !current.hasOwnProperty('hero_subheadline')) { current.hero_subheadline = 'PSD hadir mentransformasi tata kelola pesantren Anda menjadi lebih efisien, transparan, dan terintegrasi.'; updated = true; }
+            if (current && !current.hasOwnProperty('whatsapp_number')) { current.whatsapp_number = '6281368946818'; updated = true; }
+            if (updated) localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(current));
+        }
+
+        if (!localStorage.getItem(DB_KEYS.FEATURES)) {
+            const mockFeatures = [
+                { id: 1, title: 'Manajemen Santri', description: 'Kelola data ribuan santri dengan mudah dan akurat.', icon: 'users' },
+                { id: 2, title: 'Pembayaran Digital', description: 'Sistem SPP dan donasi online yang terintegrasi otomatis.', icon: 'credit-card' },
+                { id: 3, title: 'Absensi Real-time', description: 'Pantau kehadiran santri dan asatidz secara instan.', icon: 'clock' }
+            ];
+            localStorage.setItem(DB_KEYS.FEATURES, JSON.stringify(mockFeatures));
+        }
+
+        if (!localStorage.getItem(DB_KEYS.TESTIMONIALS)) {
+            const mockTestimonials = [
+                { id: 1, name: 'KH. Ahmad Dahlan', role: 'Pengasuh Ponpes', content: 'Sistem PSD sangat membantu efisiensi administrasi kami.', image: 'src/user1.webp' },
+                { id: 2, name: 'Hj. Siti Aminah', role: 'Wali Santri', content: 'Sekarang pantau perkembangan anak jadi lebih mudah lewat aplikasi.', image: 'src/user2.webp' }
+            ];
+            localStorage.setItem(DB_KEYS.TESTIMONIALS, JSON.stringify(mockTestimonials));
+        }
+
+        if (!localStorage.getItem(DB_KEYS.FAQ)) {
+            const mockFAQ = [
+                { id: 1, question: 'Apa itu Pesantren Smart Digital?', answer: 'PSD adalah platform terintegrasi untuk modernisasi tata kelola pesantren.' },
+                { id: 2, question: 'Bagaimana cara mendaftar?', answer: 'Anda dapat menghubungi tim marketing kami melalui tombol WhatsApp yang tersedia.' }
+            ];
+            localStorage.setItem(DB_KEYS.FAQ, JSON.stringify(mockFAQ));
+        }
+
+        if (!localStorage.getItem(DB_KEYS.SEO)) {
+            const defaultSEO = {
+                meta_title: 'Pesantren Smart Digital - Solusi Manajemen Pesantren',
+                meta_description: 'Platform manajemen pesantren digital terintegrasi untuk modernisasi pendidikan islam di Indonesia.',
+                meta_keywords: 'pesantren, pesantren digital, manajemen pesantren, aplikasi pesantren, spp online'
+            };
+            localStorage.setItem(DB_KEYS.SEO, JSON.stringify(defaultSEO));
         }
 
         // Initialize auth if not exists
@@ -215,21 +258,23 @@ window.saveFeedbackToDB = async function(name, email, subject, message) {
         date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
     };
     
-    let success = true;
+    let supabaseSuccess = false;
+    let localSuccess = false;
     let errorMsg = null;
 
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
+            console.log('Attempting to save feedback to Supabase:', newFeedback);
             const { error } = await window.supabaseInstance.from('feedback').insert([newFeedback]);
             if (error) throw error;
             console.log('Feedback saved to Supabase successfully');
+            supabaseSuccess = true;
         } catch (err) {
             console.error('Failed to save feedback to Supabase:', err);
-            success = false;
-            errorMsg = err.message;
+            errorMsg = `Supabase Error: ${err.message || 'Unknown error'}`;
         }
     } else {
-        console.warn('Supabase not available, feedback only saved locally');
+        console.warn('Supabase not available or error state, falling back to LocalStorage');
     }
 
     try {
@@ -237,12 +282,13 @@ window.saveFeedbackToDB = async function(name, email, subject, message) {
         newFeedback.id = Date.now();
         feedback.unshift(newFeedback);
         localStorage.setItem(DB_KEYS.FEEDBACK, JSON.stringify(feedback));
+        localSuccess = true;
+        console.log('Feedback saved to LocalStorage successfully');
     } catch (e) {
         console.error('Failed to save feedback to LocalStorage:', e);
-        success = false;
     }
 
-    return { success, error: errorMsg };
+    return { success: supabaseSuccess || localSuccess, error: errorMsg };
 };
 
 window.getCompanyInfo = async function() {
@@ -267,7 +313,10 @@ window.updateCompanyInfoInDB = async function(info) {
                 phone: info.phone,
                 address: info.address,
                 playstore_url: info.playstore_url,
-                social: info.social
+                social: info.social,
+                hero_headline: info.hero_headline,
+                hero_subheadline: info.hero_subheadline,
+                whatsapp_number: info.whatsapp_number
             }).eq('id', 1);
             if (error) throw error;
         } catch (err) {
@@ -283,27 +332,232 @@ window.syncCompanyInfo = async function() {
     try {
         const info = await window.getCompanyInfo();
         if (!info) return;
-        const emailEl = document.getElementById('footer-email');
-        const phoneEl = document.getElementById('footer-phone');
-        const addrEl = document.getElementById('footer-address');
-        if (emailEl) emailEl.innerText = info.email;
-        if (phoneEl) phoneEl.innerText = info.phone;
-        if (addrEl) addrEl.innerText = info.address;
-        const socialInsta = document.getElementById('footer-social-instagram');
-        const socialFB = document.getElementById('footer-social-facebook');
-        const socialTikTok = document.getElementById('footer-social-tiktok');
-        if (socialInsta) socialInsta.href = info.social?.instagram || '#';
-        if (socialFB) socialFB.href = info.social?.facebook || '#';
-        if (socialTikTok) socialTikTok.href = info.social?.tiktok || '#';
+
+        // Footer & Navbar Contact
+        const emailEls = document.querySelectorAll('[id^="footer-email"], [id^="nav-email"]');
+        const phoneEls = document.querySelectorAll('[id^="footer-phone"], [id^="nav-phone"]');
+        const addrEls = document.querySelectorAll('[id^="footer-address"]');
         
-        const playStoreLink = document.getElementById('footer-playstore-link');
-        if (playStoreLink) playStoreLink.href = info.playstore_url || '#';
+        emailEls.forEach(el => el.innerText = info.email);
+        phoneEls.forEach(el => el.innerText = info.phone);
+        addrEls.forEach(el => el.innerText = info.address);
+
+        // Social Links (Fixed bug where nav social didn't update)
+        const socialInstas = document.querySelectorAll('[id$="-social-instagram"]');
+        const socialFBs = document.querySelectorAll('[id$="-social-facebook"]');
+        const socialTikToks = document.querySelectorAll('[id$="-social-tiktok"]');
+        
+        let social = info.social;
+        if (typeof social === 'string') {
+            try { social = JSON.parse(social); } catch(e) { console.error('Parse social failed', e); }
+        }
+
+        socialInstas.forEach(el => el.href = social?.instagram || '#');
+        socialFBs.forEach(el => el.href = social?.facebook || '#');
+        socialTikToks.forEach(el => el.href = social?.tiktok || '#');
+        
+        // Playstore & WhatsApp
+        const playStoreLinks = document.querySelectorAll('[id$="-playstore-link"]');
+        playStoreLinks.forEach(el => el.href = info.playstore_url || '#');
+
+        // Hero Content
+        const heroTitle = document.getElementById('hero-title');
+        const heroSub = document.getElementById('hero-subtitle');
+        if (heroTitle && info.hero_headline) heroTitle.innerText = info.hero_headline;
+        if (heroSub && info.hero_subheadline) heroSub.innerText = info.hero_subheadline;
+
+        // Inject WhatsApp Button if not exists
+        if (info.whatsapp_number && !document.getElementById('wa-floating-btn')) {
+            const waBtn = document.createElement('a');
+            waBtn.id = 'wa-floating-btn';
+            waBtn.href = `https://wa.me/${info.whatsapp_number}`;
+            waBtn.target = '_blank';
+            waBtn.className = 'fixed bottom-6 right-6 z-[9999] bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform flex items-center justify-center';
+            waBtn.innerHTML = `<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>`;
+            document.body.appendChild(waBtn);
+        }
+
     } catch (e) {
         console.error('syncCompanyInfo error:', e);
     }
 };
 
+window.getGlobalSEO = async function() {
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { data, error } = await window.supabaseInstance.from('global_seo').select('*').eq('id', 1).single();
+            if (error) {
+                // Jika tabel belum ada di Supabase, fallback ke local
+                if (error.code === '42P01') {
+                    console.warn('Tabel global_seo belum ada di Supabase, fallback ke LocalStorage');
+                } else {
+                    throw error;
+                }
+            } else {
+                return data;
+            }
+        } catch (err) {
+            console.error('Failed to get global SEO from Supabase:', err);
+        }
+    }
+    return JSON.parse(localStorage.getItem(DB_KEYS.SEO));
+};
+
+window.updateGlobalSEOInDB = async function(seoData) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { error } = await window.supabaseInstance.from('global_seo').upsert([{ id: 1, ...seoData }]);
+            if (error) {
+                 if (error.code === '42P01') {
+                    console.warn('Tabel global_seo belum ada di Supabase, hanya menyimpan di LocalStorage');
+                } else {
+                    throw error;
+                }
+            }
+        } catch (err) {
+            console.error('Failed to update global SEO in Supabase:', err);
+        }
+    }
+    const current = JSON.parse(localStorage.getItem(DB_KEYS.SEO)) || {};
+    const updated = { ...current, ...seoData };
+    localStorage.setItem(DB_KEYS.SEO, JSON.stringify(updated));
+};
+
+window.syncGlobalSEO = async function() {
+    try {
+        const seo = await window.getGlobalSEO();
+        if (!seo) return;
+
+        // Update Title if not explicitly set by page logic (like berita-detail)
+        if (!window.location.pathname.includes('berita-detail.html')) {
+            if (seo.meta_title) document.title = seo.meta_title;
+        }
+
+        // Update Meta Description
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.name = 'description';
+            document.head.appendChild(metaDesc);
+        }
+        if (seo.meta_description && !window.location.pathname.includes('berita-detail.html')) {
+             metaDesc.content = seo.meta_description;
+        }
+
+        // Update Meta Keywords
+        let metaKeywords = document.querySelector('meta[name="keywords"]');
+        if (!metaKeywords) {
+            metaKeywords = document.createElement('meta');
+            metaKeywords.name = 'keywords';
+            document.head.appendChild(metaKeywords);
+        }
+        if (seo.meta_keywords && !window.location.pathname.includes('berita-detail.html')) {
+            metaKeywords.content = seo.meta_keywords;
+        }
+
+    } catch (e) {
+        console.error('syncGlobalSEO error:', e);
+    }
+};
+
+// --- NEW CRUD FUNCTIONS FOR FEATURES, TESTIMONIALS, FAQ ---
+
+async function genericGet(table, key) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { data, error } = await window.supabaseInstance.from(table).select('*').order('id', { ascending: false });
+            if (error) throw error;
+            return data;
+        } catch (err) {
+            console.error(`Failed to get ${table} from Supabase:`, err);
+        }
+    }
+    return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+async function genericSave(table, key, item) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { error } = await window.supabaseInstance.from(table).upsert([item]);
+            if (error) throw error;
+        } catch (err) {
+            console.error(`Failed to save ${table} to Supabase:`, err);
+        }
+    }
+    const list = JSON.parse(localStorage.getItem(key)) || [];
+    if (item.id) {
+        const index = list.findIndex(i => i.id === item.id);
+        if (index !== -1) list[index] = item;
+        else list.unshift(item);
+    } else {
+        item.id = Date.now();
+        list.unshift(item);
+    }
+    localStorage.setItem(key, JSON.stringify(list));
+}
+
+async function genericDelete(table, key, id) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { error } = await window.supabaseInstance.from(table).delete().eq('id', id);
+            if (error) throw error;
+        } catch (err) {
+            console.error(`Failed to delete from ${table} in Supabase:`, err);
+        }
+    }
+    const list = JSON.parse(localStorage.getItem(key)) || [];
+    localStorage.setItem(key, JSON.stringify(list.filter(i => i.id !== id)));
+}
+
+window.getFeatures = () => genericGet('features', DB_KEYS.FEATURES);
+window.saveFeature = (item) => genericSave('features', DB_KEYS.FEATURES, item);
+window.deleteFeature = (id) => genericDelete('features', DB_KEYS.FEATURES, id);
+
+window.getTestimonials = () => genericGet('testimonials', DB_KEYS.TESTIMONIALS);
+window.saveTestimonial = (item) => genericSave('testimonials', DB_KEYS.TESTIMONIALS, item);
+window.deleteTestimonial = (id) => genericDelete('testimonials', DB_KEYS.TESTIMONIALS, id);
+
+window.getFAQ = () => genericGet('faq', DB_KEYS.FAQ);
+window.saveFAQ = (item) => genericSave('faq', DB_KEYS.FAQ, item);
+window.deleteFAQ = (id) => genericDelete('faq', DB_KEYS.FAQ, id);
+
+// --- ANALYTICS ---
+window.trackVisit = async function() {
+    const data = {
+        page_path: window.location.pathname,
+        referrer: document.referrer,
+        browser: navigator.userAgent.substring(0, 100)
+    };
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            await window.supabaseInstance.from('analytics').insert([data]);
+        } catch (e) {}
+    }
+    // Local tracking
+    const logs = JSON.parse(localStorage.getItem(DB_KEYS.ANALYTICS)) || [];
+    logs.push({ ...data, date: new Date().toISOString() });
+    localStorage.setItem(DB_KEYS.ANALYTICS, JSON.stringify(logs.slice(-100))); // Keep last 100
+};
+
+window.getAnalyticsStats = async function() {
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { count: visits } = await window.supabaseInstance.from('analytics').select('*', { count: 'exact', head: true });
+            const { count: news } = await window.supabaseInstance.from('news').select('*', { count: 'exact', head: true });
+            const { count: feedback } = await window.supabaseInstance.from('feedback').select('*', { count: 'exact', head: true });
+            return { visits, news, feedback };
+        } catch (e) {}
+    }
+    // Fallback to local count
+    return {
+        visits: (JSON.parse(localStorage.getItem(DB_KEYS.ANALYTICS)) || []).length,
+        news: (JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || []).length,
+        feedback: (JSON.parse(localStorage.getItem(DB_KEYS.FEEDBACK)) || []).length
+    };
+};
+
 // 2. SUPABASE INITIALIZATION
+// IMPORTANT: Update these with your actual Supabase Project credentials!
 const SUPABASE_URL = 'https://tcorbpybtgxhtwarfwyf.supabase.co'; 
 const SUPABASE_ANON_KEY = 'sb_publishable_u3hZyGYv3X_tj6saDtjFtQ_ylo7zl7j';
 
@@ -349,6 +603,10 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('admin-system.js DOMContentLoaded');
     window.initDB();
     window.syncCompanyInfo();
+    window.syncGlobalSEO();
+    if (!window.location.pathname.includes('admin.html')) {
+        window.trackVisit();
+    }
 });
 
 console.log('admin-system.js load complete.');

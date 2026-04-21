@@ -108,4 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleMenu(false);
     }
   });
+
+  // Sync Global SEO
+  if (typeof window.syncGlobalSEO === 'function') {
+    window.syncGlobalSEO();
+  }
 });
