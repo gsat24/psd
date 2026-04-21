@@ -14,9 +14,26 @@ CREATE TABLE IF NOT EXISTS feedback (
 
 ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Enable insert for all users" ON feedback FOR INSERT WITH CHECK (true);
-CREATE POLICY "Enable select for authenticated users" ON feedback FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Enable select for all" ON feedback FOR SELECT USING (true);
 
--- 2. FEATURES TABLE
+-- 2. MESSAGES TABLE (Live Chat)
+CREATE TABLE IF NOT EXISTS messages (
+    id SERIAL PRIMARY KEY,
+    sender_id TEXT NOT NULL, -- UUID or session ID for anonymous users
+    sender_name TEXT,
+    text TEXT NOT NULL,
+    is_admin BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Enable insert for all" ON messages FOR INSERT WITH CHECK (true);
+CREATE POLICY "Enable select for all" ON messages FOR SELECT USING (true);
+
+-- Enable Realtime for messages
+ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+
+-- 3. FEATURES TABLE
 CREATE TABLE IF NOT EXISTS features (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
@@ -30,7 +47,7 @@ ALTER TABLE features ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Enable read for all" ON features FOR SELECT USING (true);
 CREATE POLICY "Enable all for authenticated" ON features FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- 3. TESTIMONIALS TABLE
+-- 4. TESTIMONIALS TABLE
 CREATE TABLE IF NOT EXISTS testimonials (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -44,7 +61,7 @@ ALTER TABLE testimonials ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Enable read for all" ON testimonials FOR SELECT USING (true);
 CREATE POLICY "Enable all for authenticated" ON testimonials FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- 4. FAQ TABLE
+-- 5. FAQ TABLE
 CREATE TABLE IF NOT EXISTS faq (
     id SERIAL PRIMARY KEY,
     question TEXT NOT NULL,
@@ -57,7 +74,7 @@ ALTER TABLE faq ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Enable read for all" ON faq FOR SELECT USING (true);
 CREATE POLICY "Enable all for authenticated" ON faq FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- 5. ANALYTICS TABLE
+-- 6. ANALYTICS TABLE
 CREATE TABLE IF NOT EXISTS analytics (
     id SERIAL PRIMARY KEY,
     page_path TEXT NOT NULL,
@@ -71,7 +88,7 @@ ALTER TABLE analytics ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Enable insert for all" ON analytics FOR INSERT WITH CHECK (true);
 CREATE POLICY "Enable select for authenticated" ON analytics FOR SELECT TO authenticated USING (true);
 
--- 6. UPDATE COMPANY TABLE
+-- 7. UPDATE COMPANY TABLE
 ALTER TABLE company 
 ADD COLUMN IF NOT EXISTS hero_headline TEXT,
 ADD COLUMN IF NOT EXISTS hero_subheadline TEXT,

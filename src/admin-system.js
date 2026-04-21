@@ -295,7 +295,85 @@ window.saveFeedbackToDB = async function(name, email, subject, message) {
         console.error('Failed to save feedback to LocalStorage:', e);
     }
 
-    return { success: supabaseSuccess || localSuccess, error: errorMsg };
+    return { success: supabaseSuccess || localSuccess, error: errorMsg, isSupabase: supabaseSuccess };
+};
+
+// --- LIVE CHAT FUNCTIONS ---
+
+// Unique ID for chat session
+window.getChatUserId = function() {
+    let userId = localStorage.getItem('psd_chat_user_id');
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('psd_chat_user_id', userId);
+    }
+    return userId;
+};
+
+window.saveChatSession = async function(name, email) {
+    const sender_id = window.getChatUserId();
+    const { data, error } = await window.supabaseInstance
+        .from('chat_sessions')
+        .upsert({ sender_id, name, email });
+    
+    if (!error) {
+        localStorage.setItem('psd_chat_user_name', name);
+        localStorage.setItem('psd_chat_user_email', email);
+        return { success: true };
+    }
+    return { success: false, error: error.message };
+};
+
+window.getMessages = async function() {
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { data, error } = await window.supabaseInstance
+                .from('messages')
+                .select('*')
+                .order('created_at', { ascending: true });
+            if (error) throw error;
+            return data;
+        } catch (err) {
+            console.error('Failed to get messages from Supabase:', err);
+        }
+    }
+    return [];
+};
+
+window.sendChatMessage = async function(text, isAdmin = false, senderName = 'User') {
+    const userId = window.getChatUserId();
+    const msg = {
+        sender_id: isAdmin ? 'admin' : userId,
+        sender_name: isAdmin ? 'Admin PSD' : senderName,
+        text: text,
+        is_admin: isAdmin
+    };
+
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { error } = await window.supabaseInstance.from('messages').insert([msg]);
+            if (error) throw error;
+            return { success: true };
+        } catch (err) {
+            console.error('Failed to send message to Supabase:', err);
+            return { success: false, error: err.message };
+        }
+    }
+    return { success: false, error: 'Supabase not connected' };
+};
+
+window.subscribeToMessages = function(callback) {
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        console.log('Subscribing to messages...');
+        return window.supabaseInstance
+            .channel('public:messages')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                console.log('New message received:', payload.new);
+                callback(payload.new);
+            })
+            .subscribe();
+    }
+    return null;
 };
 
 window.getCompanyInfo = async function() {

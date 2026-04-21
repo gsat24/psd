@@ -285,27 +285,28 @@
                 if (window.saveFeedbackToDB) {
                     const result = await window.saveFeedbackToDB(name, email, subject, message);
                     if (result.success) {
-                        alert('Terima kasih! Pesan Anda telah terkirim.');
+                        if (result.isSupabase) {
+                            alert('Terima kasih! Pesan Anda telah terkirim dan tercatat di sistem kami.');
+                        } else {
+                            alert('Terima kasih! Pesan Anda telah terkirim (Penyimpanan Lokal).');
+                        }
                         this.reset();
                     } else {
-                        alert('Maaf, terjadi kesalahan saat mengirim pesan. Silakan coba lagi nanti.');
+                        alert('Gagal mengirim pesan: ' + (result.error || 'Kesalahan tidak diketahui'));
                     }
                 } else {
                     alert('Sistem pengiriman pesan sedang tidak tersedia.');
                 }
             } catch (err) {
                 console.error('Submit error:', err);
-                alert('Terjadi kesalahan sistem. Silakan coba lagi.');
+                alert('Terjadi kesalahan sistem: ' + err.message);
             } finally {
                 submitBtn.innerText = originalText;
                 submitBtn.disabled = false;
             }
         });
     </script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 1000,
+
             once: true,
             offset: 100
         });
