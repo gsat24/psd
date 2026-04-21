@@ -266,12 +266,19 @@ window.saveFeedbackToDB = async function(name, email, subject, message) {
         try {
             console.log('Attempting to save feedback to Supabase:', newFeedback);
             const { error } = await window.supabaseInstance.from('feedback').insert([newFeedback]);
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase Insert Error:', error);
+                if (error.code === '42703') {
+                    errorMsg = 'Error: Kolom di Supabase tidak sesuai (mungkin kolom "message" atau "date" belum dibuat).';
+                } else {
+                    errorMsg = `Supabase Error: ${error.message}`;
+                }
+                throw error;
+            }
             console.log('Feedback saved to Supabase successfully');
             supabaseSuccess = true;
         } catch (err) {
             console.error('Failed to save feedback to Supabase:', err);
-            errorMsg = `Supabase Error: ${err.message || 'Unknown error'}`;
         }
     } else {
         console.warn('Supabase not available or error state, falling back to LocalStorage');

@@ -320,6 +320,7 @@
                             <th class="px-6 py-4 text-sm font-semibold text-gray-600">Pengirim</th>
                             <th class="px-6 py-4 text-sm font-semibold text-gray-600">Pesan</th>
                             <th class="px-6 py-4 text-sm font-semibold text-gray-600">Tanggal</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="feedback-list">
@@ -742,12 +743,30 @@
                         <div class="text-xs text-gray-400 font-normal">${f.email}</div>
                     </td>
                     <td class="px-6 py-4 text-gray-600 text-sm">
-                        <div class="font-bold mb-1">${f.subject}</div>
-                        <div class="truncate max-w-xs">${f.message}</div>
+                        <div class="font-bold mb-1">${f.subject || 'No Subject'}</div>
+                        <div class="truncate max-w-xs">${f.message || 'No Message'}</div>
                     </td>
-                    <td class="px-6 py-4 text-sm text-gray-500">${f.date}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${f.date || '-'}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="handleDeleteFeedback(${f.id})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 </tr>
             `).join('');
+        }
+
+        async function handleDeleteFeedback(id) {
+            if (confirm('Hapus pesan feedback ini?')) {
+                if (window.supabaseInstance && !window.isSupabaseError) {
+                    await window.supabaseInstance.from('feedback').delete().eq('id', id);
+                }
+                // Also update local storage
+                const local = JSON.parse(localStorage.getItem('psd_feedback')) || [];
+                localStorage.setItem('psd_feedback', JSON.stringify(local.filter(f => f.id !== id)));
+                
+                await renderFeedbackTable();
+            }
         }
 
         async function populateCompanyInfo() {
