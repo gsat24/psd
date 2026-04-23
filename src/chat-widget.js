@@ -183,9 +183,16 @@
         // Wait for admin-system to load functions
         const waitForDeps = async () => {
             return new Promise(resolve => {
+                let attempts = 0;
                 const check = () => {
-                    if (window.getMessages && window.supabaseInstance && window.saveChatSession) resolve();
-                    else setTimeout(check, 100);
+                    attempts++;
+                    if (window.getMessages && window.saveChatSession) {
+                        if (window.supabaseInstance || window.isSupabaseError || attempts > 50) {
+                            resolve();
+                            return;
+                        }
+                    }
+                    setTimeout(check, 100);
                 };
                 check();
             });
