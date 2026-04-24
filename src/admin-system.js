@@ -480,10 +480,10 @@ window.getMessages = async function() {
     return [];
 };
 
-window.sendChatMessage = async function(text, isAdmin = false, senderName = 'User') {
-    const userId = window.getChatUserId();
+window.sendChatMessage = async function(text, isAdmin = false, senderName = 'User', targetUserId = null) {
+    const userId = targetUserId || window.getChatUserId();
     const msg = {
-        sender_id: isAdmin ? 'admin' : userId,
+        sender_id: userId,
         sender_name: isAdmin ? 'Admin PSD' : senderName,
         text: text,
         is_admin: isAdmin

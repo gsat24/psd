@@ -1323,7 +1323,7 @@
             `).join('');
 
             if (currentChatUser) {
-                renderMessages(messages.filter(m => m.sender_id === currentChatUser || (m.is_admin && m.sender_id === 'admin')));
+                renderMessages(messages.filter(m => m.sender_id === currentChatUser));
             }
         }
 
@@ -1400,7 +1400,7 @@
             // 1. Send final message to signal end
             if (window.sendChatMessage) {
                 const cu = window.getCurrentUser ? window.getCurrentUser() : { displayName: 'Admin PSD' };
-                await window.sendChatMessage('SESI CHAT TELAH BERAKHIR', true, cu.displayName || 'Admin PSD');
+                await window.sendChatMessage('SESI CHAT TELAH BERAKHIR', true, cu.displayName || 'Admin PSD', userId);
             }
 
             // Show temporary status in header
@@ -1461,7 +1461,7 @@
 
             input.value = '';
             const cu = window.getCurrentUser ? window.getCurrentUser() : { displayName: 'Admin PSD' };
-            const res = await window.sendChatMessage(text, true, cu.displayName || 'Admin PSD'); 
+            const res = await window.sendChatMessage(text, true, cu.displayName || 'Admin PSD', currentChatUser); 
             if (res.success) {
                 await renderChat();
             }
