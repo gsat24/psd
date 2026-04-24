@@ -529,7 +529,6 @@ window.getMessages = async function() {
 window.sendChatMessage = async function(text, isAdmin = false, senderName = 'User', targetUserId = null) {
     const userId = targetUserId || window.getChatUserId();
     const msg = {
-        id: Date.now(),
         sender_id: userId,
         sender_name: isAdmin ? 'Admin PSD' : senderName,
         text: text,
