@@ -1059,20 +1059,23 @@
                 }
             };
             
-            console.log('Updating company info with:', info);
+            console.log('--- STARTING COMPANY UPDATE ---');
+            console.log('Payload:', info);
             
             if (window.updateCompanyInfoInDB) {
                 await window.updateCompanyInfoInDB(info);
             }
             
-            // Re-populate and sync to ensure UI is fresh
-            await populateCompanyInfo();
+            // Just sync the website display links, but DON'T re-populate the inputs
+            // to avoid overwriting what the user just typed with potentially old data from DB
             if (window.syncCompanyInfo) {
                 window.syncCompanyInfo();
             }
             
             alert('Informasi perusahaan berhasil diperbarui!');
+            console.log('--- COMPANY UPDATE FINISHED ---');
         }
+
 
 
 

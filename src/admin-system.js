@@ -624,43 +624,51 @@ window.subscribeToMessages = function(callback) {
 };
 
 window.getCompanyInfo = async function() {
+    console.log('getCompanyInfo() called');
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { data, error } = await window.supabaseInstance.from('company').select('*').eq('id', 1).single();
             if (error) throw error;
+            console.log('getCompanyInfo() from Supabase success:', data);
             return data;
         } catch (err) {
-            console.error('Failed to get company info from Supabase:', err);
+            console.error('getCompanyInfo() from Supabase failed:', err);
         }
     }
-    return JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
+    const local = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
+    console.log('getCompanyInfo() from LocalStorage:', local);
+    return local;
 };
+
 
 window.updateCompanyInfoInDB = async function(info) {
     console.log('updateCompanyInfoInDB() starting...', info);
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
-            // Ensure social is a string for the database
-            const socialStr = typeof info.social === 'object' ? JSON.stringify(info.social) : info.social;
+            // If it's a string, try to parse it to object first for better JSONB compatibility
+            let socialObj = info.social;
+            if (typeof socialObj === 'string') {
+                try { socialObj = JSON.parse(socialObj); } catch(e) {}
+            }
             
             const dataToSave = {
-                id: 1, // Ensure we always target the first row
+                id: 1,
                 email: info.email,
                 phone: info.phone,
                 address: info.address,
                 playstore_url: info.playstore_url,
-                social: socialStr,
+                social: socialObj, // Send as object
                 hero_headline: info.hero_headline,
                 hero_subheadline: info.hero_subheadline,
                 whatsapp_number: info.whatsapp_number
             };
 
-            console.log('Upserting to Supabase:', dataToSave);
+            console.log('Saving to Supabase...', dataToSave);
             const { error } = await window.supabaseInstance.from('company').upsert([dataToSave]);
             if (error) throw error;
-            console.log('Supabase company upsert successful');
+            console.log('Supabase update success');
         } catch (err) {
-            console.error('Failed to update company info in Supabase:', err);
+            console.error('Supabase update failed:', err);
         }
     }
     
@@ -668,8 +676,9 @@ window.updateCompanyInfoInDB = async function(info) {
     const current = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY)) || {};
     const updated = { ...current, ...info };
     localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(updated));
-    console.log('LocalStorage company update successful');
+    console.log('LocalStorage update success');
 };
+
 
 
 
