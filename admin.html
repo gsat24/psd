@@ -1257,54 +1257,9 @@
 
         // --- COMPANY INFO UPDATES ---
 
-        async function populateCompanyInfo() {
-            let info = null;
-            if (window.getCompanyInfo) {
-                info = await window.getCompanyInfo();
-            }
-            if (info) {
-                if (document.getElementById('comp-email')) document.getElementById('comp-email').value = info.email || '';
-                if (document.getElementById('comp-phone')) document.getElementById('comp-phone').value = info.phone || '';
-                if (document.getElementById('comp-address')) document.getElementById('comp-address').value = info.address || '';
-                if (document.getElementById('playstore-url')) document.getElementById('playstore-url').value = info.playstore_url || '';
-                
-                // New Fields
-                if (document.getElementById('hero-headline')) document.getElementById('hero-headline').value = info.hero_headline || '';
-                if (document.getElementById('hero-subheadline')) document.getElementById('hero-subheadline').value = info.hero_subheadline || '';
-                if (document.getElementById('whatsapp-number')) document.getElementById('whatsapp-number').value = info.whatsapp_number || '';
-
-                // Populate Social Links
-                if (info.social) {
-                    if (document.getElementById('social-instagram')) document.getElementById('social-instagram').value = info.social.instagram || '';
-                    if (document.getElementById('social-facebook')) document.getElementById('social-facebook').value = info.social.facebook || '';
-                    if (document.getElementById('social-tiktok')) document.getElementById('social-tiktok').value = info.social.tiktok || '';
-                }
-            }
-        }
-
-        async function handleUpdateCompany() {
-            const info = {
-                email: document.getElementById('comp-email').value,
-                phone: document.getElementById('comp-phone').value,
-                address: document.getElementById('comp-address').value,
-                playstore_url: document.getElementById('playstore-url').value,
-                hero_headline: document.getElementById('hero-headline').value,
-                hero_subheadline: document.getElementById('hero-subheadline').value,
-                whatsapp_number: document.getElementById('whatsapp-number').value,
-                social: {
-                    instagram: document.getElementById('social-instagram').value,
-                    facebook: document.getElementById('social-facebook').value,
-                    tiktok: document.getElementById('social-tiktok').value
-                }
-            };
-            if (window.updateCompanyInfoInDB) {
-                await window.updateCompanyInfoInDB(info);
-            }
-            alert('Semua informasi perusahaan berhasil diperbarui!');
-        }
-
 
         // --- LIVE CHAT ADMIN LOGIC ---
+
         let currentChatUser = null;
 
         async function renderChat() {
