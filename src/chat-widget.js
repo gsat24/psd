@@ -276,6 +276,20 @@
             chatMessages.appendChild(msgDiv);
             scrollToBottom();
 
+            // Detect Session End
+            if (isAdmin && msg.text === 'Sesi chat telah berakhir') {
+                setTimeout(() => {
+                    localStorage.removeItem('psd_chat_user_name');
+                    localStorage.removeItem('psd_chat_user_email');
+                    localStorage.removeItem('psd_chat_user_id');
+                    // Reset view to registration
+                    checkRegistration();
+                    // Clear messages area for next time
+                    chatMessages.innerHTML = `<div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 self-start max-w-[80%] border border-gray-100">Halo! Ada yang bisa kami bantu hari ini? 😊</div>`;
+                    renderedMsgIds.clear();
+                }, 3500);
+            }
+
             // Show badge if window closed and it's an admin message
             if (chatWindow.classList.contains('hidden') && isAdmin) {
                 chatBadge.classList.remove('hidden');

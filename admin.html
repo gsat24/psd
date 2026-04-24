@@ -1394,29 +1394,40 @@
         async function confirmEndSession() {
             if (!currentChatUser) return;
             
+            const userId = currentChatUser; // Store locally as we'll reset global soon
             closeEndSessionModal();
 
-            // Delete from localStorage
-            const allMsgs = JSON.parse(localStorage.getItem('psd_messages') || '[]');
-            const filtered = allMsgs.filter(m => m.sender_id !== currentChatUser);
-            localStorage.setItem('psd_messages', JSON.stringify(filtered));
-
-            // Delete from Supabase if available
-            if (window.supabaseInstance && !window.isSupabaseError) {
-                await window.supabaseInstance.from('messages').delete().eq('sender_id', currentChatUser);
-                await window.supabaseInstance.from('chat_sessions').delete().eq('sender_id', currentChatUser);
+            // 1. Send final message to signal end
+            if (window.sendChatMessage) {
+                const cu = window.getCurrentUser ? window.getCurrentUser() : { displayName: 'Admin PSD' };
+                await window.sendChatMessage('Sesi chat telah berakhir', true, cu.displayName || 'Admin PSD');
             }
 
-            // Reset UI
+            // Wait a bit to ensure the message is delivered via Supabase Realtime to the customer
+            await new Promise(r => setTimeout(r, 1500));
+
+            // 2. Delete from localStorage
+            const allMsgs = JSON.parse(localStorage.getItem('psd_messages') || '[]');
+            const filtered = allMsgs.filter(m => m.sender_id !== userId);
+            localStorage.setItem('psd_messages', JSON.stringify(filtered));
+
+            // 3. Delete from Supabase if available
+            if (window.supabaseInstance && !window.isSupabaseError) {
+                await window.supabaseInstance.from('messages').delete().eq('sender_id', userId);
+                await window.supabaseInstance.from('chat_sessions').delete().eq('sender_id', userId);
+            }
+
+            // 4. Reset UI
             currentChatUser = null;
             const nameEl = document.getElementById('active-chat-name');
             if (nameEl) nameEl.innerText = 'Pilih percakapan untuk memulai';
             document.getElementById('active-chat-user-id').innerText = '';
             document.getElementById('admin-chat-form').classList.add('hidden');
             document.getElementById('admin-chat-messages').innerHTML = `
-                <div class="flex-1 flex items-center justify-center text-gray-400 flex-col">
-                    <i class="fas fa-check-circle text-4xl mb-4 opacity-30 text-green-500"></i>
-                    <p>Sesi chat telah diakhiri.</p>
+                <div class="flex-1 flex items-center justify-center text-gray-400 flex-col animate-pulse">
+                    <i class="fas fa-check-circle text-4xl mb-4 text-green-500"></i>
+                    <h3 class="text-gray-800 font-bold">Sesi Berhasil Diakhiri</h3>
+                    <p class="text-sm">Riwayat chat telah dihapus.</p>
                 </div>`;
             const endBtn = document.getElementById('end-session-btn');
             if (endBtn) endBtn.style.display = 'none';
