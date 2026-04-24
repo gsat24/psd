@@ -337,6 +337,11 @@
                     const userId = window.getChatUserId ? window.getChatUserId() : null;
                     if (newMsg.sender_id === userId || newMsg.is_admin) {
                         appendMessage(newMsg);
+                        
+                        // Play sound if message is from admin
+                        if (newMsg.is_admin && window.playChatSound) {
+                            window.playChatSound();
+                        }
                     }
                 });
             }

@@ -440,6 +440,34 @@ window.getChatUserId = function() {
     return userId;
 };
 
+window.playChatSound = function() {
+    try {
+        if (!window.chatAudioCtx) {
+            window.chatAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (window.chatAudioCtx.state === 'suspended') {
+            window.chatAudioCtx.resume();
+        }
+        const osc = window.chatAudioCtx.createOscillator();
+        const gain = window.chatAudioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(window.chatAudioCtx.destination);
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, window.chatAudioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, window.chatAudioCtx.currentTime + 0.1);
+        
+        gain.gain.setValueAtTime(0, window.chatAudioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.2, window.chatAudioCtx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, window.chatAudioCtx.currentTime + 0.3);
+        
+        osc.start(window.chatAudioCtx.currentTime);
+        osc.stop(window.chatAudioCtx.currentTime + 0.3);
+    } catch (e) {
+        console.warn('Sound play failed', e);
+    }
+};
+
 window.saveChatSession = async function(name, email) {
     const sender_id = window.getChatUserId();
     

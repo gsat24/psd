@@ -1454,6 +1454,10 @@
                 window.subscribeToMessages((newMsg) => {
                     console.log('Realtime message received in Admin:', newMsg);
                     
+                    if (!newMsg.is_admin && window.playChatSound) {
+                        window.playChatSound();
+                    }
+
                     const badge = document.getElementById('admin-chat-badge');
                     if (document.getElementById('section-chat').classList.contains('hidden') && !newMsg.is_admin) {
                         badge.classList.remove('hidden');
