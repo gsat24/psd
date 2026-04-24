@@ -1330,7 +1330,12 @@
             `).join('');
 
             if (currentChatUser) {
-                renderMessages(messages.filter(m => m.sender_id === currentChatUser));
+                // Filter: show messages for this user + any legacy admin messages (for backward compatibility)
+                const filtered = messages.filter(m => 
+                    m.sender_id === currentChatUser || 
+                    (m.is_admin && m.sender_id === 'admin')
+                );
+                renderMessages(filtered);
             }
         }
 
@@ -1449,10 +1454,10 @@
         setTimeout(() => {
             if (window.subscribeToMessages) {
                 window.subscribeToMessages((newMsg) => {
-                    if (newMsg.is_admin) return; // Ignore our own messages here
+                    console.log('Realtime message received in Admin:', newMsg);
                     
                     const badge = document.getElementById('admin-chat-badge');
-                    if (document.getElementById('section-chat').classList.contains('hidden')) {
+                    if (document.getElementById('section-chat').classList.contains('hidden') && !newMsg.is_admin) {
                         badge.classList.remove('hidden');
                     }
                     renderChat();

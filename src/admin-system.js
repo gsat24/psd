@@ -465,6 +465,7 @@ window.saveChatSession = async function(name, email) {
 };
 
 window.getMessages = async function() {
+    console.log('getMessages() called');
     let messages = [];
     // 1. Try Supabase
     if (window.supabaseInstance && !window.isSupabaseError) {
@@ -473,7 +474,10 @@ window.getMessages = async function() {
                 .from('messages')
                 .select('*')
                 .order('created_at', { ascending: true });
-            if (!error && data) messages = data;
+            if (!error && data) {
+                console.log('Fetched messages from Supabase:', data.length);
+                messages = data;
+            }
         } catch (err) {
             console.error('Failed to get messages from Supabase:', err);
         }
@@ -481,6 +485,8 @@ window.getMessages = async function() {
     
     // 2. Fallback/Combine with LocalStorage
     const localMsgs = JSON.parse(localStorage.getItem('psd_messages') || '[]');
+    console.log('Fetched messages from LocalStorage:', localMsgs.length);
+    // ...
     // Simple merge by id/timestamp to avoid duplicates if both are active
     const combined = [...messages];
     localMsgs.forEach(lm => {
@@ -502,6 +508,7 @@ window.sendChatMessage = async function(text, isAdmin = false, senderName = 'Use
         is_admin: isAdmin,
         created_at: new Date().toISOString()
     };
+    console.log('sendChatMessage() attempt:', msg);
 
     let supabaseSuccess = false;
     if (window.supabaseInstance && !window.isSupabaseError) {
@@ -631,7 +638,7 @@ window.getGlobalSEO = async function() {
                 } else {
                     throw error;
                 }
-            } else {
+            } else if (data) {
                 return data;
             }
         } catch (err) {
