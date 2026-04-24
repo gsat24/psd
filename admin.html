@@ -1394,17 +1394,21 @@
         async function confirmEndSession() {
             if (!currentChatUser) return;
             
-            const userId = currentChatUser; // Store locally as we'll reset global soon
+            const userId = currentChatUser; 
             closeEndSessionModal();
 
             // 1. Send final message to signal end
             if (window.sendChatMessage) {
                 const cu = window.getCurrentUser ? window.getCurrentUser() : { displayName: 'Admin PSD' };
-                await window.sendChatMessage('Sesi chat telah berakhir', true, cu.displayName || 'Admin PSD');
+                await window.sendChatMessage('SESI CHAT TELAH BERAKHIR', true, cu.displayName || 'Admin PSD');
             }
 
-            // Wait a bit to ensure the message is delivered via Supabase Realtime to the customer
-            await new Promise(r => setTimeout(r, 1500));
+            // Show temporary status in header
+            const nameEl = document.getElementById('active-chat-name');
+            if (nameEl) nameEl.innerHTML = '<span class="text-red-500"><i class="fas fa-hand-paper mr-2"></i>Menutup Sesi...</span>';
+
+            // Wait 3 seconds to ensure delivery
+            await new Promise(r => setTimeout(r, 3000));
 
             // 2. Delete from localStorage
             const allMsgs = JSON.parse(localStorage.getItem('psd_messages') || '[]');
@@ -1419,15 +1423,14 @@
 
             // 4. Reset UI
             currentChatUser = null;
-            const nameEl = document.getElementById('active-chat-name');
             if (nameEl) nameEl.innerText = 'Pilih percakapan untuk memulai';
             document.getElementById('active-chat-user-id').innerText = '';
             document.getElementById('admin-chat-form').classList.add('hidden');
             document.getElementById('admin-chat-messages').innerHTML = `
-                <div class="flex-1 flex items-center justify-center text-gray-400 flex-col animate-pulse">
+                <div class="flex-1 flex items-center justify-center text-gray-400 flex-col">
                     <i class="fas fa-check-circle text-4xl mb-4 text-green-500"></i>
-                    <h3 class="text-gray-800 font-bold">Sesi Berhasil Diakhiri</h3>
-                    <p class="text-sm">Riwayat chat telah dihapus.</p>
+                    <h3 class="text-gray-800 font-bold">Sesi Ditutup</h3>
+                    <p class="text-sm">Seluruh riwayat pesan telah dihapus.</p>
                 </div>`;
             const endBtn = document.getElementById('end-session-btn');
             if (endBtn) endBtn.style.display = 'none';

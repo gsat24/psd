@@ -276,18 +276,24 @@
             chatMessages.appendChild(msgDiv);
             scrollToBottom();
 
-            // Detect Session End
-            if (isAdmin && msg.text === 'Sesi chat telah berakhir') {
+            // Detect Session End (Case Insensitive)
+            if (isAdmin && (msg.text || '').toUpperCase() === 'SESI CHAT TELAH BERAKHIR') {
+                const systemMsg = document.createElement('div');
+                systemMsg.className = 'w-full text-center py-4 text-red-500 font-bold text-[10px] uppercase tracking-widest animate-pulse';
+                systemMsg.innerHTML = '<i class="fas fa-hand-paper mr-2"></i> Sesi chat telah diakhiri oleh admin';
+                chatMessages.appendChild(systemMsg);
+                scrollToBottom();
+
                 setTimeout(() => {
                     localStorage.removeItem('psd_chat_user_name');
                     localStorage.removeItem('psd_chat_user_email');
                     localStorage.removeItem('psd_chat_user_id');
-                    // Reset view to registration
+                    localStorage.removeItem('psd_chat_session_id');
+                    renderedMsgIds.clear();
                     checkRegistration();
                     // Clear messages area for next time
                     chatMessages.innerHTML = `<div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 self-start max-w-[80%] border border-gray-100">Halo! Ada yang bisa kami bantu hari ini? 😊</div>`;
-                    renderedMsgIds.clear();
-                }, 3500);
+                }, 4000);
             }
 
             // Show badge if window closed and it's an admin message
