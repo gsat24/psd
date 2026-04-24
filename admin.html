@@ -1293,14 +1293,21 @@
             // Group messages by sender_id (except admin)
             const users = {};
             messages.forEach(m => {
-                if (!m.is_admin) {
-                    const session = sessionMap[m.sender_id] || {};
-                    users[m.sender_id] = {
+                const uid = m.sender_id;
+                // Initialize user from customer messages or session map
+                if (!users[uid] && (!m.is_admin || sessionMap[uid])) {
+                    const session = sessionMap[uid] || {};
+                    users[uid] = {
                         name: session.name || m.sender_name || 'Anonymous User',
                         email: session.email || '',
                         lastMsg: m.text,
                         time: m.created_at
                     };
+                }
+                // Update last message and time for the preview (from anyone)
+                if (users[uid]) {
+                    users[uid].lastMsg = m.text;
+                    users[uid].time = m.created_at;
                 }
             });
 
