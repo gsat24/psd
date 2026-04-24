@@ -637,13 +637,14 @@ window.getCompanyInfo = async function() {
 };
 
 window.updateCompanyInfoInDB = async function(info) {
-    console.log('updateCompanyInfoInDB() called with:', info);
+    console.log('updateCompanyInfoInDB() starting...', info);
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
-            // Always stringify social object for database compatibility (some DBs treat it as text)
+            // Ensure social is a string for the database
             const socialStr = typeof info.social === 'object' ? JSON.stringify(info.social) : info.social;
             
-            const updateData = {
+            const dataToSave = {
+                id: 1, // Ensure we always target the first row
                 email: info.email,
                 phone: info.phone,
                 address: info.address,
@@ -654,9 +655,10 @@ window.updateCompanyInfoInDB = async function(info) {
                 whatsapp_number: info.whatsapp_number
             };
 
-            const { error } = await window.supabaseInstance.from('company').update(updateData).eq('id', 1);
+            console.log('Upserting to Supabase:', dataToSave);
+            const { error } = await window.supabaseInstance.from('company').upsert([dataToSave]);
             if (error) throw error;
-            console.log('Supabase company update successful');
+            console.log('Supabase company upsert successful');
         } catch (err) {
             console.error('Failed to update company info in Supabase:', err);
         }
@@ -668,6 +670,7 @@ window.updateCompanyInfoInDB = async function(info) {
     localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(updated));
     console.log('LocalStorage company update successful');
 };
+
 
 
 window.syncCompanyInfo = async function() {
@@ -684,19 +687,26 @@ window.syncCompanyInfo = async function() {
         phoneEls.forEach(el => el.innerText = info.phone);
         addrEls.forEach(el => el.innerText = info.address);
 
-        // Social Links (Fixed bug where nav social didn't update)
-        const socialInstas = document.querySelectorAll('[id$="-social-instagram"]');
-        const socialFBs = document.querySelectorAll('[id$="-social-facebook"]');
-        const socialTikToks = document.querySelectorAll('[id$="-social-tiktok"]');
+        // Social Links (Only target anchors to avoid messing with admin inputs)
+        const socialInstas = document.querySelectorAll('a[id$="-social-instagram"]');
+        const socialFBs = document.querySelectorAll('a[id$="-social-facebook"]');
+        const socialTikToks = document.querySelectorAll('a[id$="-social-tiktok"]');
         
         let social = info.social;
-        if (typeof social === 'string') {
-            try { social = JSON.parse(social); } catch(e) { console.error('Parse social failed', e); }
+        console.log('syncCompanyInfo processing social:', social);
+
+        if (typeof social === 'string' && social.trim() !== '') {
+            try { 
+                social = JSON.parse(social); 
+            } catch(e) { 
+                console.error('Parse social failed', e); 
+            }
         }
 
         socialInstas.forEach(el => el.href = social?.instagram || '#');
         socialFBs.forEach(el => el.href = social?.facebook || '#');
         socialTikToks.forEach(el => el.href = social?.tiktok || '#');
+
         
         // Playstore & WhatsApp
         const playStoreLinks = document.querySelectorAll('[id$="-playstore-link"]');

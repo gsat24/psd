@@ -1030,13 +1030,16 @@
                 // Populate Social Links
                 if (info.social) {
                     let social = info.social;
-                    if (typeof social === 'string') {
+                    if (typeof social === 'string' && social.trim() !== '') {
                         try { social = JSON.parse(social); } catch(e) {}
                     }
-                    if (document.getElementById('social-instagram')) document.getElementById('social-instagram').value = social.instagram || '';
-                    if (document.getElementById('social-facebook')) document.getElementById('social-facebook').value = social.facebook || '';
-                    if (document.getElementById('social-tiktok')) document.getElementById('social-tiktok').value = social.tiktok || '';
+                    if (social && typeof social === 'object') {
+                        if (document.getElementById('social-instagram')) document.getElementById('social-instagram').value = social.instagram || '';
+                        if (document.getElementById('social-facebook')) document.getElementById('social-facebook').value = social.facebook || '';
+                        if (document.getElementById('social-tiktok')) document.getElementById('social-tiktok').value = social.tiktok || '';
+                    }
                 }
+
             }
         }
 
@@ -1061,13 +1064,16 @@
             if (window.updateCompanyInfoInDB) {
                 await window.updateCompanyInfoInDB(info);
             }
-            alert('Informasi perusahaan berhasil diperbarui!');
             
-            // Re-sync local UI
+            // Re-populate and sync to ensure UI is fresh
+            await populateCompanyInfo();
             if (window.syncCompanyInfo) {
                 window.syncCompanyInfo();
             }
+            
+            alert('Informasi perusahaan berhasil diperbarui!');
         }
+
 
 
         async function populateGlobalSEO() {
