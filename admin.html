@@ -447,18 +447,17 @@
 
                 <!-- Chat View -->
                 <div class="flex-1 flex flex-col bg-gray-50">
-                <div id="active-chat-header" class="p-4 bg-white border-b border-gray-100 font-bold text-psd-green flex justify-between items-center">
+                    <div id="active-chat-header" class="p-4 bg-white border-b border-gray-100 font-bold text-psd-green flex justify-between items-center">
                         <div class="flex flex-col">
                             <span id="active-chat-name">Pilih percakapan untuk memulai</span>
                             <span id="active-chat-user-id" class="text-[10px] text-gray-400 font-normal mt-0.5"></span>
                         </div>
-                        <button id="end-session-btn" onclick="endChatSession()" class="hidden items-center gap-1.5 text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-semibold">
+                        <button id="end-session-btn" onclick="endChatSession()" style="display:none" class="flex items-center gap-1.5 text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-semibold">
                             <i class="fas fa-times-circle text-xs"></i>
                             End Session
                         </button>
                     </div>
                     <div id="admin-chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col">
-                        <!-- Messages for selected user -->
                         <div class="flex-1 flex items-center justify-center text-gray-400 flex-col">
                             <i class="fas fa-comments text-4xl mb-4 opacity-20"></i>
                             <p>Klik salah satu user di samping untuk melihat pesan</p>
@@ -1316,14 +1315,13 @@
 
         async function selectChatUser(userId, name, email) {
             currentChatUser = userId;
-            // Update header
             const nameEl = document.getElementById('active-chat-name');
             if (nameEl) nameEl.innerText = 'Chat dengan ' + name;
             document.getElementById('active-chat-user-id').innerText = email ? `Email: ${email} | ID: ${userId}` : `ID: ${userId}`;
             document.getElementById('admin-chat-form').classList.remove('hidden');
             // Show End Session button
             const endBtn = document.getElementById('end-session-btn');
-            if (endBtn) endBtn.classList.replace('hidden', 'flex');
+            if (endBtn) endBtn.style.display = 'flex';
             renderChat();
         }
 
@@ -1373,7 +1371,7 @@
                     <p>Sesi chat telah diakhiri.</p>
                 </div>`;
             const endBtn = document.getElementById('end-session-btn');
-            if (endBtn) endBtn.classList.replace('flex', 'hidden');
+            if (endBtn) endBtn.style.display = 'none';
 
             await renderChat();
         }
