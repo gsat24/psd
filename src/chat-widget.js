@@ -6,46 +6,60 @@
 (function() {
     const WIDGET_HTML = `
     <!-- Live Chat Widget -->
-    <div id="chat-widget" class="fixed bottom-6 left-6 z-[9999] font-sans">
+    <div id="chat-widget" class="fixed bottom-6 right-6 z-[9999] font-sans flex items-end gap-3">
+
+        <!-- Animated "Admin Online" Tooltip -->
+        <div id="chat-online-label" class="mb-1 flex items-center gap-2 bg-white rounded-full shadow-lg px-4 py-2 border border-gray-100 opacity-0 transition-opacity duration-700 pointer-events-none select-none" style="transition: opacity 0.7s ease;">
+            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block"></span>
+            <span id="chat-online-text" class="text-sm font-semibold text-gray-700 whitespace-nowrap"></span>
+        </div>
+
         <!-- Chat Bubble -->
-        <button id="chat-bubble" class="bg-[#0A5C4F] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center relative">
+        <button id="chat-bubble" class="bg-[#0A5C4F] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center relative flex-shrink-0">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
             <span id="chat-badge" class="absolute -top-1 -right-1 bg-[#FFD700] text-[#0A5C4F] text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">1</span>
         </button>
 
         <!-- Chat Window -->
-        <div id="chat-window" class="absolute bottom-20 left-0 w-[300px] md:w-[350px] bg-white rounded-2xl shadow-2xl border border-gray-100 hidden flex-col overflow-hidden animate-fade-in-up">
+        <div id="chat-window" class="absolute bottom-20 right-0 w-[300px] md:w-[360px] bg-white rounded-2xl shadow-2xl border border-gray-100 hidden flex-col overflow-hidden" style="animation: none;">
             <!-- Header -->
-            <div class="bg-[#0A5C4F] p-4 text-white flex justify-between items-center">
+            <div class="bg-gradient-to-r from-[#0A5C4F] to-[#0d7a65] p-4 text-white flex justify-between items-center">
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
                         <i class="fas fa-headset"></i>
                     </div>
                     <div>
                         <h4 class="font-bold text-sm">Live Chat PSD</h4>
-                        <p class="text-[10px] text-white/80">Online | Kami siap membantu</p>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>
+                            <p id="chat-admin-name-header" class="text-[10px] text-white/90">Online | Siap membantu Anda</p>
+                        </div>
                     </div>
                 </div>
-                <button id="close-chat" class="hover:text-[#FFD700] transition">
+                <button id="close-chat" class="hover:text-[#FFD700] transition w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
             <!-- Registration View -->
             <div id="chat-reg-view" class="p-6 space-y-4 bg-white flex-col hidden">
-                <div class="text-center mb-4">
+                <div class="text-center mb-2">
+                    <div class="w-16 h-16 bg-[#0A5C4F]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-user-circle text-[#0A5C4F] text-3xl"></i>
+                    </div>
                     <h5 class="font-bold text-gray-800">Selamat Datang!</h5>
-                    <p class="text-xs text-gray-500">Silakan isi data diri untuk memulai chat.</p>
+                    <p class="text-xs text-gray-500 mt-1">Isi data diri untuk memulai chat dengan admin kami.</p>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Nama Lengkap</label>
-                    <input type="text" id="chat-reg-name" placeholder="Nama Anda" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0A5C4F] outline-none">
+                    <input type="text" id="chat-reg-name" placeholder="Nama Anda" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Alamat Email</label>
-                    <input type="email" id="chat-reg-email" placeholder="email@contoh.com" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0A5C4F] outline-none">
+                    <input type="email" id="chat-reg-email" placeholder="email@contoh.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
                 </div>
-                <button id="chat-reg-btn" class="w-full bg-[#0A5C4F] text-white font-bold py-3 rounded-xl hover:bg-opacity-90 transition shadow-lg shadow-[#0A5C4F]/20 mt-2">
+                <button id="chat-reg-btn" class="w-full bg-[#0A5C4F] text-white font-bold py-3 rounded-xl hover:bg-[#084a40] transition shadow-lg shadow-[#0A5C4F]/20 mt-1 flex items-center justify-center gap-2">
+                    <i class="fas fa-comments text-sm"></i>
                     Mulai Chat Sekarang
                 </button>
             </div>
@@ -53,17 +67,17 @@
             <!-- Chat Content View (Initially Hidden) -->
             <div id="chat-content-view" class="flex flex-col hidden">
                 <!-- Messages Area -->
-                <div id="chat-messages" class="h-80 overflow-y-auto p-4 space-y-4 bg-gray-50 flex flex-col">
+                <div id="chat-messages" class="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50 flex flex-col">
                     <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 self-start max-w-[80%] border border-gray-100">
-                        Halo! Ada yang bisa kami bantu hari ini?
+                        Halo! Ada yang bisa kami bantu hari ini? 😊
                     </div>
                 </div>
 
                 <!-- Input Area -->
-                <form id="chat-form" class="p-4 border-t border-gray-100 flex items-center space-x-2 bg-white">
-                    <input type="text" id="chat-input" placeholder="Tulis pesan..." class="flex-1 bg-gray-100 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-[#0A5C4F] outline-none text-gray-800">
-                    <button type="submit" class="bg-[#0A5C4F] text-white p-2 rounded-xl hover:bg-opacity-90 transition">
-                        <i class="fas fa-paper-plane"></i>
+                <form id="chat-form" class="p-3 border-t border-gray-100 flex items-center space-x-2 bg-white">
+                    <input type="text" id="chat-input" placeholder="Tulis pesan..." class="flex-1 bg-gray-100 border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#0A5C4F] outline-none text-gray-800 transition">
+                    <button type="submit" class="bg-[#0A5C4F] text-white p-2.5 rounded-xl hover:bg-[#084a40] transition flex-shrink-0">
+                        <i class="fas fa-paper-plane text-sm"></i>
                     </button>
                 </form>
             </div>
@@ -71,15 +85,51 @@
     </div>
 
     <style>
-        @keyframes fade-in-up {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes chat-fade-in-up {
+            from { opacity: 0; transform: translateY(16px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .animate-fade-in-up { animation: fade-in-up 0.3s ease-out; }
+        .chat-anim-open { animation: chat-fade-in-up 0.3s ease-out forwards; }
         #chat-messages::-webkit-scrollbar { width: 4px; }
         #chat-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
     `;
+
+    function getAdminDisplayName() {
+        // Try to get from localStorage (set when admin logs in via chat_sessions or company name)
+        try {
+            // Check if an admin is logged into the admin panel (stored in localStorage for cross-tab awareness)
+            const adminOnline = localStorage.getItem('psd_admin_online_name');
+            if (adminOnline) return adminOnline;
+        } catch(e) {}
+        return 'Admin PSD';
+    }
+
+    function startOnlineAnimation(labelEl, textEl) {
+        let visible = false;
+        const adminName = getAdminDisplayName();
+        textEl.textContent = adminName + ' Online';
+
+        function toggle() {
+            if (visible) {
+                // Fade out
+                labelEl.style.opacity = '0';
+                visible = false;
+                setTimeout(toggle, 2500); // jeda 2.5s saat hilang
+            } else {
+                // Fade in
+                labelEl.style.opacity = '1';
+                visible = true;
+                // Update name in case it changed
+                const name = getAdminDisplayName();
+                textEl.textContent = name + ' Online';
+                setTimeout(toggle, 3500); // tampil 3.5s
+            }
+        }
+
+        // Start after 1.5s delay
+        setTimeout(toggle, 1500);
+    }
 
     function init() {
         if (document.getElementById('chat-widget')) return;
@@ -96,20 +146,43 @@
         const chatInput = document.getElementById('chat-input');
         const chatMessages = document.getElementById('chat-messages');
         const chatBadge = document.getElementById('chat-badge');
+        const onlineLabel = document.getElementById('chat-online-label');
+        const onlineText = document.getElementById('chat-online-text');
+        const adminNameHeader = document.getElementById('chat-admin-name-header');
         
         const regView = document.getElementById('chat-reg-view');
         const contentView = document.getElementById('chat-content-view');
         const regBtn = document.getElementById('chat-reg-btn');
 
+        // Start animated "Admin Online" label
+        startOnlineAnimation(onlineLabel, onlineText);
+
+        // Update header with admin name
+        const adminName = getAdminDisplayName();
+        if (adminNameHeader) adminNameHeader.textContent = adminName + ' | Siap membantu Anda';
+
         // Toggle Chat Window
         chatBubble.addEventListener('click', () => {
-            chatWindow.classList.toggle('hidden');
+            const isHidden = chatWindow.classList.contains('hidden');
+            if (isHidden) {
+                chatWindow.classList.remove('hidden');
+                chatWindow.classList.add('chat-anim-open');
+                // Hide the online label when chat is open
+                onlineLabel.style.opacity = '0';
+                onlineLabel.style.pointerEvents = 'none';
+            } else {
+                chatWindow.classList.add('hidden');
+                chatWindow.classList.remove('chat-anim-open');
+            }
             chatBadge.classList.add('hidden');
             checkRegistration();
             scrollToBottom();
         });
 
-        closeChat.addEventListener('click', () => chatWindow.classList.add('hidden'));
+        closeChat.addEventListener('click', () => {
+            chatWindow.classList.add('hidden');
+            chatWindow.classList.remove('chat-anim-open');
+        });
 
         function checkRegistration() {
             const userName = localStorage.getItem('psd_chat_user_name');
@@ -131,67 +204,95 @@
             const email = document.getElementById('chat-reg-email').value.trim();
 
             if (!name || !email) {
-                alert('Silakan isi nama dan email Anda.');
+                // Shake effect
+                regBtn.style.transform = 'translateX(-4px)';
+                setTimeout(() => { regBtn.style.transform = 'translateX(4px)'; }, 100);
+                setTimeout(() => { regBtn.style.transform = 'none'; }, 200);
                 return;
             }
 
-            regBtn.innerText = 'Menghubungkan...';
+            regBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> Menghubungkan...';
             regBtn.disabled = true;
 
-            const res = await window.saveChatSession(name, email);
-            if (res.success) {
-                checkRegistration();
-                // Send initial greeting with user info if it's a new session
-                await window.sendChatMessage(`Halo, saya ${name}. Saya ingin bertanya...`);
+            if (window.saveChatSession) {
+                const res = await window.saveChatSession(name, email);
+                if (res.success) {
+                    checkRegistration();
+                    if (window.sendChatMessage) {
+                        await window.sendChatMessage(`Halo, saya ${name}. Saya ingin bertanya...`, false, name);
+                    }
+                } else {
+                    // Even if Supabase fails, allow local-mode chat
+                    localStorage.setItem('psd_chat_user_name', name);
+                    localStorage.setItem('psd_chat_user_email', email);
+                    checkRegistration();
+                }
             } else {
-                alert('Gagal memulai chat: ' + res.error);
+                localStorage.setItem('psd_chat_user_name', name);
+                localStorage.setItem('psd_chat_user_email', email);
+                checkRegistration();
             }
-            regBtn.innerText = 'Mulai Chat Sekarang';
+            
+            regBtn.innerHTML = '<i class="fas fa-comments text-sm"></i> Mulai Chat Sekarang';
             regBtn.disabled = false;
         });
 
         const scrollToBottom = () => {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            setTimeout(() => { chatMessages.scrollTop = chatMessages.scrollHeight; }, 50);
         };
 
-        const appendMessage = (msg) => {
-            const isMyMsg = msg.sender_id === window.getChatUserId();
+        const renderedMsgIds = new Set();
+
+        const appendMessage = (msg, skipDupeCheck = false) => {
+            const userId = window.getChatUserId ? window.getChatUserId() : null;
+            const isMyMsg = msg.sender_id === userId;
             const isAdmin = msg.is_admin;
             
+            // Deduplicate by id or text+time
+            const msgKey = msg.id || (msg.text + '|' + msg.created_at);
+            if (!skipDupeCheck && renderedMsgIds.has(msgKey)) return;
+            renderedMsgIds.add(msgKey);
+
             const msgDiv = document.createElement('div');
-            msgDiv.className = `max-w-[80%] p-3 rounded-2xl text-sm shadow-sm border ${
-                isAdmin ? 'self-start bg-white rounded-tl-none border-gray-100 text-gray-700' : 
-                isMyMsg ? 'self-end bg-[#0A5C4F] text-white rounded-tr-none border-[#0A5C4F]/20' :
-                'self-start bg-white rounded-tl-none border-gray-100 text-gray-700'
+            msgDiv.className = `max-w-[82%] p-3 rounded-2xl text-sm shadow-sm border ${
+                isAdmin
+                    ? 'self-start bg-white rounded-tl-none border-gray-100 text-gray-700'
+                    : isMyMsg
+                        ? 'self-end bg-[#0A5C4F] text-white rounded-tr-none border-[#0A5C4F]/20'
+                        : 'self-start bg-white rounded-tl-none border-gray-100 text-gray-700'
             }`;
             
+            const timeStr = msg.created_at
+                ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
             msgDiv.innerHTML = `
-                ${isAdmin ? '<div class="text-[10px] font-bold text-[#0A5C4F] mb-1">Admin PSD</div>' : ''}
+                ${isAdmin ? `<div class="text-[10px] font-bold text-[#0A5C4F] mb-1">${msg.sender_name || 'Admin PSD'}</div>` : ''}
                 <div>${msg.text}</div>
-                <div class="text-[9px] mt-1 ${isMyMsg ? 'text-white/60' : 'text-gray-400 text-right'}">
-                    ${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                <div class="text-[9px] mt-1 ${isMyMsg && !isAdmin ? 'text-white/60 text-right' : 'text-gray-400'}">
+                    ${timeStr}
                 </div>
             `;
             chatMessages.appendChild(msgDiv);
             scrollToBottom();
 
+            // Show badge if window closed and it's an admin message
             if (chatWindow.classList.contains('hidden') && isAdmin) {
                 chatBadge.classList.remove('hidden');
             }
         };
 
         // Wait for admin-system to load functions
-        const waitForDeps = async () => {
+        const waitForDeps = () => {
             return new Promise(resolve => {
                 let attempts = 0;
                 const check = () => {
                     attempts++;
-                    if (window.getMessages && window.saveChatSession) {
-                        if (window.supabaseInstance || window.isSupabaseError || attempts > 50) {
-                            resolve();
-                            return;
-                        }
+                    if (window.getChatUserId && window.saveChatSession) {
+                        resolve();
+                        return;
                     }
+                    if (attempts > 60) { resolve(); return; }
                     setTimeout(check, 100);
                 };
                 check();
@@ -200,34 +301,40 @@
 
         waitForDeps().then(async () => {
             // Load Existing Messages
-            const messages = await window.getMessages();
-            const userId = window.getChatUserId();
-            messages.forEach(msg => {
-                if (msg.sender_id === userId || msg.is_admin) {
-                    appendMessage(msg);
-                }
-            });
+            if (window.getMessages) {
+                const messages = await window.getMessages();
+                const userId = window.getChatUserId ? window.getChatUserId() : null;
+                messages.forEach(msg => {
+                    if (msg.sender_id === userId || msg.is_admin) {
+                        appendMessage(msg);
+                    }
+                });
+            }
 
             // Subscribe to Realtime
-            window.subscribeToMessages((newMsg) => {
-                const userId = window.getChatUserId();
-                if (newMsg.sender_id === userId || newMsg.is_admin) {
-                    const timestamp = new Date(newMsg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                    const existing = Array.from(chatMessages.children).some(el => el.innerText.includes(newMsg.text) && el.innerText.includes(timestamp));
-                    if (!existing) appendMessage(newMsg);
-                }
-            });
+            if (window.subscribeToMessages) {
+                window.subscribeToMessages((newMsg) => {
+                    const userId = window.getChatUserId ? window.getChatUserId() : null;
+                    if (newMsg.sender_id === userId || newMsg.is_admin) {
+                        appendMessage(newMsg);
+                    }
+                });
+            }
 
             // Send Message
             chatForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const text = chatInput.value.trim();
                 if (!text) return;
-
+                
+                const userName = localStorage.getItem('psd_chat_user_name') || 'User';
                 chatInput.value = '';
-                const res = await window.sendChatMessage(text);
-                if (!res.success) {
-                    console.error('Chat error:', res.error);
+
+                if (window.sendChatMessage) {
+                    const res = await window.sendChatMessage(text, false, userName);
+                    if (!res.success) {
+                        console.error('Chat send error:', res.error);
+                    }
                 }
             });
         });

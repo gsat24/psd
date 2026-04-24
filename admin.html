@@ -8,11 +8,14 @@
     <script src="src/tw-config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- CryptoJS for Encryption -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="src/admin-system.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <!-- Quill.js Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
@@ -23,6 +26,11 @@
         .ql-editor { min-height: 200px; font-family: 'Poppins', sans-serif; }
         .ql-toolbar.ql-snow { border-radius: 0.5rem 0.5rem 0 0; }
         .ql-container.ql-snow { border-radius: 0 0 0.5rem 0.5rem; }
+        /* Custom Scrollbar for Sidebar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
     </style>
 </head>
 <body class="bg-gray-100 flex h-screen overflow-hidden">
@@ -60,7 +68,7 @@
             <h2 class="text-center font-bold text-lg uppercase tracking-wider">Admin Panel</h2>
         </div>
         
-        <nav class="flex-1 mt-6">
+        <nav class="flex-1 mt-6 overflow-y-auto custom-scrollbar">
             <a href="#" onclick="showSection('dashboard')" class="sidebar-item flex items-center px-6 py-4 hover:bg-white/10 transition sidebar-active" id="nav-dashboard" data-aos="fade-right" data-aos-delay="50">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 Dashboard
@@ -102,6 +110,10 @@
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                 Keamanan
             </a>
+            <a href="#" onclick="showSection('users')" class="sidebar-item flex items-center px-6 py-4 hover:bg-white/10 transition" id="nav-users" data-aos="fade-right" data-aos-delay="450">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Manajemen User
+            </a>
         </nav>
 
         <div class="p-6 mt-auto border-t border-white/10 space-y-4">
@@ -121,49 +133,128 @@
         
         <!-- Dashboard Section -->
         <section id="section-dashboard" class="admin-section">
-            <h1 class="text-3xl font-bold text-gray-800 mb-8">Dashboard Analytics</h1>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center">
-                    <div class="p-4 bg-blue-50 rounded-xl mr-4">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Total Pengunjung</p>
-                        <h3 id="stat-visits" class="text-3xl font-bold text-gray-800">0</h3>
-                    </div>
+            <!-- Header Row -->
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Dashboard Analytics</h1>
+                    <p class="text-gray-500 text-sm mt-1">Pantau performa website Pesantren Smart Digital secara real-time</p>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center">
-                    <div class="p-4 bg-psd-green/10 rounded-xl mr-4">
-                        <svg class="w-8 h-8 text-psd-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                <div class="flex flex-wrap gap-3 items-center">
+                    <!-- Date Filter -->
+                    <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2 shadow-sm">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <input type="date" id="filter-date-start" class="text-sm text-gray-700 outline-none border-none bg-transparent cursor-pointer">
+                        <span class="text-gray-400 text-sm">–</span>
+                        <input type="date" id="filter-date-end" class="text-sm text-gray-700 outline-none border-none bg-transparent cursor-pointer">
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Berita Publish</p>
-                        <h3 id="stat-news" class="text-3xl font-bold text-gray-800">0</h3>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center">
-                    <div class="p-4 bg-yellow-50 rounded-xl mr-4">
-                        <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Pesan Masuk</p>
-                        <h3 id="stat-feedback" class="text-3xl font-bold text-gray-800">0</h3>
-                    </div>
+                    <button onclick="applyDateFilter()" class="bg-psd-green text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-opacity-90 transition shadow-sm">
+                        Filter
+                    </button>
+                    <button onclick="resetDateFilter()" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-gray-200 transition">
+                        Reset
+                    </button>
+                    <button onclick="window.syncLocalToSupabase()" class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-opacity-90 transition font-semibold flex items-center shadow-sm text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        Sync ke Database
+                    </button>
                 </div>
             </div>
 
-            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                <h3 class="text-lg font-bold text-gray-800 mb-6">Traffic Terkini</h3>
+            <!-- Stat Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-5 rounded-2xl shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-white/20 rounded-xl p-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        </div>
+                        <span class="text-blue-200 text-xs font-medium" id="visits-trend">—</span>
+                    </div>
+                    <h3 id="stat-visits" class="text-3xl font-bold">0</h3>
+                    <p class="text-blue-100 text-xs mt-1 uppercase tracking-wider">Total Pengunjung</p>
+                </div>
+                <div class="bg-gradient-to-br from-emerald-500 to-green-600 text-white p-5 rounded-2xl shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-white/20 rounded-xl p-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                        </div>
+                    </div>
+                    <h3 id="stat-news" class="text-3xl font-bold">0</h3>
+                    <p class="text-green-100 text-xs mt-1 uppercase tracking-wider">Berita Publish</p>
+                </div>
+                <div class="bg-gradient-to-br from-amber-400 to-orange-500 text-white p-5 rounded-2xl shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-white/20 rounded-xl p-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        </div>
+                    </div>
+                    <h3 id="stat-feedback" class="text-3xl font-bold">0</h3>
+                    <p class="text-amber-100 text-xs mt-1 uppercase tracking-wider">Pesan Masuk</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-violet-600 text-white p-5 rounded-2xl shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-white/20 rounded-xl p-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"/></svg>
+                        </div>
+                    </div>
+                    <h3 id="stat-features" class="text-3xl font-bold">0</h3>
+                    <p class="text-purple-100 text-xs mt-1 uppercase tracking-wider">Fitur Aktif</p>
+                </div>
+                <div class="bg-gradient-to-br from-rose-500 to-pink-600 text-white p-5 rounded-2xl shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-white/20 rounded-xl p-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                    </div>
+                    <h3 id="stat-faq" class="text-3xl font-bold">0</h3>
+                    <p class="text-rose-100 text-xs mt-1 uppercase tracking-wider">Total FAQ</p>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Line Chart: Traffic Over Time -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">Grafik Pengunjung</h3>
+                            <p class="text-xs text-gray-400">Jumlah kunjungan per hari</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="setChartPeriod(7)" id="chart-btn-7" class="text-xs px-3 py-1 rounded-lg bg-psd-green text-white font-semibold">7 Hari</button>
+                            <button onclick="setChartPeriod(14)" id="chart-btn-14" class="text-xs px-3 py-1 rounded-lg bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition">14 Hari</button>
+                            <button onclick="setChartPeriod(30)" id="chart-btn-30" class="text-xs px-3 py-1 rounded-lg bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition">30 Hari</button>
+                        </div>
+                    </div>
+                    <canvas id="chart-traffic" height="100"></canvas>
+                </div>
+
+                <!-- Doughnut Chart: Page Popularity -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="mb-6">
+                        <h3 class="text-lg font-bold text-gray-800">Halaman Populer</h3>
+                        <p class="text-xs text-gray-400">Distribusi kunjungan per halaman</p>
+                    </div>
+                    <canvas id="chart-pages" height="180"></canvas>
+                    <div id="chart-pages-legend" class="mt-4 space-y-2 text-xs"></div>
+                </div>
+            </div>
+
+            <!-- Traffic Table -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold text-gray-800">Log Kunjungan Terkini</h3>
+                    <span id="traffic-count" class="text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded-full">0 kunjungan</span>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
-                        <thead class="bg-gray-50 text-gray-600 text-xs uppercase font-bold tracking-wider">
+                        <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-bold tracking-wider rounded-lg">
                             <tr>
-                                <th class="px-6 py-4">Halaman</th>
-                                <th class="px-6 py-4">Waktu</th>
-                                <th class="px-6 py-4">Referrer</th>
+                                <th class="px-5 py-3 rounded-l-lg">Halaman</th>
+                                <th class="px-5 py-3">Waktu</th>
+                                <th class="px-5 py-3 rounded-r-lg">Browser</th>
                             </tr>
                         </thead>
-                        <tbody id="analytics-list" class="text-sm text-gray-600">
+                        <tbody id="analytics-list" class="text-sm text-gray-600 divide-y divide-gray-50">
                             <!-- Analytics data -->
                         </tbody>
                     </table>
@@ -418,6 +509,46 @@
             </div>
         </section>
 
+        <!-- User Management Section -->
+        <section id="section-users" class="admin-section hidden">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Manajemen User</h1>
+                    <p class="text-gray-500 text-sm mt-1">Kelola akun admin yang dapat mengakses panel ini</p>
+                </div>
+                <button onclick="openUserModal()" class="bg-psd-green text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition font-semibold flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Tambah User
+                </button>
+            </div>
+
+            <!-- Current Login Info -->
+            <div id="current-user-banner" class="mb-6 p-4 bg-psd-green/10 border border-psd-green/20 rounded-xl flex items-center gap-3">
+                <div class="w-10 h-10 bg-psd-green rounded-full flex items-center justify-center text-white font-bold" id="current-user-avatar">A</div>
+                <div>
+                    <div class="font-bold text-psd-green" id="current-user-display">Admin</div>
+                    <div class="text-xs text-gray-500">Sesi login aktif</div>
+                </div>
+                <span class="ml-auto text-xs bg-psd-green text-white px-3 py-1 rounded-full">Sedang Login</span>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Nama Tampilan</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Username</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">Role</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-list">
+                        <!-- User rows populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
     </main>
 
     <!-- News Modal -->
@@ -473,6 +604,36 @@
         </div>
     </div>
 
+    <!-- User Modal -->
+    <div id="userModal" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-center justify-center p-6">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+            <div class="p-8 border-b border-gray-100">
+                <h2 id="userModalTitle" class="text-2xl font-bold text-gray-800">Tambah User Baru</h2>
+                <p class="text-gray-500 text-sm mt-1">User baru akan langsung bisa login ke admin panel</p>
+            </div>
+            <div class="p-8 space-y-4">
+                <input type="hidden" id="edit-user-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Tampilan</label>
+                    <input type="text" id="user-display-name" placeholder="Contoh: Ahmad Rifai" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Username (untuk login)</label>
+                    <input type="text" id="user-username" placeholder="Contoh: ahmad" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="user-password" placeholder="Minimal 6 karakter" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-psd-green focus:border-transparent">
+                    <p class="text-xs text-gray-400 mt-1" id="user-password-hint">Kosongkan jika tidak ingin mengubah password</p>
+                </div>
+            </div>
+            <div class="p-8 border-t border-gray-100 flex justify-end space-x-4">
+                <button onclick="closeUserModal()" class="px-6 py-2 text-gray-600 font-semibold hover:text-gray-800 transition">Batal</button>
+                <button onclick="saveUserHandler()" class="bg-psd-green text-white px-8 py-2 rounded-lg font-semibold hover:bg-[#084a40] transition">Simpan User</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Generic CRUD Modal (Features, Testimonials, FAQ) -->
     <div id="genericModal" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-center justify-center p-6">
         <div class="bg-white rounded-2xl max-w-lg w-full flex flex-col shadow-2xl">
@@ -519,7 +680,7 @@
             document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('sidebar-active'));
             document.getElementById('nav-' + sectionId).classList.add('sidebar-active');
             
-            if (sectionId === 'dashboard') renderAnalytics();
+            if (sectionId === 'dashboard') { renderAnalytics(); setTimeout(initDashboardCharts, 300); }
             if (sectionId === 'news') renderNewsTable();
             if (sectionId === 'features') renderFeatures();
             if (sectionId === 'testimonials') renderTestimonials();
@@ -527,6 +688,7 @@
             if (sectionId === 'feedback') renderFeedbackTable();
             if (sectionId === 'company') populateCompanyInfo();
             if (sectionId === 'seo') populateGlobalSEO();
+            if (sectionId === 'users') renderUsers();
             if (sectionId === 'chat') {
                 document.getElementById('admin-chat-badge').classList.add('hidden');
                 renderChat();
@@ -566,27 +728,21 @@
             const changePasswordForm = document.getElementById('change-password-form');
 
             if (loginForm) {
-                console.log('Login form found, attaching submit listener');
                 loginForm.addEventListener('submit', (e) => {
                     e.preventDefault();
-                    console.log('Login form submit event captured!');
-                    
                     const user = document.getElementById('login-username').value;
                     const pass = document.getElementById('login-password').value;
                     
-                    console.log('Attempting login with user:', user);
-                    
-                    // Check window.login with a small delay if not found immediately
                     if (typeof window.login === 'function') {
                         if (window.login(user, pass)) {
-                            console.log('Login success, reloading page...');
+                            // Store admin name for chat widget before reload
+                            const currentUser = window.getCurrentUser ? window.getCurrentUser() : { displayName: user };
+                            localStorage.setItem('psd_admin_online_name', currentUser.displayName || user);
                             window.location.reload();
                         } else {
-                            console.warn('Login failed according to window.login');
                             if (loginError) loginError.classList.remove('hidden');
                         }
                     } else {
-                        console.error('window.login function not found at submission time!');
                         alert('Sistem login sedang memuat. Silakan tunggu 1-2 detik dan coba lagi.');
                     }
                 });
@@ -618,7 +774,17 @@
                 });
             }
 
-            console.log('Calling checkAuth() from window.onload');
+            // On successful auth, update the current user banner and set admin online name
+            if (window.isLoggedIn && window.isLoggedIn()) {
+                const cu = window.getCurrentUser ? window.getCurrentUser() : { displayName: 'Admin', username: 'admin' };
+                const banner = document.getElementById('current-user-display');
+                const avatar = document.getElementById('current-user-avatar');
+                if (banner) banner.textContent = cu.displayName;
+                if (avatar) avatar.textContent = (cu.displayName || 'A').charAt(0).toUpperCase();
+                // Make admin name available for public chat widget
+                localStorage.setItem('psd_admin_online_name', cu.displayName || 'Admin');
+            }
+
             await checkAuth();
         };
 
@@ -1187,11 +1353,366 @@
             if (!text || !currentChatUser) return;
 
             input.value = '';
-            const res = await window.sendChatMessage(text, true); 
+            const cu = window.getCurrentUser ? window.getCurrentUser() : { displayName: 'Admin PSD' };
+            const res = await window.sendChatMessage(text, true, cu.displayName || 'Admin PSD'); 
             if (res.success) {
-                renderChat();
+                await renderChat();
             }
         });
+
+        // ==========================================
+        // DASHBOARD ANALYTICS CHARTS
+        // ==========================================
+        let trafficChart = null;
+        let pagesChart = null;
+        let allAnalyticsData = [];
+        let currentChartDays = 7;
+
+        // Set default date range (last 7 days)
+        function setDefaultDates() {
+            const today = new Date();
+            const past = new Date();
+            past.setDate(today.getDate() - 7);
+            const fmt = d => d.toISOString().split('T')[0];
+            document.getElementById('filter-date-start').value = fmt(past);
+            document.getElementById('filter-date-end').value = fmt(today);
+        }
+
+        async function loadDashboardAnalytics(dateStart = null, dateEnd = null) {
+            if (!window.supabaseInstance || window.isSupabaseError) {
+                renderChartsFromData([]);
+                return;
+            }
+
+            try {
+                let query = window.supabaseInstance.from('analytics').select('*').order('created_at', { ascending: false }).limit(500);
+                if (dateStart) query = query.gte('created_at', dateStart + 'T00:00:00');
+                if (dateEnd)   query = query.lte('created_at', dateEnd + 'T23:59:59');
+
+                const { data, error } = await query;
+                if (error) throw error;
+
+                allAnalyticsData = data || [];
+                renderChartsFromData(allAnalyticsData);
+                renderTrafficTable(allAnalyticsData.slice(0, 50));
+
+                // Update visits stat card
+                document.getElementById('stat-visits').innerText = allAnalyticsData.length;
+                const countEl = document.getElementById('traffic-count');
+                if (countEl) countEl.innerText = allAnalyticsData.length + ' kunjungan';
+
+            } catch (err) {
+                console.error('Error loading analytics:', err);
+            }
+        }
+
+        function renderChartsFromData(data) {
+            // --- Line Chart: Visits per day ---
+            const dayCounts = {};
+            const today = new Date();
+            for (let i = currentChartDays - 1; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(today.getDate() - i);
+                dayCounts[d.toISOString().split('T')[0]] = 0;
+            }
+            data.forEach(row => {
+                const day = row.created_at ? row.created_at.split('T')[0] : null;
+                if (day && dayCounts.hasOwnProperty(day)) dayCounts[day]++;
+            });
+
+            const labels = Object.keys(dayCounts).map(d => {
+                const dt = new Date(d);
+                return dt.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            });
+            const values = Object.values(dayCounts);
+
+            const trafficCtx = document.getElementById('chart-traffic');
+            if (trafficCtx) {
+                if (trafficChart) trafficChart.destroy();
+                trafficChart = new Chart(trafficCtx, {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Pengunjung',
+                            data: values,
+                            borderColor: '#1B5E40',
+                            backgroundColor: 'rgba(27,94,64,0.08)',
+                            borderWidth: 2.5,
+                            pointBackgroundColor: '#1B5E40',
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 11 } } },
+                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { precision: 0, font: { size: 11 } } }
+                        }
+                    }
+                });
+            }
+
+            // --- Doughnut Chart: Page Breakdown ---
+            const pageCounts = {};
+            const pageNames = {
+                '/index.html': 'Beranda', '/': 'Beranda',
+                '/berita.html': 'Berita', '/features.html': 'Fitur',
+                '/about.html': 'Tentang', '/contact.html': 'Kontak',
+                '/admin.html': 'Admin'
+            };
+            data.forEach(row => {
+                const page = row.page_path || '/';
+                let label = pageNames[page] || row.page_path || 'Lainnya';
+                if (page.includes('berita-detail')) label = 'Detail Berita';
+                pageCounts[label] = (pageCounts[label] || 0) + 1;
+            });
+
+            const sortedPages = Object.entries(pageCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+            const pColors = ['#1B5E40','#F2C94C','#3B82F6','#8B5CF6','#F97316','#EC4899'];
+
+            const pagesCtx = document.getElementById('chart-pages');
+            if (pagesCtx) {
+                if (pagesChart) pagesChart.destroy();
+                if (sortedPages.length === 0) {
+                    pagesCtx.parentElement.querySelector('#chart-pages-legend').innerHTML = '<p class="text-gray-400 text-center py-4">Belum ada data kunjungan</p>';
+                    return;
+                }
+                pagesChart = new Chart(pagesCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: sortedPages.map(p => p[0]),
+                        datasets: [{
+                            data: sortedPages.map(p => p[1]),
+                            backgroundColor: pColors,
+                            borderWidth: 2,
+                            borderColor: '#fff',
+                            hoverOffset: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        cutout: '70%',
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                // Custom legend
+                const total = sortedPages.reduce((s, p) => s + p[1], 0);
+                document.getElementById('chart-pages-legend').innerHTML = sortedPages.map((p, i) => `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full" style="background:${pColors[i]}"></span>
+                            <span class="text-gray-600">${p[0]}</span>
+                        </div>
+                        <span class="font-semibold text-gray-700">${p[1]} <span class="text-gray-400">(${Math.round(p[1]/total*100)}%)</span></span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function renderTrafficTable(data) {
+            const tbody = document.getElementById('analytics-list');
+            if (!tbody) return;
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8 text-gray-400 italic">Belum ada data kunjungan</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.map(row => {
+                const time = row.created_at ? new Date(row.created_at).toLocaleString('id-ID', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '-';
+                const browser = (row.browser || '').substring(0, 40);
+                const page = row.page_path || '-';
+                return `<tr class="hover:bg-gray-50 transition">
+                    <td class="px-5 py-3 font-medium text-psd-green">${page}</td>
+                    <td class="px-5 py-3 text-gray-500">${time}</td>
+                    <td class="px-5 py-3 text-gray-400 truncate max-w-xs">${browser}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function setChartPeriod(days) {
+            currentChartDays = days;
+            ['7','14','30'].forEach(d => {
+                const btn = document.getElementById('chart-btn-' + d);
+                if (btn) {
+                    btn.className = d == days
+                        ? 'text-xs px-3 py-1 rounded-lg bg-psd-green text-white font-semibold'
+                        : 'text-xs px-3 py-1 rounded-lg bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition';
+                }
+            });
+            renderChartsFromData(allAnalyticsData);
+        }
+
+        function applyDateFilter() {
+            const start = document.getElementById('filter-date-start').value;
+            const end   = document.getElementById('filter-date-end').value;
+            if (!start || !end) { alert('Pilih rentang tanggal terlebih dahulu.'); return; }
+            loadDashboardAnalytics(start, end);
+        }
+
+        function resetDateFilter() {
+            setDefaultDates();
+            loadDashboardAnalytics();
+        }
+
+        // Load additional stat counts
+        async function loadAdditionalStats() {
+            try {
+                if (window.getFeatures) {
+                    const f = await window.getFeatures();
+                    const el = document.getElementById('stat-features');
+                    if (el) el.innerText = (f || []).length;
+                }
+                if (window.getFAQ) {
+                    const f = await window.getFAQ();
+                    const el = document.getElementById('stat-faq');
+                    if (el) el.innerText = (f || []).length;
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // Init dashboard when shown
+        const _origShowSection = typeof showSection === 'function' ? showSection : null;
+        function initDashboardCharts() {
+            setDefaultDates();
+            loadDashboardAnalytics();
+            loadAdditionalStats();
+        }
+
+        // Trigger on first load if dashboard is active
+        setTimeout(initDashboardCharts, 800);
+
+        // --- USER MANAGEMENT ---
+        function renderUsers() {
+            const users = window.getUsers ? window.getUsers() : [];
+            const currentUser = window.getCurrentUser ? window.getCurrentUser() : {};
+            const tbody = document.getElementById('users-list');
+            if (!tbody) return;
+
+            // Update current user banner
+            const banner = document.getElementById('current-user-display');
+            const avatar = document.getElementById('current-user-avatar');
+            if (banner) banner.textContent = currentUser.displayName || 'Admin';
+            if (avatar) avatar.textContent = (currentUser.displayName || 'A').charAt(0).toUpperCase();
+
+            if (users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-12 text-center text-gray-400 italic">Belum ada user yang ditambahkan.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = users.map(u => {
+                const isCurrentUser = u.username === currentUser.username;
+                const initial = (u.displayName || u.username || 'U').charAt(0).toUpperCase();
+                return `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition ${isCurrentUser ? 'bg-psd-green/5' : ''}">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-psd-green flex items-center justify-center text-white font-bold text-sm">${initial}</div>
+                            <div>
+                                <div class="font-semibold text-gray-800">${u.displayName || '-'}</div>
+                                ${isCurrentUser ? '<span class="text-[10px] text-psd-green font-bold">● Anda</span>' : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-600 font-mono text-sm">${u.username}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 bg-psd-green/10 text-psd-green rounded-full text-xs font-semibold">${u.role || 'admin'}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2">
+                            <button onclick="openUserModal('${u.id}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Edit">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            </button>
+                            ${!isCurrentUser && !u.isLegacy ? `
+                            <button onclick="deleteUserHandler('${u.id}', '${u.displayName || u.username}')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>` : `<span class="p-2 text-gray-300" title="User utama tidak dapat dihapus">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            </span>`}
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function openUserModal(userId = null) {
+            const modal = document.getElementById('userModal');
+            const title = document.getElementById('userModalTitle');
+            const idInput = document.getElementById('edit-user-id');
+            const hint = document.getElementById('user-password-hint');
+            
+            document.getElementById('user-display-name').value = '';
+            document.getElementById('user-username').value = '';
+            document.getElementById('user-password').value = '';
+            idInput.value = '';
+
+            if (userId) {
+                const users = window.getUsers ? window.getUsers() : [];
+                const user = users.find(u => u.id === userId);
+                if (user) {
+                    title.textContent = 'Edit User: ' + (user.displayName || user.username);
+                    idInput.value = userId;
+                    document.getElementById('user-display-name').value = user.displayName || '';
+                    document.getElementById('user-username').value = user.username || '';
+                    hint.textContent = 'Kosongkan jika tidak ingin mengubah password';
+                }
+            } else {
+                title.textContent = 'Tambah User Baru';
+                hint.textContent = 'Wajib diisi untuk user baru';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').classList.add('hidden');
+        }
+
+        function saveUserHandler() {
+            const id = document.getElementById('edit-user-id').value;
+            const displayName = document.getElementById('user-display-name').value.trim();
+            const username = document.getElementById('user-username').value.trim();
+            const password = document.getElementById('user-password').value;
+
+            if (!displayName || !username) {
+                alert('Nama tampilan dan username wajib diisi!');
+                return;
+            }
+            if (!id && !password) {
+                alert('Password wajib diisi untuk user baru!');
+                return;
+            }
+            if (password && password.length < 6) {
+                alert('Password minimal 6 karakter!');
+                return;
+            }
+
+            const userData = { displayName, username, role: 'admin' };
+            if (id) userData.id = id;
+            if (password) userData.password = password;
+
+            const result = window.saveUser ? window.saveUser(userData) : { success: false };
+            if (result.success) {
+                closeUserModal();
+                renderUsers();
+                alert('User berhasil disimpan!');
+            } else {
+                alert('Gagal menyimpan user: ' + (result.error || 'Unknown error'));
+            }
+        }
+
+        function deleteUserHandler(userId, name) {
+            if (!confirm(`Hapus user "${name}"? Tindakan ini tidak dapat dibatalkan.`)) return;
+            const result = window.deleteUser ? window.deleteUser(userId) : { success: false };
+            if (result.success) {
+                renderUsers();
+            } else {
+                alert('Gagal menghapus user.');
+            }
+        }
 
     </script>
 </body>

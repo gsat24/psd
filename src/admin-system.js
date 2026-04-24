@@ -8,6 +8,8 @@ const DB_KEYS = {
     COMPANY: 'psd_company',
     AUTH: 'psd_auth_v2',
     SESSION: 'psd_session',
+    CURRENT_USER: 'psd_current_user',
+    USERS: 'psd_users',
     SEO: 'psd_seo',
     FEATURES: 'psd_features',
     TESTIMONIALS: 'psd_testimonials',
@@ -20,38 +22,45 @@ console.log('Attaching functions to window...');
 
 window.isLoggedIn = function() {
     const session = sessionStorage.getItem(DB_KEYS.SESSION) === 'true';
-    console.log('isLoggedIn check:', session);
     return session;
+};
+
+window.getCurrentUser = function() {
+    try {
+        const stored = sessionStorage.getItem(DB_KEYS.CURRENT_USER);
+        return stored ? JSON.parse(stored) : { username: 'admin', displayName: 'Admin' };
+    } catch(e) {
+        return { username: 'admin', displayName: 'Admin' };
+    }
 };
 
 window.login = function(username, password) {
     console.log('login() called for:', username);
     try {
-        const storedAuth = localStorage.getItem(DB_KEYS.AUTH);
-        let authData;
-        try {
-            authData = storedAuth ? JSON.parse(storedAuth) : null;
-        } catch(e) {
-            console.error('Failed to parse auth data, resetting...');
-            authData = null;
-        }
-        
-        if (!authData) {
-            authData = { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' };
-        }
-        
-        console.log('Comparing against stored username:', authData.username);
-
         if (typeof CryptoJS === 'undefined') {
-            console.error('CryptoJS is not loaded!');
             alert('Error: Sistem keamanan (CryptoJS) tidak termuat. Periksa koneksi internet Anda.');
             return false;
         }
-
         const inputHash = CryptoJS.SHA256(password).toString();
+
+        // 1. Check multi-user list first
+        const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
+        const matchedUser = users.find(u => u.username === username && u.passwordHash === inputHash);
+        if (matchedUser) {
+            sessionStorage.setItem(DB_KEYS.SESSION, 'true');
+            sessionStorage.setItem(DB_KEYS.CURRENT_USER, JSON.stringify({ username: matchedUser.username, displayName: matchedUser.displayName || matchedUser.username }));
+            console.log('Login successful (multi-user):', matchedUser.username);
+            return true;
+        }
+
+        // 2. Fallback: legacy single auth
+        let authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH) || 'null');
+        if (!authData) authData = { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', displayName: 'Admin' };
+        
         if (username === authData.username && inputHash === authData.passwordHash) {
             sessionStorage.setItem(DB_KEYS.SESSION, 'true');
-            console.log('Login successful! Session set.');
+            sessionStorage.setItem(DB_KEYS.CURRENT_USER, JSON.stringify({ username: authData.username, displayName: authData.displayName || 'Admin' }));
+            console.log('Login successful (legacy):', authData.username);
             return true;
         }
         
@@ -63,18 +72,26 @@ window.login = function(username, password) {
     }
 };
 
-window.updateAdminPassword = function(newPassword) {
+window.updateAdminPassword = function(newPassword, targetUsername) {
     console.log('updateAdminPassword() called');
     try {
-        const storedAuth = localStorage.getItem(DB_KEYS.AUTH);
-        let authData = { username: 'admin' };
-        try {
-            if (storedAuth) authData = JSON.parse(storedAuth);
-        } catch(e) {}
-        
         const newHash = CryptoJS.SHA256(newPassword).toString();
-        authData.passwordHash = newHash;
-        localStorage.setItem(DB_KEYS.AUTH, JSON.stringify(authData));
+        const uname = targetUsername || window.getCurrentUser().username;
+
+        // Update in users array if exists
+        const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
+        const idx = users.findIndex(u => u.username === uname);
+        if (idx !== -1) {
+            users[idx].passwordHash = newHash;
+            localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
+        }
+
+        // Also update legacy auth if it's the same user
+        let authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH) || 'null') || { username: 'admin' };
+        if (authData.username === uname) {
+            authData.passwordHash = newHash;
+            localStorage.setItem(DB_KEYS.AUTH, JSON.stringify(authData));
+        }
         return true;
     } catch (e) {
         console.error('Update password error:', e);
@@ -85,24 +102,85 @@ window.updateAdminPassword = function(newPassword) {
 window.logout = function() {
     console.log('logout() called');
     sessionStorage.removeItem(DB_KEYS.SESSION);
+    sessionStorage.removeItem(DB_KEYS.CURRENT_USER);
     window.location.reload();
+};
+
+// --- USER MANAGEMENT ---
+window.getUsers = function() {
+    try {
+        const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
+        // Always ensure default admin appears
+        const authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH) || 'null');
+        if (authData && !users.find(u => u.username === authData.username)) {
+            users.unshift({ id: 'legacy-admin', username: authData.username, displayName: authData.displayName || 'Admin', role: 'admin', isLegacy: true });
+        }
+        return users;
+    } catch(e) { return []; }
+};
+
+window.saveUser = function(userData) {
+    try {
+        const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
+        if (userData.password) {
+            userData.passwordHash = CryptoJS.SHA256(userData.password).toString();
+            delete userData.password;
+        }
+        const idx = users.findIndex(u => u.id === userData.id);
+        if (idx !== -1) {
+            users[idx] = { ...users[idx], ...userData };
+        } else {
+            userData.id = 'user_' + Date.now();
+            userData.role = userData.role || 'admin';
+            users.push(userData);
+        }
+        localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
+        return { success: true };
+    } catch(e) {
+        return { success: false, error: e.message };
+    }
+};
+
+window.deleteUser = function(userId) {
+    try {
+        const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
+        const filtered = users.filter(u => u.id !== userId);
+        localStorage.setItem(DB_KEYS.USERS, JSON.stringify(filtered));
+        return { success: true };
+    } catch(e) {
+        return { success: false, error: e.message };
+    }
 };
 
 window.initDB = function() {
     console.log('initDB() called');
     try {
-        if (!localStorage.getItem(DB_KEYS.NEWS)) {
-            const mockNews = [
-                {
-                    id: 1,
-                    title: 'Implementasi Sistem Digital di Pesantren Modern',
-                    date: '05 Jan 2026',
-                    summary: 'Langkah besar menuju digitalisasi pendidikan islam di Indonesia mulai menunjukkan hasil yang signifikan dengan sistem manajemen terpadu.',
-                    content: `<p>Digitalisasi di lingkungan pesantren...</p>`,
-                    image: 'src/berita1.webp'
-                }
-            ];
-            localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(mockNews));
+        const all2News = [
+            {
+                title: 'Implementasi Sistem Digital di Pesantren Modern',
+                date: '05 Jan 2026',
+                summary: 'Langkah besar menuju digitalisasi pendidikan islam di Indonesia mulai menunjukkan hasil yang signifikan dengan sistem manajemen terpadu.',
+                content: '<p>Digitalisasi di lingkungan pesantren...</p>',
+                image: 'src/berita1.webp'
+            },
+            {
+                title: 'Pelatihan Manajemen Keuangan Digital Untuk Admin Pesantren',
+                date: '02 Jan 2026',
+                summary: 'Meningkatkan akuntabilitas dan transparansi keuangan pesantren melalui sistem manajemen yang terintegrasi...',
+                content: '<p>Pelatihan keuangan...</p>',
+                image: 'src/berita2.webp'
+            }
+        ];
+        let currentNews = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
+        let newsAdded = false;
+        all2News.forEach((n, idx) => {
+            if (!currentNews.find(cn => cn.title === n.title)) {
+                currentNews.push({ ...n, id: Date.now() + 100 + idx });
+                newsAdded = true;
+            }
+        });
+        if (newsAdded) {
+            localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(currentNews));
         }
 
         if (!localStorage.getItem(DB_KEYS.COMPANY)) {
@@ -128,13 +206,39 @@ window.initDB = function() {
             if (updated) localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(current));
         }
 
-        if (!localStorage.getItem(DB_KEYS.FEATURES)) {
-            const mockFeatures = [
-                { id: 1, title: 'Manajemen Santri', description: 'Kelola data ribuan santri dengan mudah dan akurat.', icon: 'users' },
-                { id: 2, title: 'Pembayaran Digital', description: 'Sistem SPP dan donasi online yang terintegrasi otomatis.', icon: 'credit-card' },
-                { id: 3, title: 'Absensi Real-time', description: 'Pantau kehadiran santri dan asatidz secara instan.', icon: 'clock' }
-            ];
-            localStorage.setItem(DB_KEYS.FEATURES, JSON.stringify(mockFeatures));
+        const all20Features = [
+            { title: 'Buku Tamu Digital', description: 'Pencatatan pengunjung pesantren dengan mudah dan rapi.', icon: 'card' },
+            { title: 'Izin Santri', description: 'Proses perizinan santri keluar-masuk terpantau sistematis.', icon: 'parent' },
+            { title: 'Kepegawaian', description: 'Manajemen data asatidz, absen, hingga penggajian.', icon: 'staff' },
+            { title: 'Akademik', description: 'Pengelolaan kurikulum, jadwal pelajaran, dan nilai santri.', icon: 'teacher' },
+            { title: 'Surat Menyurat', description: 'Pembuatan surat keterangan secara otomatis dan arsip digital.', icon: 'archive' },
+            { title: 'Pangkalan Data', description: 'Bank data terpusat seluruh elemen pesantren.', icon: 'database' },
+            { title: 'Koperasi & Kantin', description: 'Digitalisasi transaksi minimarket dan kantin santri.', icon: 'shop' },
+            { title: 'BK & Pelanggaran', description: 'Pencatatan poin kedisiplinan dan histori pelanggaran santri.', icon: 'student' },
+            { title: 'Penilaian (Raport)', description: 'Generate nilai raport santri secara otomatis dalam hitungan detik.', icon: 'star' },
+            { title: 'Buku Induk', description: 'Penyimpanan data historis santri secara komprehensif.', icon: 'report' },
+            { title: 'Keuangan', description: 'Rekap bayaran SPP, donasi, dan laporan arus kas pesantren.', icon: 'money' },
+            { title: 'Aset & Inventaris', description: 'Monitoring barang, asrama, dan fasilitas yayasan.', icon: 'monitor' },
+            { title: 'Absensi', description: 'Rekap kehadiran harian santri, kelas, dan asrama.', icon: 'clock' },
+            { title: 'Berita & Pengumuman', description: 'Platform info terupdate untuk wali santri dan civitas.', icon: 'news' },
+            { title: 'Konseling', description: 'Fasilitas konsultasi asatidz dan psikolog pesantren.', icon: 'chat' },
+            { title: 'Broadcast WA', description: 'Kirim info tagihan dan pengumuman masal via WhatsApp otomatis.', icon: 'broadcast' },
+            { title: 'Payment Gateway', description: 'Pembayaran SPP via Virtual Account (BSI, Mandiri, BCA, dll).', icon: 'payment' },
+            { title: 'Pesan Wali Santri', description: 'Fitur direct message wali santri ke musyrif/pengasuh.', icon: 'mail' },
+            { title: 'Jurnal Kegiatan', description: 'Pencatatan harian log kegiatan santri di asrama.', icon: 'activity' },
+            { title: 'Akses Gerbang', description: 'Kartu RFID/Barcode terintegrasi untuk akses gerbang masuk.', icon: 'gate' }
+        ];
+        
+        let currentFeatures = JSON.parse(localStorage.getItem(DB_KEYS.FEATURES)) || [];
+        let featuresAdded = false;
+        all20Features.forEach((f, idx) => {
+            if (!currentFeatures.find(cf => cf.title === f.title)) {
+                currentFeatures.push({ ...f, id: Date.now() + 200 + idx });
+                featuresAdded = true;
+            }
+        });
+        if (featuresAdded) {
+            localStorage.setItem(DB_KEYS.FEATURES, JSON.stringify(currentFeatures));
         }
 
         if (!localStorage.getItem(DB_KEYS.TESTIMONIALS)) {
@@ -174,11 +278,12 @@ window.initDB = function() {
 };
 
 window.getNews = async function() {
+    let supabaseData = [];
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { data, error } = await window.supabaseInstance.from('news').select('*').order('id', { ascending: false });
             if (error) throw error;
-            return data;
+            supabaseData = data;
         } catch (err) {
             console.error('Failed to get news from Supabase:', err);
             if (err.message === 'TypeError: Load failed' || err.message.includes('hostname')) {
@@ -187,51 +292,76 @@ window.getNews = async function() {
             }
         }
     }
-    return JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
+    const localData = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
+    const combined = [...supabaseData];
+    const existingIds = new Set(supabaseData.map(item => item.id));
+    const existingTitles = new Set(supabaseData.map(item => (item.title || '').toLowerCase()));
+    
+    for (const item of localData) {
+        if (!existingIds.has(item.id) && !existingTitles.has((item.title || '').toLowerCase())) {
+            combined.push(item);
+        }
+    }
+    return combined.sort((a, b) => b.id - a.id);
 };
 
 window.getNewsById = async function(id) {
-    if (window.supabaseInstance && !window.isSupabaseError) {
+    const numericId = parseInt(id, 10);
+    
+    // Try Supabase first if connected and ID is a valid integer
+    if (window.supabaseInstance && !window.isSupabaseError && !isNaN(numericId)) {
         try {
-            const { data, error } = await window.supabaseInstance.from('news').select('*').eq('id', id).single();
-            if (error) throw error;
-            return data;
+            const { data, error } = await window.supabaseInstance.from('news').select('*').eq('id', numericId).single();
+            if (!error && data) return data;
+            if (error && error.code !== 'PGRST116') { // PGRST116 = not found, which is fine
+                console.error('Supabase getNewsById error:', error);
+            }
         } catch (err) {
             console.error('Failed to get news by ID from Supabase:', err);
         }
     }
+    // Fallback to localStorage
     const news = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
-    return news.find(n => n.id == id);
+    return news.find(n => String(n.id) === String(id)) || null;
 };
 
 window.saveNewsToDB = async function(newsItem) {
+    let newId = newsItem.id;
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
-            const { error } = await window.supabaseInstance.from('news').upsert([newsItem]);
+            const dataToSave = { ...newsItem };
+            if (dataToSave.id > 2147483647) delete dataToSave.id;
+            
+            const { data, error } = await window.supabaseInstance.from('news').upsert([dataToSave]).select();
             if (error) throw error;
+            if (data && data.length > 0) newId = data[0].id;
         } catch (err) {
             console.error('Failed to save news to Supabase:', err);
         }
     }
     const news = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
+    const finalItem = { ...newsItem, id: newId };
+    
     if (newsItem.id) {
         const index = news.findIndex(n => n.id === newsItem.id);
-        if (index !== -1) news[index] = newsItem;
-        else news.unshift(newsItem);
+        if (index !== -1) news[index] = finalItem;
+        else news.unshift(finalItem);
     } else {
-        newsItem.id = Date.now();
-        news.unshift(newsItem);
+        finalItem.id = newId || Date.now();
+        news.unshift(finalItem);
     }
     localStorage.setItem(DB_KEYS.NEWS, JSON.stringify(news));
 };
 
 window.deleteNewsFromDB = async function(id) {
     if (window.supabaseInstance && !window.isSupabaseError) {
-        try {
-            const { error } = await window.supabaseInstance.from('news').delete().eq('id', id);
-            if (error) throw error;
-        } catch (err) {
-            console.error('Failed to delete news from Supabase:', err);
+        if (id <= 2147483647) {
+            try {
+                const { error } = await window.supabaseInstance.from('news').delete().eq('id', id);
+                if (error) throw error;
+            } catch (err) {
+                console.error('Failed to delete news from Supabase:', err);
+            }
         }
     }
     const news = JSON.parse(localStorage.getItem(DB_KEYS.NEWS)) || [];
@@ -548,46 +678,69 @@ window.syncGlobalSEO = async function() {
 // --- NEW CRUD FUNCTIONS FOR FEATURES, TESTIMONIALS, FAQ ---
 
 async function genericGet(table, key) {
+    let supabaseData = [];
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { data, error } = await window.supabaseInstance.from(table).select('*').order('id', { ascending: false });
             if (error) throw error;
-            return data;
+            supabaseData = data;
         } catch (err) {
             console.error(`Failed to get ${table} from Supabase:`, err);
         }
     }
-    return JSON.parse(localStorage.getItem(key)) || [];
+    const localData = JSON.parse(localStorage.getItem(key)) || [];
+    
+    const combined = [...supabaseData];
+    const existingIds = new Set(supabaseData.map(item => item.id));
+    const existingTitles = new Set(supabaseData.map(item => (item.title || item.name || item.question || '').toLowerCase()));
+    
+    for (const item of localData) {
+        const identifier = (item.title || item.name || item.question || '').toLowerCase();
+        if (!existingIds.has(item.id) && !existingTitles.has(identifier)) {
+            combined.push(item);
+        }
+    }
+    
+    return combined.sort((a, b) => b.id - a.id);
 }
 
 async function genericSave(table, key, item) {
+    let newId = item.id;
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
-            const { error } = await window.supabaseInstance.from(table).upsert([item]);
+            const dataToSave = { ...item };
+            if (dataToSave.id > 2147483647) delete dataToSave.id;
+            
+            const { data, error } = await window.supabaseInstance.from(table).upsert([dataToSave]).select();
             if (error) throw error;
+            if (data && data.length > 0) newId = data[0].id;
         } catch (err) {
             console.error(`Failed to save ${table} to Supabase:`, err);
         }
     }
     const list = JSON.parse(localStorage.getItem(key)) || [];
+    const finalItem = { ...item, id: newId };
+    
     if (item.id) {
         const index = list.findIndex(i => i.id === item.id);
-        if (index !== -1) list[index] = item;
-        else list.unshift(item);
+        if (index !== -1) list[index] = finalItem;
+        else list.unshift(finalItem);
     } else {
-        item.id = Date.now();
-        list.unshift(item);
+        finalItem.id = newId || Date.now();
+        list.unshift(finalItem);
     }
     localStorage.setItem(key, JSON.stringify(list));
 }
 
 async function genericDelete(table, key, id) {
     if (window.supabaseInstance && !window.isSupabaseError) {
-        try {
-            const { error } = await window.supabaseInstance.from(table).delete().eq('id', id);
-            if (error) throw error;
-        } catch (err) {
-            console.error(`Failed to delete from ${table} in Supabase:`, err);
+        if (id <= 2147483647) {
+            try {
+                const { error } = await window.supabaseInstance.from(table).delete().eq('id', id);
+                if (error) throw error;
+            } catch (err) {
+                console.error(`Failed to delete from ${table} in Supabase:`, err);
+            }
         }
     }
     const list = JSON.parse(localStorage.getItem(key)) || [];
@@ -693,5 +846,78 @@ document.addEventListener('DOMContentLoaded', () => {
         window.trackVisit();
     }
 });
+
+// Sync Local Data to Supabase manually
+window.syncLocalToSupabase = async function() {
+    if (!window.supabaseInstance || window.isSupabaseError) {
+        alert('Koneksi ke Supabase gagal atau belum dikonfigurasi!');
+        return;
+    }
+    
+    if (!confirm('Apakah Anda yakin ingin mengupload semua data dari Local Storage (Fitur, Testimoni, FAQ, Berita) ke database Supabase?')) {
+        return;
+    }
+    
+    try {
+        const tables = [
+            { name: 'features', key: DB_KEYS.FEATURES },
+            { name: 'testimonials', key: DB_KEYS.TESTIMONIALS },
+            { name: 'faq', key: DB_KEYS.FAQ },
+            { name: 'news', key: DB_KEYS.NEWS }
+        ];
+        
+        let totalUploaded = 0;
+        
+        for (const t of tables) {
+            const localData = JSON.parse(localStorage.getItem(t.key)) || [];
+            
+            if (localData.length === 0) continue;
+            
+            // Get existing titles from Supabase to prevent duplicates
+            const { data: existingData } = await window.supabaseInstance.from(t.name).select('*');
+            const existingTitles = new Set((existingData || []).map(item => (item.title || item.name || item.question || '').toLowerCase()));
+            
+            // Items to upload are all local items that don't share a title with Supabase data
+            const itemsToUpload = localData.filter(item => {
+                const title = (item.title || item.name || item.question || '').toLowerCase();
+                return !existingTitles.has(title);
+            });
+            
+            const successfullyUploadedIds = new Set();
+            
+            for (const item of itemsToUpload) {
+                const dataToSave = { ...item };
+                delete dataToSave.id; // Let Supabase generate a proper serial ID
+                
+                const { error } = await window.supabaseInstance.from(t.name).insert([dataToSave]);
+                if (error) {
+                    console.error(`Gagal upload ke ${t.name}:`, error);
+                    alert(`Gagal upload ke tabel ${t.name}: ${error.message}. Kemungkinan masalah izin akses (RLS).`);
+                } else {
+                    totalUploaded++;
+                    successfullyUploadedIds.add(item.id);
+                }
+            }
+            
+            // Only remove successfully uploaded items from local storage
+            if (successfullyUploadedIds.size > 0) {
+                const currentLocal = JSON.parse(localStorage.getItem(t.key)) || [];
+                const remainingLocal = currentLocal.filter(item => !successfullyUploadedIds.has(item.id));
+                localStorage.setItem(t.key, JSON.stringify(remainingLocal));
+            }
+        }
+        
+        if (totalUploaded > 0) {
+            alert(`Berhasil mengupload ${totalUploaded} data ke Supabase! Halaman akan dimuat ulang.`);
+            window.location.reload();
+        } else {
+            alert('Proses selesai. Jika data belum masuk, cek pengaturan izin RLS di database Supabase kamu.');
+        }
+        
+    } catch (error) {
+        console.error('Sync error:', error);
+        alert('Terjadi kesalahan saat sinkronisasi: ' + error.message);
+    }
+};
 
 console.log('admin-system.js load complete.');

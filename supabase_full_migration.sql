@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS feedback (
 );
 
 ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Enable insert for all users" ON feedback;
 CREATE POLICY "Enable insert for all users" ON feedback FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable select for all" ON feedback;
 CREATE POLICY "Enable select for all" ON feedback FOR SELECT USING (true);
 
 -- 2. MESSAGES TABLE (Live Chat)
@@ -27,11 +29,13 @@ CREATE TABLE IF NOT EXISTS messages (
 );
 
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Enable insert for all" ON messages;
 CREATE POLICY "Enable insert for all" ON messages FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable select for all" ON messages;
 CREATE POLICY "Enable select for all" ON messages FOR SELECT USING (true);
 
--- Enable Realtime for messages
-ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+-- Enable Realtime for messages (Jalankan sekali saja)
+-- ALTER PUBLICATION supabase_realtime ADD TABLE messages;
 
 -- 3. FEATURES TABLE
 CREATE TABLE IF NOT EXISTS features (
@@ -44,8 +48,10 @@ CREATE TABLE IF NOT EXISTS features (
 );
 
 ALTER TABLE features ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Enable read for all" ON features;
 CREATE POLICY "Enable read for all" ON features FOR SELECT USING (true);
-CREATE POLICY "Enable all for authenticated" ON features FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable all for anon" ON features;
+CREATE POLICY "Enable all for anon" ON features FOR ALL USING (true) WITH CHECK (true);
 
 -- 4. TESTIMONIALS TABLE
 CREATE TABLE IF NOT EXISTS testimonials (
@@ -58,8 +64,10 @@ CREATE TABLE IF NOT EXISTS testimonials (
 );
 
 ALTER TABLE testimonials ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Enable read for all" ON testimonials;
 CREATE POLICY "Enable read for all" ON testimonials FOR SELECT USING (true);
-CREATE POLICY "Enable all for authenticated" ON testimonials FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable all for anon" ON testimonials;
+CREATE POLICY "Enable all for anon" ON testimonials FOR ALL USING (true) WITH CHECK (true);
 
 -- 5. FAQ TABLE
 CREATE TABLE IF NOT EXISTS faq (
@@ -71,8 +79,10 @@ CREATE TABLE IF NOT EXISTS faq (
 );
 
 ALTER TABLE faq ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Enable read for all" ON faq;
 CREATE POLICY "Enable read for all" ON faq FOR SELECT USING (true);
-CREATE POLICY "Enable all for authenticated" ON faq FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable all for anon" ON faq;
+CREATE POLICY "Enable all for anon" ON faq FOR ALL USING (true) WITH CHECK (true);
 
 -- 6. ANALYTICS TABLE
 CREATE TABLE IF NOT EXISTS analytics (
@@ -85,8 +95,10 @@ CREATE TABLE IF NOT EXISTS analytics (
 );
 
 ALTER TABLE analytics ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Enable insert for all" ON analytics;
 CREATE POLICY "Enable insert for all" ON analytics FOR INSERT WITH CHECK (true);
-CREATE POLICY "Enable select for authenticated" ON analytics FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "Enable select for authenticated" ON analytics;
+CREATE POLICY "Enable select for authenticated" ON analytics FOR SELECT USING (true);
 
 -- 7. UPDATE COMPANY TABLE
 ALTER TABLE company 
@@ -107,3 +119,51 @@ WHERE id = 1;
 INSERT INTO features (title, description, icon) 
 SELECT 'Manajemen Santri', 'Mengelola data hingga ribuan santri tanpa repot.', 'user'
 WHERE NOT EXISTS (SELECT 1 FROM features);
+
+-- 8. NEWS TABLE (Fixing RLS & Redirect bugs)
+CREATE TABLE IF NOT EXISTS news (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    date TEXT,
+    summary TEXT,
+    content TEXT,
+    image TEXT,
+    meta_title TEXT,
+    meta_description TEXT,
+    meta_keywords TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE news ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Enable read for all" ON news;
+CREATE POLICY "Enable read for all" ON news FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Enable all for anon" ON news;
+CREATE POLICY "Enable all for anon" ON news FOR ALL USING (true) WITH CHECK (true);
+
+-- 9. CHAT SESSIONS TABLE
+CREATE TABLE IF NOT EXISTS chat_sessions (
+    sender_id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE chat_sessions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Enable insert for all" ON chat_sessions;
+CREATE POLICY "Enable insert for all" ON chat_sessions FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable update for all" ON chat_sessions;
+CREATE POLICY "Enable update for all" ON chat_sessions FOR UPDATE USING (true);
+DROP POLICY IF EXISTS "Enable select for all" ON chat_sessions;
+CREATE POLICY "Enable select for all" ON chat_sessions FOR SELECT USING (true);
+
+-- 10. COMPANY TABLE RLS
+ALTER TABLE company ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Enable read for all" ON company;
+CREATE POLICY "Enable read for all" ON company FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Enable all for anon" ON company;
+CREATE POLICY "Enable all for anon" ON company FOR ALL USING (true) WITH CHECK (true);
+
+-- 11. REFRESH SCHEMA CACHE
+NOTIFY pgrst, 'reload schema';
+

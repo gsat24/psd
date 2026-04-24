@@ -241,16 +241,28 @@
         });
 
         async function loadDetail() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
-            
-            if(!id) return window.location.href = 'berita.html';
-            
-            let item = null;
-            if (window.getNewsById) {
-                item = await window.getNewsById(id);
-            }
-            if(!item) return window.location.href = 'berita.html';
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const id = urlParams.get('id');
+                
+                if (!id || id === 'undefined' || id === 'null' || id.trim() === '') {
+                    showErrorInline('ID Berita tidak valid atau tidak ditemukan di URL. Silakan kembali ke halaman daftar berita.');
+                    return;
+                }
+                
+                let item = null;
+                if (window.getNewsById) {
+                    item = await window.getNewsById(id);
+                } else {
+                    showErrorInline('Fungsi sistem tidak ditemukan. Pastikan koneksi internet aktif.');
+                    return;
+                }
+                
+                if (!item) {
+                    console.error('Berita tidak ditemukan untuk ID:', id);
+                    showErrorInline('Berita tidak ditemukan atau telah dihapus. ID: ' + id);
+                    return;
+                }
             
             // Render Header
             document.getElementById('news-header').innerHTML = `
@@ -294,9 +306,37 @@
                 }
                 metaKeywords.content = item.meta_keywords;
             }
+            } catch (error) {
+                console.error('Error in loadDetail:', error);
+                showErrorInline('Terjadi kesalahan saat memuat berita: ' + error.message);
+            }
         }
 
-        window.onload = loadDetail;
+        // Wait for admin-system.js to fully initialize before loading detail
+        // Note: We only need getNewsById to be available — not supabaseInstance
+        function waitForSystem(cb, attempts = 0) {
+            if (typeof window.getNewsById === 'function') {
+                // Give Supabase a brief moment to init (max 1.5s), then proceed regardless
+                setTimeout(cb, Math.min(attempts * 50, 1500));
+            } else if (attempts > 50) {
+                showErrorInline('Sistem gagal diinisialisasi. Pastikan koneksi internet aktif dan coba refresh halaman.');
+            } else {
+                setTimeout(() => waitForSystem(cb, attempts + 1), 100);
+            }
+        }
+
+        function showErrorInline(msg) {
+            const header = document.getElementById('news-header');
+            if (header) {
+                header.innerHTML = `<div class="text-red-300 text-lg font-semibold py-8">${msg}</div>`;
+            }
+            const body = document.getElementById('news-content-body');
+            if (body) {
+                body.innerHTML = `<div class="text-center py-16"><p class="text-gray-500 mb-4">${msg}</p><a href="berita.html" class="inline-block mt-4 px-6 py-3 bg-psd-green text-white rounded-xl font-semibold hover:opacity-90 transition">Kembali ke Daftar Berita</a></div>`;
+            }
+        }
+
+        window.addEventListener('load', () => waitForSystem(loadDetail));
     </script>
     <script src="src/chat-widget.js"></script>
     <script src="src/main.js" defer></script>
