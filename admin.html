@@ -22,6 +22,11 @@
     <style>
         body { font-family: 'Poppins', sans-serif; }
         .sidebar-active { background-color: rgba(255, 255, 255, 0.1); border-left: 4px solid #F4C430; }
+        /* Force all sidebar nav links to be white */
+        aside nav a.sidebar-item,
+        aside nav a.sidebar-item:visited,
+        aside nav a.sidebar-item:hover,
+        aside nav a.sidebar-item:active { color: #ffffff !important; text-decoration: none; }
         /* Custom Quill Style */
         .ql-editor { min-height: 200px; font-family: 'Poppins', sans-serif; }
         .ql-toolbar.ql-snow { border-radius: 0.5rem 0.5rem 0 0; }
