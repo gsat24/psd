@@ -465,41 +465,64 @@ window.saveChatSession = async function(name, email) {
 };
 
 window.getMessages = async function() {
+    let messages = [];
+    // 1. Try Supabase
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { data, error } = await window.supabaseInstance
                 .from('messages')
                 .select('*')
                 .order('created_at', { ascending: true });
-            if (error) throw error;
-            return data;
+            if (!error && data) messages = data;
         } catch (err) {
             console.error('Failed to get messages from Supabase:', err);
         }
     }
-    return [];
+    
+    // 2. Fallback/Combine with LocalStorage
+    const localMsgs = JSON.parse(localStorage.getItem('psd_messages') || '[]');
+    // Simple merge by id/timestamp to avoid duplicates if both are active
+    const combined = [...messages];
+    localMsgs.forEach(lm => {
+        if (!combined.find(cm => (cm.id && cm.id === lm.id) || (cm.text === lm.text && cm.created_at === lm.created_at))) {
+            combined.push(lm);
+        }
+    });
+    
+    return combined.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 };
 
 window.sendChatMessage = async function(text, isAdmin = false, senderName = 'User', targetUserId = null) {
     const userId = targetUserId || window.getChatUserId();
     const msg = {
+        id: Date.now(),
         sender_id: userId,
         sender_name: isAdmin ? 'Admin PSD' : senderName,
         text: text,
-        is_admin: isAdmin
+        is_admin: isAdmin,
+        created_at: new Date().toISOString()
     };
 
+    let supabaseSuccess = false;
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { error } = await window.supabaseInstance.from('messages').insert([msg]);
-            if (error) throw error;
-            return { success: true };
+            if (!error) supabaseSuccess = true;
         } catch (err) {
             console.error('Failed to send message to Supabase:', err);
-            return { success: false, error: err.message };
         }
     }
-    return { success: false, error: 'Supabase not connected' };
+
+    // Always save to LocalStorage as well for reliability/fallback
+    try {
+        const localMsgs = JSON.parse(localStorage.getItem('psd_messages') || '[]');
+        localMsgs.push(msg);
+        localStorage.setItem('psd_messages', JSON.stringify(localMsgs));
+    } catch (e) {
+        console.error('Local message save failed:', e);
+    }
+
+    return { success: true, isSupabase: supabaseSuccess };
 };
 
 window.subscribeToMessages = function(callback) {
