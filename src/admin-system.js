@@ -645,30 +645,74 @@ window.updateCompanyInfoInDB = async function(info) {
     console.log('updateCompanyInfoInDB() starting...', info);
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
-            // If it's a string, try to parse it to object first for better JSONB compatibility
-            let socialObj = info.social;
-            if (typeof socialObj === 'string') {
-                try { socialObj = JSON.parse(socialObj); } catch(e) {}
-            }
+            // 1. Fetch existing data to see which columns actually exist in the DB
+            const { data: existing, error: fetchError } = await window.supabaseInstance
+                .from('company')
+                .select('*')
+                .eq('id', 1)
+                .single();
             
-            const dataToSave = {
+            if (fetchError) {
+                console.warn('Could not fetch existing company info to check columns, attempting blind upsert...');
+            }
+
+            // 2. Build update payload based on what the DB supports
+            // If we have 'existing' data, we only update keys that exist in 'existing'
+            const socialObj = typeof info.social === 'string' ? JSON.parse(info.social) : info.social;
+            
+            const fullPayload = {
                 id: 1,
                 email: info.email,
                 phone: info.phone,
                 address: info.address,
                 playstore_url: info.playstore_url,
-                social: socialObj, // Send as object
+                social: socialObj,
                 hero_headline: info.hero_headline,
                 hero_subheadline: info.hero_subheadline,
                 whatsapp_number: info.whatsapp_number
             };
 
-            console.log('Saving to Supabase...', dataToSave);
+            const dataToSave = { id: 1 };
+            
+            // Only include fields that exist in the database schema (from existing record)
+            if (existing) {
+                Object.keys(fullPayload).forEach(key => {
+                    if (existing.hasOwnProperty(key)) {
+                        dataToSave[key] = fullPayload[key];
+                    } else {
+                        console.warn(`Column '${key}' does not exist in Supabase 'company' table. Skipping.`);
+                    }
+                });
+            } else {
+                // Fallback: try common fields if we couldn't fetch
+                ['email', 'phone', 'address', 'social'].forEach(k => {
+                    if (info[k] !== undefined) dataToSave[k] = (k === 'social' ? socialObj : info[k]);
+                });
+            }
+
+            console.log('Saving to Supabase with detected columns:', dataToSave);
             const { error } = await window.supabaseInstance.from('company').upsert([dataToSave]);
             if (error) throw error;
             console.log('Supabase update success');
         } catch (err) {
             console.error('Supabase update failed:', err);
+            // If it failed with 400, it's likely still a column mismatch
+            if (err.code === 'PGRST204' || err.status === 400) {
+                console.warn('Attempting ultra-safe fallback update (email/phone/address/social only)...');
+                try {
+                    const safeData = {
+                        id: 1,
+                        email: info.email,
+                        phone: info.phone,
+                        address: info.address,
+                        social: typeof info.social === 'object' ? JSON.stringify(info.social) : info.social
+                    };
+                    await window.supabaseInstance.from('company').upsert([safeData]);
+                    console.log('Safe fallback update success');
+                } catch(e2) {
+                    console.error('Safe fallback failed too:', e2);
+                }
+            }
         }
     }
     
@@ -678,6 +722,7 @@ window.updateCompanyInfoInDB = async function(info) {
     localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(updated));
     console.log('LocalStorage update success');
 };
+
 
 
 
