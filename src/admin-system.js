@@ -441,32 +441,73 @@ window.getChatUserId = function() {
 };
 
 window.playChatSound = function() {
+    console.log('playChatSound() triggered');
     try {
         if (!window.chatAudioCtx) {
             window.chatAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
+        
+        // Re-resume if suspended (common in browsers)
         if (window.chatAudioCtx.state === 'suspended') {
-            window.chatAudioCtx.resume();
+            window.chatAudioCtx.resume().then(() => {
+                console.log('AudioContext resumed successfully');
+                executeDing();
+            }).catch(e => console.warn('AudioContext resume failed:', e));
+        } else {
+            executeDing();
         }
-        const osc = window.chatAudioCtx.createOscillator();
-        const gain = window.chatAudioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(window.chatAudioCtx.destination);
-        
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(800, window.chatAudioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1200, window.chatAudioCtx.currentTime + 0.1);
-        
-        gain.gain.setValueAtTime(0, window.chatAudioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.2, window.chatAudioCtx.currentTime + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, window.chatAudioCtx.currentTime + 0.3);
-        
-        osc.start(window.chatAudioCtx.currentTime);
-        osc.stop(window.chatAudioCtx.currentTime + 0.3);
+
+        function executeDing() {
+            const now = window.chatAudioCtx.currentTime;
+            
+            // Tone 1 (Higher)
+            const osc1 = window.chatAudioCtx.createOscillator();
+            const gain1 = window.chatAudioCtx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(880, now); // A5
+            osc1.frequency.exponentialRampToValueAtTime(1046.50, now + 0.1); // C6
+            gain1.gain.setValueAtTime(0, now);
+            gain1.gain.linearRampToValueAtTime(0.15, now + 0.02);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc1.connect(gain1);
+            gain1.connect(window.chatAudioCtx.destination);
+            
+            // Tone 2 (Lower harmonic)
+            const osc2 = window.chatAudioCtx.createOscillator();
+            const gain2 = window.chatAudioCtx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(440, now); // A4
+            gain2.gain.setValueAtTime(0, now);
+            gain2.gain.linearRampToValueAtTime(0.05, now + 0.05);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+            osc2.connect(gain2);
+            gain2.connect(window.chatAudioCtx.destination);
+
+            osc1.start(now);
+            osc1.stop(now + 0.4);
+            osc2.start(now);
+            osc2.stop(now + 0.5);
+            console.log('Sound ping executed');
+        }
     } catch (e) {
-        console.warn('Sound play failed', e);
+        console.warn('Sound play failed:', e);
     }
 };
+
+// Global click listener to "unlock" audio context for browsers that require user interaction
+document.addEventListener('click', function unlockAudio() {
+    if (window.chatAudioCtx && window.chatAudioCtx.state === 'suspended') {
+        window.chatAudioCtx.resume().then(() => {
+            console.log('AudioContext unlocked via user click');
+            // document.removeEventListener('click', unlockAudio); // Keep it just in case? Usually once is enough.
+        });
+    } else if (!window.chatAudioCtx) {
+        // Create it early to be ready
+        window.chatAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        console.log('AudioContext initialized via user click');
+    }
+}, { once: false }); // keep it active to ensure it stays resumed
+
 
 window.saveChatSession = async function(name, email) {
     const sender_id = window.getChatUserId();
@@ -493,9 +534,7 @@ window.saveChatSession = async function(name, email) {
 };
 
 window.getMessages = async function() {
-    console.log('getMessages() called');
-    let messages = [];
-    // 1. Try Supabase
+    let supabaseMsgs = [];
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { data, error } = await window.supabaseInstance
@@ -503,39 +542,49 @@ window.getMessages = async function() {
                 .select('*')
                 .order('created_at', { ascending: true });
             if (!error && data) {
-                console.log('Fetched messages from Supabase:', data.length);
-                messages = data;
+                supabaseMsgs = data;
             }
         } catch (err) {
             console.error('Failed to get messages from Supabase:', err);
         }
     }
     
-    // 2. Fallback/Combine with LocalStorage
     const localMsgs = JSON.parse(localStorage.getItem('psd_messages') || '[]');
-    console.log('Fetched messages from LocalStorage:', localMsgs.length);
-    // ...
-    // Simple merge by id/timestamp to avoid duplicates if both are active
-    const combined = [...messages];
-    localMsgs.forEach(lm => {
-        if (!combined.find(cm => (cm.id && cm.id === lm.id) || (cm.text === lm.text && cm.created_at === lm.created_at))) {
-            combined.push(lm);
+    
+    // Combine and deduplicate
+    const allMsgs = [...supabaseMsgs, ...localMsgs];
+    const uniqueMap = new Map();
+    
+    allMsgs.forEach(m => {
+        // Round to nearest second to handle slight sync differences
+        const timeSecs = Math.floor(new Date(m.created_at).getTime() / 1000);
+        // Signature includes text, time (to the second), sender, and role
+        const sig = `${m.text}_${timeSecs}_${m.sender_id}_${m.is_admin}`;
+        
+        // Logic: 
+        // 1. If not seen, add it.
+        // 2. If already seen but THIS one has a Supabase ID and the stored one doesn't, replace it.
+        if (!uniqueMap.has(sig)) {
+            uniqueMap.set(sig, m);
+        } else if (m.id && !uniqueMap.get(sig).id) {
+            uniqueMap.set(sig, m);
         }
     });
     
-    return combined.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    // Sort final list by time
+    return Array.from(uniqueMap.values()).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 };
 
 window.sendChatMessage = async function(text, isAdmin = false, senderName = 'User', targetUserId = null) {
     const userId = targetUserId || window.getChatUserId();
+    const now = new Date().toISOString();
     const msg = {
         sender_id: userId,
         sender_name: isAdmin ? 'Admin PSD' : senderName,
         text: text,
         is_admin: isAdmin,
-        created_at: new Date().toISOString()
+        created_at: now
     };
-    console.log('sendChatMessage() attempt:', msg);
 
     let supabaseSuccess = false;
     if (window.supabaseInstance && !window.isSupabaseError) {
@@ -547,7 +596,7 @@ window.sendChatMessage = async function(text, isAdmin = false, senderName = 'Use
         }
     }
 
-    // Always save to LocalStorage as well for reliability/fallback
+    // Always save to LocalStorage as well for immediate UI feedback (optimistic update)
     try {
         const localMsgs = JSON.parse(localStorage.getItem('psd_messages') || '[]');
         localMsgs.push(msg);
@@ -558,6 +607,7 @@ window.sendChatMessage = async function(text, isAdmin = false, senderName = 'Use
 
     return { success: true, isSupabase: supabaseSuccess };
 };
+
 
 window.subscribeToMessages = function(callback) {
     if (window.supabaseInstance && !window.isSupabaseError) {
@@ -587,28 +637,38 @@ window.getCompanyInfo = async function() {
 };
 
 window.updateCompanyInfoInDB = async function(info) {
+    console.log('updateCompanyInfoInDB() called with:', info);
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
-            // Include all fields in the update
-            const { error } = await window.supabaseInstance.from('company').update({
+            // Always stringify social object for database compatibility (some DBs treat it as text)
+            const socialStr = typeof info.social === 'object' ? JSON.stringify(info.social) : info.social;
+            
+            const updateData = {
                 email: info.email,
                 phone: info.phone,
                 address: info.address,
                 playstore_url: info.playstore_url,
-                social: info.social,
+                social: socialStr,
                 hero_headline: info.hero_headline,
                 hero_subheadline: info.hero_subheadline,
                 whatsapp_number: info.whatsapp_number
-            }).eq('id', 1);
+            };
+
+            const { error } = await window.supabaseInstance.from('company').update(updateData).eq('id', 1);
             if (error) throw error;
+            console.log('Supabase company update successful');
         } catch (err) {
             console.error('Failed to update company info in Supabase:', err);
         }
     }
+    
+    // Always sync to LocalStorage
     const current = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY)) || {};
     const updated = { ...current, ...info };
     localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(updated));
+    console.log('LocalStorage company update successful');
 };
+
 
 window.syncCompanyInfo = async function() {
     try {

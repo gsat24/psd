@@ -333,18 +333,26 @@
 
             // Subscribe to Realtime
             if (window.subscribeToMessages) {
+                console.log('Chat widget setting up message subscription...');
                 window.subscribeToMessages((newMsg) => {
+                    console.log('Realtime message received in widget callback:', newMsg);
                     const userId = window.getChatUserId ? window.getChatUserId() : null;
                     if (newMsg.sender_id === userId || newMsg.is_admin) {
                         appendMessage(newMsg);
                         
                         // Play sound if message is from admin
-                        if (newMsg.is_admin && window.playChatSound) {
-                            window.playChatSound();
+                        if (newMsg.is_admin) {
+                            console.log('Attempting to play sound for admin message');
+                            if (window.playChatSound) {
+                                window.playChatSound();
+                            } else {
+                                console.warn('window.playChatSound not found!');
+                            }
                         }
                     }
                 });
             }
+
 
             // Send Message
             chatForm.addEventListener('submit', async (e) => {

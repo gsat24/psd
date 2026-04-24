@@ -466,10 +466,15 @@
                             <span id="active-chat-name">Pilih percakapan untuk memulai</span>
                             <span id="active-chat-user-id" class="text-[10px] text-gray-400 font-normal mt-0.5"></span>
                         </div>
-                        <button type="button" id="end-session-btn" style="display:none" class="flex items-center gap-1.5 text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-semibold">
-                            <i class="fas fa-times-circle text-xs"></i>
-                            End Session
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="window.playChatSound ? window.playChatSound() : alert('Audio belum siap. Klik di mana saja lalu coba lagi.')" class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-[10px] font-bold transition">
+                                <i class="fas fa-volume-up"></i> Tes Suara
+                            </button>
+                            <button type="button" id="end-session-btn" style="display:none" class="flex items-center gap-1.5 text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-semibold">
+                                <i class="fas fa-times-circle text-xs"></i>
+                                End Session
+                            </button>
+                        </div>
                     </div>
                     <div id="admin-chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col">
                         <div class="flex-1 flex items-center justify-center text-gray-400 flex-col">
@@ -1017,11 +1022,20 @@
                 if (document.getElementById('comp-address')) document.getElementById('comp-address').value = info.address || '';
                 if (document.getElementById('playstore-url')) document.getElementById('playstore-url').value = info.playstore_url || '';
                 
+                // Hero Fields
+                if (document.getElementById('hero-headline')) document.getElementById('hero-headline').value = info.hero_headline || '';
+                if (document.getElementById('hero-subheadline')) document.getElementById('hero-subheadline').value = info.hero_subheadline || '';
+                if (document.getElementById('whatsapp-number')) document.getElementById('whatsapp-number').value = info.whatsapp_number || '';
+
                 // Populate Social Links
                 if (info.social) {
-                    if (document.getElementById('social-instagram')) document.getElementById('social-instagram').value = info.social.instagram || '';
-                    if (document.getElementById('social-facebook')) document.getElementById('social-facebook').value = info.social.facebook || '';
-                    if (document.getElementById('social-tiktok')) document.getElementById('social-tiktok').value = info.social.tiktok || '';
+                    let social = info.social;
+                    if (typeof social === 'string') {
+                        try { social = JSON.parse(social); } catch(e) {}
+                    }
+                    if (document.getElementById('social-instagram')) document.getElementById('social-instagram').value = social.instagram || '';
+                    if (document.getElementById('social-facebook')) document.getElementById('social-facebook').value = social.facebook || '';
+                    if (document.getElementById('social-tiktok')) document.getElementById('social-tiktok').value = social.tiktok || '';
                 }
             }
         }
@@ -1032,17 +1046,29 @@
                 phone: document.getElementById('comp-phone').value,
                 address: document.getElementById('comp-address').value,
                 playstore_url: document.getElementById('playstore-url').value,
+                hero_headline: document.getElementById('hero-headline').value,
+                hero_subheadline: document.getElementById('hero-subheadline').value,
+                whatsapp_number: document.getElementById('whatsapp-number').value,
                 social: {
                     instagram: document.getElementById('social-instagram').value,
                     facebook: document.getElementById('social-facebook').value,
                     tiktok: document.getElementById('social-tiktok').value
                 }
             };
+            
+            console.log('Updating company info with:', info);
+            
             if (window.updateCompanyInfoInDB) {
                 await window.updateCompanyInfoInDB(info);
             }
             alert('Informasi perusahaan berhasil diperbarui!');
+            
+            // Re-sync local UI
+            if (window.syncCompanyInfo) {
+                window.syncCompanyInfo();
+            }
         }
+
 
         async function populateGlobalSEO() {
             let seo = null;
@@ -1451,11 +1477,18 @@
         // Subscribe to Realtime
         setTimeout(() => {
             if (window.subscribeToMessages) {
+                console.log('Admin setting up message subscription...');
                 window.subscribeToMessages((newMsg) => {
-                    console.log('Realtime message received in Admin:', newMsg);
+                    console.log('Realtime message received in Admin callback:', newMsg);
                     
-                    if (!newMsg.is_admin && window.playChatSound) {
-                        window.playChatSound();
+                    // Sound for customer messages
+                    if (!newMsg.is_admin) {
+                        console.log('Attempting to play sound for customer message');
+                        if (window.playChatSound) {
+                            window.playChatSound();
+                        } else {
+                            console.warn('window.playChatSound not found!');
+                        }
                     }
 
                     const badge = document.getElementById('admin-chat-badge');
@@ -1464,8 +1497,11 @@
                     }
                     renderChat();
                 });
+            } else {
+                console.warn('window.subscribeToMessages not found during setup');
             }
         }, 1000);
+
 
         document.getElementById('admin-chat-form').addEventListener('submit', async (e) => {
             e.preventDefault();
