@@ -243,8 +243,8 @@ window.initDB = function() {
 
         if (!localStorage.getItem(DB_KEYS.TESTIMONIALS)) {
             const mockTestimonials = [
-                { id: 1, name: 'KH. Ahmad Dahlan', role: 'Pengasuh Ponpes', content: 'Sistem PSD sangat membantu efisiensi administrasi kami.', image: 'src/user1.webp' },
-                { id: 2, name: 'Hj. Siti Aminah', role: 'Wali Santri', content: 'Sekarang pantau perkembangan anak jadi lebih mudah lewat aplikasi.', image: 'src/user2.webp' }
+                { id: 1, name: 'KH. Ahmad Dahlan', role: 'Pengasuh Ponpes', content: 'Sistem PSD sangat membantu efisiensi administrasi kami.', image: 'https://ui-avatars.com/api/?name=Ahmad+Dahlan&background=0A5C4F&color=fff' },
+                { id: 2, name: 'Hj. Siti Aminah', role: 'Wali Santri', content: 'Sekarang pantau perkembangan anak jadi lebih mudah lewat aplikasi.', image: 'https://ui-avatars.com/api/?name=Siti+Aminah&background=F4C430&color=fff' }
             ];
             localStorage.setItem(DB_KEYS.TESTIMONIALS, JSON.stringify(mockTestimonials));
         }
