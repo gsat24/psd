@@ -447,9 +447,15 @@
 
                 <!-- Chat View -->
                 <div class="flex-1 flex flex-col bg-gray-50">
-                    <div id="active-chat-header" class="p-4 bg-white border-b border-gray-100 font-bold text-psd-green flex justify-between items-center">
-                        <span>Pilih percakapan untuk memulai</span>
-                        <span id="active-chat-user-id" class="text-[10px] text-gray-400 font-normal"></span>
+                <div id="active-chat-header" class="p-4 bg-white border-b border-gray-100 font-bold text-psd-green flex justify-between items-center">
+                        <div class="flex flex-col">
+                            <span id="active-chat-name">Pilih percakapan untuk memulai</span>
+                            <span id="active-chat-user-id" class="text-[10px] text-gray-400 font-normal mt-0.5"></span>
+                        </div>
+                        <button id="end-session-btn" onclick="endChatSession()" class="hidden items-center gap-1.5 text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-semibold">
+                            <i class="fas fa-times-circle text-xs"></i>
+                            End Session
+                        </button>
                     </div>
                     <div id="admin-chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col">
                         <!-- Messages for selected user -->
@@ -459,7 +465,7 @@
                         </div>
                     </div>
                     <form id="admin-chat-form" class="p-4 bg-white border-t border-gray-100 flex items-center space-x-2 hidden">
-                        <input type="text" id="admin-chat-input" placeholder="Balas pesan..." class="flex-1 bg-gray-100 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-psd-green outline-none">
+                        <input type="text" id="admin-chat-input" placeholder="Balas pesan..." class="flex-1 bg-gray-100 border-none rounded-xl px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-psd-green outline-none">
                         <button type="submit" class="bg-psd-green text-white p-3 rounded-xl hover:bg-opacity-90 transition">
                             <i class="fas fa-paper-plane"></i>
                         </button>
@@ -1310,11 +1316,15 @@
 
         async function selectChatUser(userId, name, email) {
             currentChatUser = userId;
-            document.getElementById('active-chat-header').querySelector('span').innerText = 'Chat dengan ' + name;
+            // Update header
+            const nameEl = document.getElementById('active-chat-name');
+            if (nameEl) nameEl.innerText = 'Chat dengan ' + name;
             document.getElementById('active-chat-user-id').innerText = email ? `Email: ${email} | ID: ${userId}` : `ID: ${userId}`;
             document.getElementById('admin-chat-form').classList.remove('hidden');
-            
-            renderChat(); // Refresh list to show active state
+            // Show End Session button
+            const endBtn = document.getElementById('end-session-btn');
+            if (endBtn) endBtn.classList.replace('hidden', 'flex');
+            renderChat();
         }
 
         function renderMessages(msgs) {
@@ -1334,6 +1344,38 @@
                 `;
             }).join('');
             container.scrollTop = container.scrollHeight;
+        }
+
+        async function endChatSession() {
+            if (!currentChatUser) return;
+            if (!confirm('Akhiri sesi chat dengan user ini? Semua pesan akan dihapus dari tampilan.')) return;
+
+            // Delete from localStorage
+            const allMsgs = JSON.parse(localStorage.getItem('psd_messages') || '[]');
+            const filtered = allMsgs.filter(m => m.sender_id !== currentChatUser);
+            localStorage.setItem('psd_messages', JSON.stringify(filtered));
+
+            // Delete from Supabase if available
+            if (window.supabaseInstance && !window.isSupabaseError) {
+                await window.supabaseInstance.from('messages').delete().eq('sender_id', currentChatUser);
+                await window.supabaseInstance.from('chat_sessions').delete().eq('sender_id', currentChatUser);
+            }
+
+            // Reset UI
+            currentChatUser = null;
+            const nameEl = document.getElementById('active-chat-name');
+            if (nameEl) nameEl.innerText = 'Pilih percakapan untuk memulai';
+            document.getElementById('active-chat-user-id').innerText = '';
+            document.getElementById('admin-chat-form').classList.add('hidden');
+            document.getElementById('admin-chat-messages').innerHTML = `
+                <div class="flex-1 flex items-center justify-center text-gray-400 flex-col">
+                    <i class="fas fa-check-circle text-4xl mb-4 opacity-30 text-green-500"></i>
+                    <p>Sesi chat telah diakhiri.</p>
+                </div>`;
+            const endBtn = document.getElementById('end-session-btn');
+            if (endBtn) endBtn.classList.replace('flex', 'hidden');
+
+            await renderChat();
         }
 
         // Subscribe to Realtime
