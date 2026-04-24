@@ -1330,11 +1330,9 @@
             `).join('');
 
             if (currentChatUser) {
-                // Filter: show messages for this user + any legacy admin messages (for backward compatibility)
-                const filtered = messages.filter(m => 
-                    m.sender_id === currentChatUser || 
-                    (m.is_admin && m.sender_id === 'admin')
-                );
+                // Strictly filter messages for this user only to prevent mixing.
+                // Note: Legacy admin messages (sender_id: 'admin') cannot be safely assigned to a specific user and are thus hidden.
+                const filtered = messages.filter(m => m.sender_id === currentChatUser);
                 renderMessages(filtered);
             }
         }
