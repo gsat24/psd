@@ -52,11 +52,11 @@
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Nama Lengkap</label>
-                    <input type="text" id="chat-reg-name" placeholder="Nama Anda" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
+                    <input type="text" id="chat-reg-name" placeholder="Nama Anda" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Alamat Email</label>
-                    <input type="email" id="chat-reg-email" placeholder="email@contoh.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
+                    <input type="email" id="chat-reg-email" placeholder="email@contoh.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
                 </div>
                 <button id="chat-reg-btn" class="w-full bg-[#0A5C4F] text-white font-bold py-3 rounded-xl hover:bg-[#084a40] transition shadow-lg shadow-[#0A5C4F]/20 mt-1 flex items-center justify-center gap-2">
                     <i class="fas fa-comments text-sm"></i>
