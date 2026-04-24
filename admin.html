@@ -38,7 +38,21 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
     </style>
 </head>
-<body class="bg-gray-100 flex h-screen overflow-hidden">
+<body class="bg-gray-50 font-sans text-gray-900 overflow-hidden h-screen">
+    <!-- End Chat Session Modal (Moved to top for stability) -->
+    <div id="endSessionModal" class="fixed inset-0 bg-black/80 z-[10000] flex items-center justify-center p-4" style="display:none !important">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
+            <div class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Akhiri Sesi Chat?</h3>
+            <p class="text-gray-500 text-sm mb-8">Semua riwayat percakapan dengan user ini akan dihapus dari tampilan admin.</p>
+            <div class="flex gap-3">
+                <button type="button" onclick="closeEndSessionModal()" class="flex-1 px-4 py-3 border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition">Batal</button>
+                <button type="button" onclick="confirmEndSession()" class="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition">Ya, Akhiri</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Login Overlay -->
     <div id="login-overlay" class="fixed inset-0 bg-psd-green z-[100] flex items-center justify-center p-6">
@@ -452,7 +466,7 @@
                             <span id="active-chat-name">Pilih percakapan untuk memulai</span>
                             <span id="active-chat-user-id" class="text-[10px] text-gray-400 font-normal mt-0.5"></span>
                         </div>
-                        <button type="button" id="end-session-btn" onclick="event.preventDefault(); event.stopPropagation(); openEndSessionModal();" style="display:none" class="flex items-center gap-1.5 text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-semibold">
+                        <button type="button" id="end-session-btn" style="display:none" class="flex items-center gap-1.5 text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-semibold">
                             <i class="fas fa-times-circle text-xs"></i>
                             End Session
                         </button>
@@ -658,20 +672,7 @@
                 <button id="genericModalSaveBtn" class="bg-psd-green text-white px-8 py-2 rounded-lg font-semibold hover:bg-[#084a40] transition">Simpan</button>
             </div>
         </div>
-    <!-- End Chat Session Modal -->
-    <div id="endSessionModal" class="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4" style="display:none">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center">
-            <div class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-exclamation-triangle text-2xl"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Akhiri Sesi Chat?</h3>
-            <p class="text-gray-500 text-sm mb-8">Semua riwayat percakapan dengan user ini akan dihapus dari tampilan admin.</p>
-            <div class="flex gap-3">
-                <button type="button" onclick="closeEndSessionModal()" class="flex-1 px-4 py-3 border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition">Batal</button>
-                <button type="button" onclick="confirmEndSession()" class="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition">Ya, Akhiri</button>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Other Libraries -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -1358,16 +1359,37 @@
         }
 
         function openEndSessionModal() {
-            console.log('Opening End Session Modal...');
+            console.log('--- ATTEMPTING TO OPEN MODAL ---');
             const modal = document.getElementById('endSessionModal');
-            if (modal) modal.style.display = 'flex';
+            if (modal) {
+                modal.setAttribute('style', 'display: flex !important');
+                console.log('Modal style set to flex !important');
+            } else {
+                console.error('Modal element not found!');
+            }
         }
 
         function closeEndSessionModal() {
-            console.log('Closing End Session Modal...');
+            console.log('--- CLOSING MODAL ---');
+            console.trace(); // Find out what is calling this
             const modal = document.getElementById('endSessionModal');
-            if (modal) modal.style.display = 'none';
+            if (modal) {
+                modal.setAttribute('style', 'display: none !important');
+            }
         }
+
+        // Attach event listener via JS for better reliability
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('end-session-btn');
+            if (btn) {
+                btn.addEventListener('click', (e) => {
+                    console.log('End Session Button Clicked');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openEndSessionModal();
+                });
+            }
+        });
 
         async function confirmEndSession() {
             if (!currentChatUser) return;
