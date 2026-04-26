@@ -12,7 +12,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="src/admin-system.js"></script>
+    <script src="src/admin-system.js?v=1.1"></script>
 </head>
 <body class="font-sans text-white">
 
@@ -1083,6 +1083,13 @@
             if (window.getCompanyInfo) {
                 const info = await window.getCompanyInfo();
                 if (info) {
+                    // Top Hero (Utama)
+                    const heroTitle = document.getElementById('hero-title');
+                    const heroSub = document.getElementById('hero-subtitle');
+                    if (heroTitle && info.hero_headline) heroTitle.innerHTML = info.hero_headline;
+                    if (heroSub && info.hero_subheadline) heroSub.innerHTML = info.hero_subheadline;
+
+                    // Solusi Nyata Section (Bawah)
                     const dynHeadline = document.getElementById('hero-dyn-headline');
                     const dynSub = document.getElementById('hero-dyn-subheadline');
                     if (dynHeadline && info.solusi_headline) dynHeadline.innerText = info.solusi_headline;
@@ -1096,6 +1103,6 @@
 
         window.addEventListener('load', loadDynamicContent);
     </script>
-    <script src="src/chat-widget.js"></script>
+    <script src="src/chat-widget.js?v=1.1"></script>
 </body>
 </html>

@@ -68,6 +68,32 @@
                 </button>
             </div>
 
+            <!-- Offline / Ticket View -->
+            <div id="chat-offline-view" class="p-4 md:p-5 space-y-3 bg-white hidden flex-col overflow-y-auto flex-1 min-h-0">
+                <div class="text-center mb-1">
+                    <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-envelope-open-text text-gray-400 text-2xl"></i>
+                    </div>
+                    <h5 class="font-bold text-gray-800 text-sm">Admin Sedang Offline</h5>
+                    <p class="text-[10px] text-gray-500 mt-1">Silakan tinggalkan pesan, kami akan segera menghubungi Anda via WhatsApp.</p>
+                </div>
+                <div>
+                    <label class="block text-[9px] uppercase font-bold text-gray-400 mb-0.5">Nama Lengkap</label>
+                    <input type="text" id="chat-off-name" placeholder="Nama Anda" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-800 focus:ring-2 focus:ring-[#0A5C4F] outline-none">
+                </div>
+                <div>
+                    <label class="block text-[9px] uppercase font-bold text-gray-400 mb-0.5">No. WhatsApp</label>
+                    <input type="tel" id="chat-off-phone" placeholder="Contoh: 081234567890" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-800 focus:ring-2 focus:ring-[#0A5C4F] outline-none">
+                </div>
+                <div>
+                    <label class="block text-[9px] uppercase font-bold text-gray-400 mb-0.5">Pesan / Kendala</label>
+                    <textarea id="chat-off-msg" rows="3" placeholder="Tulis pesan Anda di sini..." class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-800 focus:ring-2 focus:ring-[#0A5C4F] outline-none"></textarea>
+                </div>
+                <button id="chat-off-btn" class="w-full bg-[#0A5C4F] text-white font-bold py-2.5 rounded-lg hover:bg-[#084a40] transition text-xs shadow-lg shadow-[#0A5C4F]/20">
+                    Kirim Pesan Sekarang
+                </button>
+            </div>
+
             <!-- Chat Content View (Initially Hidden) -->
             <div id="chat-content-view" class="flex flex-col hidden">
                 <!-- Messages Area -->
@@ -114,30 +140,54 @@
         return re.test(email);
     }
 
-    function startOnlineAnimation(labelEl, textEl) {
+    async function startOnlineAnimation(labelEl, textEl) {
         let visible = false;
-        const adminName = getAdminDisplayName();
-        textEl.textContent = adminName + ' Online';
 
-        function toggle() {
+        async function toggle() {
+            // Check if chat is window is open, don't show tooltip if it is
+            const chatWindow = document.getElementById('chat-window');
+            if (chatWindow && !chatWindow.classList.contains('hidden')) {
+                labelEl.style.opacity = '0';
+                visible = false;
+                setTimeout(toggle, 3000);
+                return;
+            }
+
+            const isOnline = await getChatStatus();
+            if (!isOnline) {
+                labelEl.style.opacity = '0';
+                visible = false;
+                setTimeout(toggle, 5000); // Re-check after 5s
+                return;
+            }
+
             if (visible) {
                 // Fade out
                 labelEl.style.opacity = '0';
                 visible = false;
-                setTimeout(toggle, 2500); // jeda 2.5s saat hilang
+                setTimeout(toggle, 2500); // delay when hidden
             } else {
                 // Fade in
                 labelEl.style.opacity = '1';
                 visible = true;
-                // Update name in case it changed
                 const name = getAdminDisplayName();
                 textEl.textContent = name + ' Online';
-                setTimeout(toggle, 3500); // tampil 3.5s
+                setTimeout(toggle, 3500); // show for 3.5s
             }
         }
 
-        // Start after 1.5s delay
-        setTimeout(toggle, 1500);
+        // Start after 2s delay
+        setTimeout(toggle, 2000);
+    }
+
+    async function getChatStatus() {
+        try {
+            if (window.getCompanyInfo) {
+                const info = await window.getCompanyInfo();
+                return info.chat_status !== false; // Default true if undefined
+            }
+        } catch (e) {}
+        return true;
     }
 
     function init() {
@@ -171,7 +221,7 @@
         if (adminNameHeader) adminNameHeader.textContent = adminName + ' | Siap membantu Anda';
 
         // Toggle Chat Window
-        chatBubble.addEventListener('click', () => {
+        chatBubble.addEventListener('click', async () => {
             const isHidden = chatWindow.classList.contains('hidden');
             if (isHidden) {
                 chatWindow.classList.remove('hidden');
@@ -184,7 +234,7 @@
                 chatWindow.classList.remove('chat-anim-open');
             }
             chatBadge.classList.add('hidden');
-            checkRegistration();
+            await checkRegistration();
             scrollToBottom();
         });
 
@@ -193,18 +243,48 @@
             chatWindow.classList.remove('chat-anim-open');
         });
 
-        function checkRegistration() {
+        async function checkRegistration() {
+            const isOnline = await getChatStatus();
             const userName = localStorage.getItem('psd_chat_user_name');
-            if (userName) {
+            const offlineView = document.getElementById('chat-offline-view');
+            const regView = document.getElementById('chat-reg-view');
+            const contentView = document.getElementById('chat-content-view');
+
+            if (!isOnline) {
+                // Admin Offline -> Show Ticket Form
+                offlineView.classList.remove('hidden');
+                offlineView.classList.add('flex');
+                regView.classList.add('hidden');
+                regView.classList.remove('flex');
+                contentView.classList.add('hidden');
+                contentView.classList.remove('flex');
+                
+                // Update header
+                if (adminNameHeader) adminNameHeader.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block mr-1"></span> Offline | Kirim Pesan';
+            } else if (userName) {
+                // Online & Registered -> Show Chat
+                offlineView.classList.add('hidden');
+                offlineView.classList.remove('flex');
                 regView.classList.add('hidden');
                 regView.classList.remove('flex');
                 contentView.classList.remove('hidden');
                 contentView.classList.add('flex');
+                
+                // Update header
+                const adminName = getAdminDisplayName();
+                if (adminNameHeader) adminNameHeader.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block mr-1"></span> Online | Siap membantu`;
             } else {
+                // Online & Not Registered -> Show Reg Form
+                offlineView.classList.add('hidden');
+                offlineView.classList.remove('flex');
                 regView.classList.remove('hidden');
                 regView.classList.add('flex');
                 contentView.classList.add('hidden');
                 contentView.classList.remove('flex');
+                
+                // Update header
+                const adminName = getAdminDisplayName();
+                if (adminNameHeader) adminNameHeader.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block mr-1"></span> Online | Siap membantu`;
             }
         }
 
@@ -375,6 +455,44 @@
                 });
             }
 
+
+            // Send Offline Message (Ticket)
+            const offBtn = document.getElementById('chat-off-btn');
+            if (offBtn) {
+                offBtn.addEventListener('click', async () => {
+                    const name = document.getElementById('chat-off-name').value.trim();
+                    const phone = document.getElementById('chat-off-phone').value.trim();
+                    const msg = document.getElementById('chat-off-msg').value.trim();
+
+                    if (!name || !phone || !msg) {
+                        if (window.showModal) window.showModal('Data Belum Lengkap', 'Nama, WhatsApp, dan Pesan wajib diisi.', 'error');
+                        else alert('Semua data wajib diisi!');
+                        return;
+                    }
+
+                    offBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+                    offBtn.disabled = true;
+
+                    if (window.saveFeedbackToDB) {
+                        const res = await window.saveFeedbackToDB(name, 'via-chat-offline@psd.com', 'Tiket Chat Offline', msg, phone);
+                        if (res.success) {
+                            if (window.showModal) window.showModal('Berhasil!', 'Pesan Anda telah terkirim sebagai tiket. Kami akan menghubungi Anda segera.', 'success');
+                            else alert('Pesan terkirim!');
+                            
+                            // Clear and close
+                            document.getElementById('chat-off-name').value = '';
+                            document.getElementById('chat-off-phone').value = '';
+                            document.getElementById('chat-off-msg').value = '';
+                            chatWindow.classList.add('hidden');
+                        } else {
+                            if (window.showModal) window.showModal('Gagal', 'Terjadi kesalahan saat mengirim pesan.', 'error');
+                        }
+                    }
+                    
+                    offBtn.innerHTML = 'Kirim Pesan Sekarang';
+                    offBtn.disabled = false;
+                });
+            }
 
             // Send Message
             chatForm.addEventListener('submit', async (e) => {

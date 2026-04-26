@@ -494,9 +494,9 @@ window.getFeedback = async function() {
     return JSON.parse(localStorage.getItem(DB_KEYS.FEEDBACK)) || [];
 };
 
-window.saveFeedbackToDB = async function(name, email, subject, message) {
+window.saveFeedbackToDB = async function(name, email, subject, message, whatsapp = '') {
     const newFeedback = {
-        name, email, subject, message,
+        name, email, subject, message, whatsapp,
         date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
     };
     
@@ -858,7 +858,10 @@ window.updateCompanyInfoInDB = async function(info) {
                 social: socialObj,
                 hero_headline: info.hero_headline,
                 hero_subheadline: info.hero_subheadline,
-                whatsapp_number: info.whatsapp_number
+                solusi_headline: info.solusi_headline,
+                solusi_subheadline: info.solusi_subheadline,
+                whatsapp_number: info.whatsapp_number,
+                chat_status: info.chat_status
             };
 
             const dataToSave = { id: 1 };
@@ -873,9 +876,11 @@ window.updateCompanyInfoInDB = async function(info) {
                     }
                 });
             } else {
-                // Fallback: try common fields if we couldn't fetch
-                ['email', 'phone', 'address', 'social'].forEach(k => {
-                    if (info[k] !== undefined) dataToSave[k] = (k === 'social' ? socialObj : info[k]);
+                // Fallback: try all known fields if we couldn't fetch to detect
+                ['email', 'phone', 'address', 'social', 'hero_headline', 'hero_subheadline', 'solusi_headline', 'solusi_subheadline', 'whatsapp_number', 'chat_status'].forEach(k => {
+                    if (info[k] !== undefined) {
+                        dataToSave[k] = (k === 'social' && typeof info[k] === 'object' ? socialObj : info[k]);
+                    }
                 });
             }
 
@@ -894,7 +899,14 @@ window.updateCompanyInfoInDB = async function(info) {
                         email: info.email,
                         phone: info.phone,
                         address: info.address,
-                        social: typeof info.social === 'object' ? JSON.stringify(info.social) : info.social
+                        playstore_url: info.playstore_url,
+                        social: typeof info.social === 'object' ? JSON.stringify(info.social) : info.social,
+                        hero_headline: info.hero_headline,
+                        hero_subheadline: info.hero_subheadline,
+                        solusi_headline: info.solusi_headline,
+                        solusi_subheadline: info.solusi_subheadline,
+                        whatsapp_number: info.whatsapp_number,
+                        chat_status: info.chat_status
                     };
                     await window.supabaseInstance.from('company').upsert([safeData]);
                     console.log('Safe fallback update success');
@@ -956,8 +968,9 @@ window.syncCompanyInfo = async function() {
         playStoreLinks.forEach(el => el.href = info.playstore_url || '#');
 
         const ctaWaLinks = document.querySelectorAll('#cta-whatsapp-link');
-        if (info.whatsapp) {
-            const waUrl = `https://wa.me/${info.whatsapp.replace(/[^0-9]/g, '')}`;
+        const waNum = info.whatsapp_number || info.whatsapp; // Fallback to 'whatsapp' if 'whatsapp_number' is not yet set
+        if (waNum) {
+            const waUrl = `https://wa.me/${waNum.replace(/[^0-9]/g, '')}`;
             ctaWaLinks.forEach(el => el.href = waUrl);
         }
 

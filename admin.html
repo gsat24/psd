@@ -13,7 +13,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- CryptoJS for Encryption -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <script src="src/admin-system.js"></script>
+    <script src="src/admin-system.js?v=1.1"></script>
+    <script src="src/chat-widget.js?v=1.1"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <!-- Quill.js Editor -->
@@ -442,6 +443,7 @@
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
                             <th class="px-6 py-4 text-sm font-semibold text-gray-600">Pengirim</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-600">WhatsApp</th>
                             <th class="px-6 py-4 text-sm font-semibold text-gray-600">Pesan</th>
                             <th class="px-6 py-4 text-sm font-semibold text-gray-600">Tanggal</th>
                             <th class="px-6 py-4 text-sm font-semibold text-gray-600">Aksi</th>
@@ -456,7 +458,22 @@
 
         <!-- Live Chat Section -->
         <section id="section-chat" class="admin-section hidden">
-            <h1 class="text-3xl font-bold text-gray-800 mb-8">Live Chat Pelanggan</h1>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Live Chat Pelanggan</h1>
+                    <p class="text-gray-500 text-sm mt-1">Kelola pesan real-time dari pengunjung website Anda.</p>
+                </div>
+                <div class="flex items-center gap-4 bg-white p-2 px-4 rounded-2xl border border-gray-100 shadow-sm">
+                    <span class="text-sm font-bold text-gray-600">Status Chat:</span>
+                    <button id="admin-status-toggle" onclick="toggleAdminStatus()" class="group relative inline-flex h-7 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-gray-200">
+                        <span id="toggle-circle" class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out translate-x-0"></span>
+                    </button>
+                    <div class="flex flex-col">
+                        <span id="status-text" class="text-[10px] font-black uppercase text-gray-400 leading-none">OFFLINE</span>
+                        <span id="status-desc" class="text-[9px] text-gray-500 mt-0.5">User kirim tiket</span>
+                    </div>
+                </div>
+            </div>
             
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex h-[600px]">
                 <!-- Chat List -->
@@ -1001,6 +1018,14 @@
                         <div class="text-xs text-gray-400 font-normal">${f.email}</div>
                     </td>
                     <td class="px-6 py-4 text-gray-600 text-sm">
+                        ${f.whatsapp ? `
+                            <a href="https://wa.me/${f.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" class="flex items-center gap-1 text-psd-green hover:underline font-medium">
+                                <i class="fab fa-whatsapp"></i>
+                                ${f.whatsapp}
+                            </a>
+                        ` : '<span class="text-gray-300">-</span>'}
+                    </td>
+                    <td class="px-6 py-4 text-gray-600 text-sm">
                         <div class="font-bold mb-1">${f.subject || 'No Subject'}</div>
                         <div class="truncate max-w-xs">${f.message || 'No Message'}</div>
                     </td>
@@ -1057,7 +1082,54 @@
                         if (document.getElementById('social-tiktok')) document.getElementById('social-tiktok').value = social.tiktok || '';
                     }
                 }
+                // Chat Status
+                if (info.hasOwnProperty('chat_status')) {
+                    updateStatusUI(info.chat_status);
+                }
+            }
+        }
 
+        async function toggleAdminStatus() {
+            const btn = document.getElementById('admin-status-toggle');
+            if (!btn) return;
+            const isOnline = btn.classList.contains('bg-psd-green');
+            const newStatus = !isOnline;
+            
+            updateStatusUI(newStatus);
+            
+            if (window.updateCompanyInfoInDB) {
+                try {
+                    await window.updateCompanyInfoInDB({ chat_status: newStatus });
+                } catch (e) {
+                    updateStatusUI(isOnline);
+                    console.error('Chat status update failed:', e);
+                }
+            }
+        }
+
+        function updateStatusUI(isOnline) {
+            const btn = document.getElementById('admin-status-toggle');
+            const circle = document.getElementById('toggle-circle');
+            const text = document.getElementById('status-text');
+            const desc = document.getElementById('status-desc');
+            if (!btn || !circle) return;
+
+            if (isOnline) {
+                btn.classList.remove('bg-gray-200');
+                btn.classList.add('bg-psd-green');
+                circle.style.transform = 'translateX(1.75rem)';
+                text.innerText = 'ONLINE';
+                text.classList.remove('text-gray-400');
+                text.classList.add('text-psd-green');
+                desc.innerText = 'Bisa chat langsung';
+            } else {
+                btn.classList.remove('bg-psd-green');
+                btn.classList.add('bg-gray-200');
+                circle.style.transform = 'translateX(0)';
+                text.innerText = 'OFFLINE';
+                text.classList.remove('text-psd-green');
+                text.classList.add('text-gray-400');
+                desc.innerText = 'User kirim tiket';
             }
         }
 
@@ -1076,7 +1148,8 @@
                     instagram: document.getElementById('social-instagram').value,
                     facebook: document.getElementById('social-facebook').value,
                     tiktok: document.getElementById('social-tiktok').value
-                }
+                },
+                chat_status: document.getElementById('admin-status-toggle').classList.contains('bg-psd-green')
             };
             
             console.log('--- STARTING COMPANY UPDATE ---');
