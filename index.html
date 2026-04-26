@@ -1041,7 +1041,9 @@
                             </div>
                             <div class="relative z-10">
                                 <div class="flex items-center mb-6">
-                                    <img src="${t.image}" class="h-16 w-16 rounded-full object-cover mr-4 shadow-md border-2 border-psd-green/10">
+                                    <img src="${t.image}" 
+                                         onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=0A5C4F&color=fff'" 
+                                         class="h-16 w-16 rounded-full object-cover mr-4 shadow-md border-2 border-psd-green/10">
                                     <div class="text-left">
                                         <h4 class="font-bold text-gray-800 text-lg">${t.name}</h4>
                                         <p class="text-psd-yellow font-bold text-xs uppercase tracking-wider mt-1">${t.role}</p>
