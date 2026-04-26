@@ -955,11 +955,8 @@ window.syncCompanyInfo = async function() {
         const playStoreLinks = document.querySelectorAll('[id$="-playstore-link"]');
         playStoreLinks.forEach(el => el.href = info.playstore_url || '#');
 
-        // Hero Content
-        const heroTitle = document.getElementById('hero-title');
-        const heroSub = document.getElementById('hero-subtitle');
-        if (heroTitle && info.hero_headline) heroTitle.innerText = info.hero_headline;
-        if (heroSub && info.hero_subheadline) heroSub.innerText = info.hero_subheadline;
+        // Hero Content Top is now static as per user request
+        // Dynamic headline for other sections is handled in index.html loadDynamicContent
 
         // WhatsApp floating button logic has been removed and replaced with Live Chat
     } catch (e) {
