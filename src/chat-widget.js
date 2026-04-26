@@ -21,7 +21,7 @@
         </button>
 
         <!-- Chat Window -->
-        <div id="chat-window" class="absolute bottom-20 right-0 w-[300px] md:w-[360px] max-h-[calc(100vh-120px)] bg-white rounded-2xl shadow-2xl border border-gray-100 hidden flex-col overflow-hidden" style="animation: none;">
+        <div id="chat-window" class="absolute bottom-20 right-0 w-[300px] md:w-[360px] max-h-[80vh] md:max-h-[600px] bg-white rounded-2xl shadow-2xl border border-gray-100 hidden flex-col overflow-hidden" style="animation: none; overscroll-behavior: contain;">
             <!-- Header -->
             <div class="bg-gradient-to-r from-[#0A5C4F] to-[#0d7a65] p-4 text-white flex justify-between items-center">
                 <div class="flex items-center">
@@ -42,28 +42,28 @@
             </div>
 
             <!-- Registration View -->
-            <div id="chat-reg-view" class="p-5 md:p-6 pt-2 md:pt-4 bg-white hidden flex-col overflow-y-auto" style="max-height: 450px;">
-                <div class="text-center mb-2">
-                    <div class="w-16 h-16 bg-[#0A5C4F]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="fas fa-user-circle text-[#0A5C4F] text-3xl"></i>
+            <div id="chat-reg-view" class="p-4 md:p-5 space-y-3 bg-white hidden flex-col overflow-y-auto flex-1 min-h-0">
+                <div class="text-center mb-1">
+                    <div class="w-12 h-12 bg-[#0A5C4F]/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-user-circle text-[#0A5C4F] text-2xl"></i>
                     </div>
-                    <h5 class="font-bold text-gray-800">Selamat Datang!</h5>
-                    <p class="text-xs text-gray-500 mt-1">Isi data diri untuk memulai chat dengan admin kami.</p>
+                    <h5 class="font-bold text-gray-800 text-sm">Selamat Datang!</h5>
+                    <p class="text-[10px] text-gray-500 mt-1">Isi data diri untuk memulai chat.</p>
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Nama Lengkap</label>
-                    <input type="text" id="chat-reg-name" placeholder="Nama Anda" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
+                    <label class="block text-[9px] uppercase font-bold text-gray-400 mb-0.5">Nama Lengkap</label>
+                    <input type="text" id="chat-reg-name" placeholder="Nama Anda" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">No. WhatsApp</label>
-                    <input type="tel" id="chat-reg-phone" placeholder="Contoh: 081234567890" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
+                    <label class="block text-[9px] uppercase font-bold text-gray-400 mb-0.5">No. WhatsApp</label>
+                    <input type="tel" id="chat-reg-phone" placeholder="Contoh: 081234567890" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Alamat Email</label>
-                    <input type="email" id="chat-reg-email" placeholder="email@contoh.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
+                    <label class="block text-[9px] uppercase font-bold text-gray-400 mb-0.5">Alamat Email</label>
+                    <input type="email" id="chat-reg-email" placeholder="email@contoh.com" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
                 </div>
-                <button id="chat-reg-btn" class="w-full bg-[#0A5C4F] text-white font-bold py-3 rounded-xl hover:bg-[#084a40] transition shadow-lg shadow-[#0A5C4F]/20 mt-1 flex items-center justify-center gap-2">
-                    <i class="fas fa-comments text-sm"></i>
+                <button id="chat-reg-btn" class="w-full bg-[#0A5C4F] text-white font-bold py-2.5 rounded-lg hover:bg-[#084a40] transition shadow-lg shadow-[#0A5C4F]/20 mt-1 flex items-center justify-center gap-2 text-xs">
+                    <i class="fas fa-comments text-xs"></i>
                     Mulai Chat Sekarang
                 </button>
             </div>
