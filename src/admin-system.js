@@ -34,7 +34,7 @@ window.getCurrentUser = function() {
     }
 };
 
-window.login = function(username, password) {
+window.login = async function(username, password) {
     console.log('login() called for:', username);
     try {
         if (typeof CryptoJS === 'undefined') {
@@ -43,24 +43,48 @@ window.login = function(username, password) {
         }
         const inputHash = CryptoJS.SHA256(password).toString();
 
-        // 1. Check multi-user list first
+        // 1. Try Supabase first
+        if (window.supabaseInstance && !window.isSupabaseError) {
+            try {
+                const { data, error } = await window.supabaseInstance
+                    .from('users')
+                    .select('*')
+                    .eq('username', username)
+                    .eq('password_hash', inputHash)
+                    .single();
+                
+                if (!error && data) {
+                    sessionStorage.setItem(DB_KEYS.SESSION, 'true');
+                    sessionStorage.setItem(DB_KEYS.CURRENT_USER, JSON.stringify({ 
+                        username: data.username, 
+                        displayName: data.display_name || data.username 
+                    }));
+                    console.log('Login successful (Supabase):', data.username);
+                    return true;
+                }
+            } catch (err) {
+                console.error('Supabase login failed, trying fallback...', err);
+            }
+        }
+
+        // 2. Check multi-user list in local second
         const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
         const matchedUser = users.find(u => u.username === username && u.passwordHash === inputHash);
         if (matchedUser) {
             sessionStorage.setItem(DB_KEYS.SESSION, 'true');
             sessionStorage.setItem(DB_KEYS.CURRENT_USER, JSON.stringify({ username: matchedUser.username, displayName: matchedUser.displayName || matchedUser.username }));
-            console.log('Login successful (multi-user):', matchedUser.username);
+            console.log('Login successful (multi-user local):', matchedUser.username);
             return true;
         }
 
-        // 2. Fallback: legacy single auth
+        // 3. Fallback: legacy single auth
         let authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH) || 'null');
         if (!authData) authData = { username: 'admin', passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', displayName: 'Admin' };
         
         if (username === authData.username && inputHash === authData.passwordHash) {
             sessionStorage.setItem(DB_KEYS.SESSION, 'true');
             sessionStorage.setItem(DB_KEYS.CURRENT_USER, JSON.stringify({ username: authData.username, displayName: authData.displayName || 'Admin' }));
-            console.log('Login successful (legacy):', authData.username);
+            console.log('Login successful (legacy local):', authData.username);
             return true;
         }
         
@@ -72,13 +96,26 @@ window.login = function(username, password) {
     }
 };
 
-window.updateAdminPassword = function(newPassword, targetUsername) {
+window.updateAdminPassword = async function(newPassword, targetUsername) {
     console.log('updateAdminPassword() called');
     try {
         const newHash = CryptoJS.SHA256(newPassword).toString();
         const uname = targetUsername || window.getCurrentUser().username;
 
-        // Update in users array if exists
+        // 1. Update in Supabase
+        if (window.supabaseInstance && !window.isSupabaseError) {
+            try {
+                await window.supabaseInstance
+                    .from('users')
+                    .update({ password_hash: newHash })
+                    .eq('username', uname);
+                console.log('Password updated in Supabase for:', uname);
+            } catch (err) {
+                console.error('Supabase password update failed:', err);
+            }
+        }
+
+        // 2. Update in local users array
         const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
         const idx = users.findIndex(u => u.username === uname);
         if (idx !== -1) {
@@ -86,7 +123,7 @@ window.updateAdminPassword = function(newPassword, targetUsername) {
             localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
         }
 
-        // Also update legacy auth if it's the same user
+        // 3. Update legacy auth
         let authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH) || 'null') || { username: 'admin' };
         if (authData.username === uname) {
             authData.passwordHash = newHash;
@@ -107,45 +144,120 @@ window.logout = function() {
 };
 
 // --- USER MANAGEMENT ---
-window.getUsers = function() {
-    try {
-        const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
-        // Always ensure default admin appears
-        const authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH) || 'null');
-        if (authData && !users.find(u => u.username === authData.username)) {
-            users.unshift({ id: 'legacy-admin', username: authData.username, displayName: authData.displayName || 'Admin', role: 'admin', isLegacy: true });
+window.getUsers = async function() {
+    let supabaseUsers = [];
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { data, error } = await window.supabaseInstance.from('users').select('*');
+            if (!error && data) {
+                supabaseUsers = data.map(u => ({
+                    id: u.id,
+                    username: u.username,
+                    displayName: u.display_name,
+                    role: u.role,
+                    passwordHash: u.password_hash
+                }));
+            }
+        } catch (err) {
+            console.error('Failed to get users from Supabase:', err);
         }
-        return users;
-    } catch(e) { return []; }
+    }
+
+    try {
+        const localUsers = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
+        const combined = [...supabaseUsers];
+        const existingUsernames = new Set(supabaseUsers.map(u => u.username));
+        
+        for (const u of localUsers) {
+            if (!existingUsernames.has(u.username)) {
+                combined.push(u);
+            }
+        }
+
+        // Always ensure default admin from legacy auth is considered
+        const authData = JSON.parse(localStorage.getItem(DB_KEYS.AUTH) || 'null');
+        if (authData && !combined.find(u => u.username === authData.username)) {
+            combined.unshift({ 
+                id: 'legacy-admin', 
+                username: authData.username, 
+                displayName: authData.displayName || 'Admin', 
+                role: 'admin', 
+                isLegacy: true,
+                passwordHash: authData.passwordHash
+            });
+        }
+        return combined;
+    } catch(e) { return supabaseUsers; }
 };
 
-window.saveUser = function(userData) {
+window.saveUser = async function(userData) {
     try {
-        const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
         if (userData.password) {
             userData.passwordHash = CryptoJS.SHA256(userData.password).toString();
             delete userData.password;
         }
-        const idx = users.findIndex(u => u.id === userData.id);
+
+        let finalId = userData.id;
+
+        // 1. Save to Supabase
+        if (window.supabaseInstance && !window.isSupabaseError) {
+            try {
+                const dbPayload = {
+                    username: userData.username,
+                    display_name: userData.displayName,
+                    role: userData.role || 'admin'
+                };
+                if (userData.passwordHash) dbPayload.password_hash = userData.passwordHash;
+                
+                if (userData.id && !String(userData.id).startsWith('user_')) {
+                    dbPayload.id = userData.id;
+                }
+
+                const { data, error } = await window.supabaseInstance.from('users').upsert([dbPayload]).select();
+                if (!error && data && data.length > 0) {
+                    finalId = data[0].id;
+                } else if (error) throw error;
+            } catch (err) {
+                console.error('Supabase save user failed:', err);
+            }
+        }
+
+        // 2. Save to LocalStorage
+        const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
+        const finalUser = { ...userData, id: finalId || 'user_' + Date.now() };
+        const idx = users.findIndex(u => u.username === userData.username);
+        
         if (idx !== -1) {
-            users[idx] = { ...users[idx], ...userData };
+            users[idx] = { ...users[idx], ...finalUser };
         } else {
-            userData.id = 'user_' + Date.now();
-            userData.role = userData.role || 'admin';
-            users.push(userData);
+            users.push(finalUser);
         }
         localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
+        
         return { success: true };
     } catch(e) {
         return { success: false, error: e.message };
     }
 };
 
-window.deleteUser = function(userId) {
+window.deleteUser = async function(userId) {
     try {
+        // 1. Delete from Supabase
+        if (window.supabaseInstance && !window.isSupabaseError) {
+            if (!String(userId).startsWith('user_') && userId !== 'legacy-admin') {
+                try {
+                    await window.supabaseInstance.from('users').delete().eq('id', userId);
+                } catch (err) {
+                    console.error('Supabase delete user failed:', err);
+                }
+            }
+        }
+
+        // 2. Delete from LocalStorage
         const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
         const filtered = users.filter(u => u.id !== userId);
         localStorage.setItem(DB_KEYS.USERS, JSON.stringify(filtered));
+        
         return { success: true };
     } catch(e) {
         return { success: false, error: e.message };

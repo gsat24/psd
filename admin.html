@@ -757,13 +757,14 @@
             const changePasswordForm = document.getElementById('change-password-form');
 
             if (loginForm) {
-                loginForm.addEventListener('submit', (e) => {
+                loginForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const user = document.getElementById('login-username').value;
                     const pass = document.getElementById('login-password').value;
                     
                     if (typeof window.login === 'function') {
-                        if (window.login(user, pass)) {
+                        const success = await window.login(user, pass);
+                        if (success) {
                             // Store admin name for chat widget before reload
                             const currentUser = window.getCurrentUser ? window.getCurrentUser() : { displayName: user };
                             localStorage.setItem('psd_admin_online_name', currentUser.displayName || user);
@@ -791,7 +792,8 @@
                     }
 
                     if (typeof window.updateAdminPassword === 'function') {
-                        if (window.updateAdminPassword(newPass)) {
+                        const success = await window.updateAdminPassword(newPass);
+                        if (success) {
                             alert('Password berhasil diperbarui!');
                             changePasswordForm.reset();
                         } else {
@@ -1745,8 +1747,8 @@
         setTimeout(initDashboardCharts, 800);
 
         // --- USER MANAGEMENT ---
-        function renderUsers() {
-            const users = window.getUsers ? window.getUsers() : [];
+        async function renderUsers() {
+            const users = window.getUsers ? await window.getUsers() : [];
             const currentUser = window.getCurrentUser ? window.getCurrentUser() : {};
             const tbody = document.getElementById('users-list');
             if (!tbody) return;
@@ -1797,7 +1799,7 @@
             }).join('');
         }
 
-        function openUserModal(userId = null) {
+        async function openUserModal(userId = null) {
             const modal = document.getElementById('userModal');
             const title = document.getElementById('userModalTitle');
             const idInput = document.getElementById('edit-user-id');
@@ -1809,7 +1811,7 @@
             idInput.value = '';
 
             if (userId) {
-                const users = window.getUsers ? window.getUsers() : [];
+                const users = window.getUsers ? await window.getUsers() : [];
                 const user = users.find(u => u.id === userId);
                 if (user) {
                     title.textContent = 'Edit User: ' + (user.displayName || user.username);
@@ -1829,7 +1831,7 @@
             document.getElementById('userModal').classList.add('hidden');
         }
 
-        function saveUserHandler() {
+        async function saveUserHandler() {
             const id = document.getElementById('edit-user-id').value;
             const displayName = document.getElementById('user-display-name').value.trim();
             const username = document.getElementById('user-username').value.trim();
@@ -1852,21 +1854,21 @@
             if (id) userData.id = id;
             if (password) userData.password = password;
 
-            const result = window.saveUser ? window.saveUser(userData) : { success: false };
+            const result = window.saveUser ? await window.saveUser(userData) : { success: false };
             if (result.success) {
                 closeUserModal();
-                renderUsers();
+                await renderUsers();
                 alert('User berhasil disimpan!');
             } else {
                 alert('Gagal menyimpan user: ' + (result.error || 'Unknown error'));
             }
         }
 
-        function deleteUserHandler(userId, name) {
+        async function deleteUserHandler(userId, name) {
             if (!confirm(`Hapus user "${name}"? Tindakan ini tidak dapat dibatalkan.`)) return;
-            const result = window.deleteUser ? window.deleteUser(userId) : { success: false };
+            const result = window.deleteUser ? await window.deleteUser(userId) : { success: false };
             if (result.success) {
-                renderUsers();
+                await renderUsers();
             } else {
                 alert('Gagal menghapus user.');
             }
