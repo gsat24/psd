@@ -870,10 +870,28 @@ async function genericGet(table, key) {
         }
     }
     const localData = JSON.parse(localStorage.getItem(key)) || [];
+    const localMap = {};
+    for (const item of localData) {
+        localMap[item.id] = item;
+    }
     
-    const combined = [...supabaseData];
-    const existingIds = new Set(supabaseData.map(item => item.id));
-    const existingTitles = new Set(supabaseData.map(item => (item.title || item.name || item.question || '').toLowerCase()));
+    const combined = [];
+    const existingIds = new Set();
+    const existingTitles = new Set();
+    
+    for (const sItem of supabaseData) {
+        const lItem = localMap[sItem.id] || {};
+        const finalItem = { ...sItem };
+        
+        // Prefer local order_num if it exists (handles case where Supabase lacks the column or has lag)
+        if (lItem.order_num !== undefined) {
+            finalItem.order_num = lItem.order_num;
+        }
+        
+        combined.push(finalItem);
+        existingIds.add(finalItem.id);
+        existingTitles.add((finalItem.title || finalItem.name || finalItem.question || '').toLowerCase());
+    }
     
     for (const item of localData) {
         const identifier = (item.title || item.name || item.question || '').toLowerCase();
