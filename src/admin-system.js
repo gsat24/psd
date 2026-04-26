@@ -1000,7 +1000,6 @@ window.syncCompanyInfo = async function() {
         playStoreLinks.forEach(el => el.href = info.playstore_url || '#');
 
         const ctaWaLinks = document.querySelectorAll('#cta-whatsapp-link');
-        const waNum = info.whatsapp_number || info.whatsapp; // Fallback to 'whatsapp' if 'whatsapp_number' is not yet set
         if (waNum) {
             const waUrl = `https://wa.me/${waNum.replace(/[^0-9]/g, '')}`;
             ctaWaLinks.forEach(el => el.href = waUrl);
