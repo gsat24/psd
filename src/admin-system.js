@@ -937,14 +937,14 @@ window.syncCompanyInfo = async function() {
             return;
         }
 
-        // Footer & Navbar Contact
+        // Footer & Navbar Contact (Only update if data exists to avoid clearing hardcoded text)
         const emailEls = document.querySelectorAll('[id^="footer-email"], [id^="nav-email"], #contact-email');
         const phoneEls = document.querySelectorAll('[id^="footer-phone"], [id^="nav-phone"], #contact-phone');
         const addrEls = document.querySelectorAll('[id^="footer-address"], #contact-address');
         
-        emailEls.forEach(el => el.innerText = info.email || '');
-        phoneEls.forEach(el => el.innerText = info.phone || '');
-        addrEls.forEach(el => el.innerText = info.address || '');
+        if (info.email) emailEls.forEach(el => el.innerText = info.email);
+        if (info.phone) phoneEls.forEach(el => el.innerText = info.phone);
+        if (info.address) addrEls.forEach(el => el.innerText = info.address);
 
         // Social Links (Only target anchors to avoid messing with admin inputs)
         const socialInstas = document.querySelectorAll('a[id$="-social-instagram"]');
