@@ -1,0 +1,105 @@
+﻿                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">YPI Dayah Budi Al-Mukhtari</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Bireuen, Aceh</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Darul Muttaqien</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Siak, Riau</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Tebuireng-3</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Indragiri Hilir, Riau</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Ma'had Tahfidzul Qu'ran Daarul Iman</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Bangka Belitung</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Darul Ulum</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Seputih Banyak, Lampung Tengah</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">SMK Yapemi PP Madinatul Ilmi</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Pringsewu, Lampung</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Al-Amin</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Cintamulya, Lampung Selatan</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Roudhotussolihin</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Palas, Lampung Selatan</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Darussalamah</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Mekar Sari, Lampung Timur</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Tebuireng-12</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Tubaba, Lampung</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Al-Hikmah</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Bandar Lampung, Lampung</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Yayasan Pondok Pesantren Salafiyah Terpadu Al-Um</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Bogor, Jawa Barat</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Sunanul Huda</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Sukabumi, Jawa Barat</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Ma'had Al-Shighor Al-Islamy Al-Dualy</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Cirebon, Jawa Barat</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Al-Falah</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Wonosobo, Jawa Tengah</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Yayasan Walyatalaththof Darussalam</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Kebumen, Jawa Tengah</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">MBI Mambaul Falah</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Pulau Bawean, Gresik, Jawa Timur</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Yayasan Pendidikan Islam As-Salam</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Ponorogo, Jawa Timur</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Yayasan Chodidjah Hasyim Asy'ari Tebuireng</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Jombang, Jawa Timur</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Karang Sari</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Madura, Jawa Timur</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Yayasan Baldatushshiddiq</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Banyuwangi, Jawa Timur</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Daarussalam</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Sengkubang, Mempawah, Kalimantan Barat</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Yayasan Manbaul Khair</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Tobadak, Mamuju Tengah, Sulawesi Barat</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Nahdlatul Ulum</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Maros, Sulawesi Selatan</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Al-Muhaarib</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Gorontalo</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 w-72 flex-shrink-0 flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <p class="font-bold text-gray-800 text-sm mb-2">Pondok Pesantren Tarbiyatussibyan</p>
+                        <p class="text-xs text-psd-green font-semibold bg-green-50 px-3 py-1 rounded-full">Jayapura, Papua</p>
+                    </div>
+

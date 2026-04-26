@@ -1164,19 +1164,56 @@
 
         async function renderFAQ() {
             const list = await window.getFAQ();
-            document.getElementById('faq-list').innerHTML = list.map(f => `
+            document.getElementById('faq-list').innerHTML = list.map((f, index) => `
                 <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center">
                     <div class="flex-1">
                         <h3 class="font-bold text-gray-800">${f.question}</h3>
                         <p class="text-sm text-gray-500 mt-1">${f.answer}</p>
                     </div>
-                    <div class="flex space-x-2 ml-4">
-                        <button onclick="openGenericModal('faq', ${f.id})" class="text-blue-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
-                        <button onclick="handleDeleteGeneric('faq', ${f.id})" class="text-red-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                    <div class="flex space-x-2 ml-4 items-center">
+                        <button onclick="window.moveFAQ(${index}, -1)" class="text-gray-400 hover:text-blue-600 disabled:opacity-30 p-1" title="Geser ke atas" ${index === 0 ? 'disabled' : ''}>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                        </button>
+                        <button onclick="window.moveFAQ(${index}, 1)" class="text-gray-400 hover:text-blue-600 disabled:opacity-30 p-1" title="Geser ke bawah" ${index === list.length - 1 ? 'disabled' : ''}>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="w-px h-6 bg-gray-200 mx-2"></div>
+                        <button onclick="openGenericModal('faq', ${f.id})" class="text-blue-600 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                        <button onclick="handleDeleteGeneric('faq', ${f.id})" class="text-red-600 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
                     </div>
                 </div>
             `).join('');
         }
+
+        window.moveFAQ = async function(index, direction) {
+            const list = await window.getFAQ();
+            if (index + direction < 0 || index + direction >= list.length) return;
+            
+            let needsFullSave = false;
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].order_num === undefined || list[i].order_num === null) {
+                    list[i].order_num = i;
+                    needsFullSave = true;
+                }
+            }
+            
+            const item1 = list[index];
+            const item2 = list[index + direction];
+            
+            const temp = item1.order_num;
+            item1.order_num = item2.order_num;
+            item2.order_num = temp;
+            
+            if (needsFullSave) {
+                for (const item of list) {
+                    await window.saveFAQ(item);
+                }
+            } else {
+                await window.saveFAQ(item1);
+                await window.saveFAQ(item2);
+            }
+            renderFAQ();
+        };
 
         // --- GENERIC CRUD MODAL LOGIC ---
 

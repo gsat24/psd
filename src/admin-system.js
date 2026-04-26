@@ -882,7 +882,12 @@ async function genericGet(table, key) {
         }
     }
     
-    return combined.sort((a, b) => b.id - a.id);
+    return combined.sort((a, b) => {
+        const orderA = a.order_num !== undefined ? a.order_num : 999999;
+        const orderB = b.order_num !== undefined ? b.order_num : 999999;
+        if (orderA !== orderB) return orderA - orderB;
+        return b.id - a.id;
+    });
 }
 
 async function genericSave(table, key, item) {
