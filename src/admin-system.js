@@ -939,12 +939,28 @@ window.syncCompanyInfo = async function() {
 
         // Footer & Navbar Contact (Only update if data exists to avoid clearing hardcoded text)
         const emailEls = document.querySelectorAll('[id^="footer-email"], [id^="nav-email"], #contact-email');
-        const phoneEls = document.querySelectorAll('[id^="footer-phone"], [id^="nav-phone"], #contact-phone');
         const addrEls = document.querySelectorAll('[id^="footer-address"], #contact-address');
         
         if (info.email) emailEls.forEach(el => el.innerText = info.email);
-        if (info.phone) phoneEls.forEach(el => el.innerText = info.phone);
         if (info.address) addrEls.forEach(el => el.innerText = info.address);
+
+        // Global Phone & WhatsApp Sync
+        const phoneEls = document.querySelectorAll('[id*="phone"]');
+        const waNum = info.whatsapp_number || info.phone || info.whatsapp;
+        
+        if (waNum) {
+            const waUrl = `https://wa.me/${waNum.replace(/[^0-9]/g, '')}`;
+            phoneEls.forEach(el => {
+                // Set the link
+                if (el.tagName === 'A') el.href = waUrl;
+                // Set the display text if available
+                if (info.phone) {
+                    el.innerText = info.phone;
+                } else if (waNum && el.innerText.trim() === '') {
+                    el.innerText = waNum;
+                }
+            });
+        }
 
         // Social Links (Only target anchors to avoid messing with admin inputs)
         const socialInstas = document.querySelectorAll('a[id$="-social-instagram"]');
