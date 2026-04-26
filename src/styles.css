@@ -1,5 +1,8 @@
-body {
+html, body {
   font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
 }
 .hero-bg {
   background-color: #0A5C4F;

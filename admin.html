@@ -787,17 +787,17 @@
                     const confirmPass = document.getElementById('confirm-password').value;
 
                     if (newPass !== confirmPass) {
-                        alert('Password tidak cocok!');
+                        window.showModal('Password Tidak Cocok', 'Konfirmasi password harus sama dengan password baru.', 'error');
                         return;
                     }
 
                     if (typeof window.updateAdminPassword === 'function') {
                         const success = await window.updateAdminPassword(newPass);
                         if (success) {
-                            alert('Password berhasil diperbarui!');
+                            window.showModal('Berhasil!', 'Password administrator telah diperbarui.', 'success');
                             changePasswordForm.reset();
                         } else {
-                            alert('Gagal memperbarui password.');
+                            window.showModal('Gagal', 'Terjadi kesalahan saat memperbarui password.', 'error');
                         }
                     } else {
                         console.error('window.updateAdminPassword not found');
@@ -886,7 +886,10 @@
             const metaDesc = document.getElementById('news-meta-description').value;
             const metaKeywords = document.getElementById('news-meta-keywords').value;
 
-            if(!title || plainText.length === 0) return alert('Semua field harus diisi!');
+            if(!title || plainText.length === 0) {
+                window.showModal('Data Belum Lengkap', 'Judul dan isi berita wajib diisi.', 'error');
+                return;
+            }
             
             const onComplete = async (imageUrl) => {
                 const newsData = {
@@ -931,7 +934,7 @@
         async function finishSave() {
             await renderNewsTable();
             closeNewsModal();
-            alert('Berita berhasil disimpan!');
+            window.showModal('Berhasil!', 'Berita telah berhasil disimpan dan dipublikasikan.', 'success');
         }
 
         async function renderNewsTable() {
@@ -1074,7 +1077,7 @@
                 window.syncCompanyInfo();
             }
             
-            alert('Informasi perusahaan berhasil diperbarui!');
+            window.showModal('Berhasil!', 'Informasi profil perusahaan telah diperbarui.', 'success');
             console.log('--- COMPANY UPDATE FINISHED ---');
         }
 
@@ -1102,7 +1105,7 @@
             if (window.updateGlobalSEOInDB) {
                 await window.updateGlobalSEOInDB(seo);
             }
-            alert('Pengaturan SEO berhasil diperbarui!');
+            window.showModal('Berhasil!', 'Pengaturan SEO dan Meta Tag telah diperbarui.', 'success');
         }
 
         // --- NEW SECTION RENDERERS ---
@@ -1838,7 +1841,7 @@
             const password = document.getElementById('user-password').value;
 
             if (!displayName || !username) {
-                alert('Nama tampilan dan username wajib diisi!');
+                window.showModal('Data Kurang', 'Nama tampilan dan username wajib diisi!', 'error');
                 return;
             }
             if (!id && !password) {
@@ -1846,7 +1849,7 @@
                 return;
             }
             if (password && password.length < 6) {
-                alert('Password minimal 6 karakter!');
+                window.showModal('Password Lemah', 'Untuk keamanan, password minimal harus 6 karakter.', 'error');
                 return;
             }
 
@@ -1858,9 +1861,9 @@
             if (result.success) {
                 closeUserModal();
                 await renderUsers();
-                alert('User berhasil disimpan!');
+                window.showModal('Berhasil!', 'Data pengguna telah berhasil disimpan.', 'success');
             } else {
-                alert('Gagal menyimpan user: ' + (result.error || 'Unknown error'));
+                window.showModal('Gagal', (result.error || 'Terjadi kesalahan saat menyimpan user.'), 'error');
             }
         }
 

@@ -621,14 +621,14 @@ document.addEventListener('click', function unlockAudio() {
 }, { once: false }); // keep it active to ensure it stays resumed
 
 
-window.saveChatSession = async function(name, email) {
+window.saveChatSession = async function(name, email, phone) {
     const sender_id = window.getChatUserId();
     
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { data, error } = await window.supabaseInstance
                 .from('chat_sessions')
-                .upsert({ sender_id, name, email });
+                .upsert({ sender_id, name, email, phone });
             if (error) {
                 console.error('Supabase chat_sessions error:', error);
                 return { success: false, error: error.message };
@@ -642,7 +642,79 @@ window.saveChatSession = async function(name, email) {
     // Always save to localStorage
     localStorage.setItem('psd_chat_user_name', name);
     localStorage.setItem('psd_chat_user_email', email);
+    localStorage.setItem('psd_chat_user_phone', phone || '');
     return { success: true };
+};
+
+// --- GLOBAL MODAL SYSTEM ---
+window.showModal = function(title, message, type = 'success') {
+    console.log('showModal called:', title, message, type);
+    
+    // Ensure modal exists in DOM
+    let modal = document.getElementById('global-modal');
+    if (!modal) {
+        const modalHTML = `
+        <div id="global-modal" class="fixed inset-0 z-[10000] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+            <div class="bg-white rounded-[2rem] w-full max-w-md overflow-hidden shadow-2xl transform scale-90 transition-transform duration-300">
+                <div id="modal-header" class="p-8 text-center">
+                    <div id="modal-icon" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"></div>
+                    <h3 id="modal-title" class="text-2xl font-bold text-gray-800 mb-2 uppercase tracking-tight"></h3>
+                    <p id="modal-message" class="text-gray-600 leading-relaxed"></p>
+                </div>
+                <div class="p-6 bg-gray-50 flex justify-center">
+                    <button id="modal-close-btn" class="px-8 py-3 rounded-xl font-bold uppercase tracking-widest transition-all duration-300 focus:outline-none">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>`;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        modal = document.getElementById('global-modal');
+    }
+
+    const iconEl = document.getElementById('modal-icon');
+    const titleEl = document.getElementById('modal-title');
+    const messageEl = document.getElementById('modal-message');
+    const closeBtn = document.getElementById('modal-close-btn');
+    const content = modal.querySelector('div > div');
+
+    // Configure based on type
+    if (type === 'success') {
+        iconEl.innerHTML = '<i class="fas fa-check-circle text-4xl"></i>';
+        iconEl.className = 'w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-green-100 text-green-600';
+        closeBtn.className = 'px-8 py-3 rounded-xl font-bold uppercase tracking-widest bg-psd-green text-white hover:bg-opacity-90 shadow-lg';
+    } else if (type === 'error') {
+        iconEl.innerHTML = '<i class="fas fa-exclamation-triangle text-4xl"></i>';
+        iconEl.className = 'w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-red-100 text-red-600';
+        closeBtn.className = 'px-8 py-3 rounded-xl font-bold uppercase tracking-widest bg-red-600 text-white hover:bg-opacity-90 shadow-lg';
+    } else {
+        iconEl.innerHTML = '<i class="fas fa-info-circle text-4xl"></i>';
+        iconEl.className = 'w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-blue-100 text-blue-600';
+        closeBtn.className = 'px-8 py-3 rounded-xl font-bold uppercase tracking-widest bg-blue-600 text-white hover:bg-opacity-90 shadow-lg';
+    }
+
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+
+    // Show with animation
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.add('opacity-100');
+        content.classList.remove('scale-90');
+        content.classList.add('scale-100');
+    }, 10);
+
+    const closeModal = () => {
+        modal.classList.remove('opacity-100');
+        content.classList.add('scale-90');
+        content.classList.remove('scale-100');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    };
+
+    closeBtn.onclick = closeModal;
+    modal.onclick = (e) => { if (e.target === modal) closeModal(); };
 };
 
 window.getMessages = async function() {

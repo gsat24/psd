@@ -55,6 +55,10 @@
                     <input type="text" id="chat-reg-name" placeholder="Nama Anda" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
                 </div>
                 <div>
+                    <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">No. WhatsApp</label>
+                    <input type="tel" id="chat-reg-phone" placeholder="Contoh: 081234567890" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
+                </div>
+                <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Alamat Email</label>
                     <input type="email" id="chat-reg-email" placeholder="email@contoh.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#0A5C4F] outline-none transition">
                 </div>
@@ -103,6 +107,11 @@
             if (adminOnline) return adminOnline;
         } catch(e) {}
         return 'Admin PSD';
+    }
+
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
     }
 
     function startOnlineAnimation(labelEl, textEl) {
@@ -202,12 +211,23 @@
         regBtn.addEventListener('click', async () => {
             const name = document.getElementById('chat-reg-name').value.trim();
             const email = document.getElementById('chat-reg-email').value.trim();
+            const phone = document.getElementById('chat-reg-phone').value.trim();
 
-            if (!name || !email) {
-                // Shake effect
-                regBtn.style.transform = 'translateX(-4px)';
-                setTimeout(() => { regBtn.style.transform = 'translateX(4px)'; }, 100);
-                setTimeout(() => { regBtn.style.transform = 'none'; }, 200);
+            if (!name || !email || !phone) {
+                if (window.showModal) {
+                    window.showModal('Data Belum Lengkap', 'Semua data wajib diisi (Nama, WhatsApp, & Email) agar admin kami dapat menghubungi Anda.', 'error');
+                } else {
+                    alert('Semua data wajib diisi (Nama, WhatsApp, & Email)!');
+                }
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                if (window.showModal) {
+                    window.showModal('Format Email Salah', 'Pastikan alamat email Anda sudah benar (contoh: nama@gmail.com).', 'error');
+                } else {
+                    alert('Format email tidak valid!');
+                }
                 return;
             }
 
@@ -215,7 +235,7 @@
             regBtn.disabled = true;
 
             if (window.saveChatSession) {
-                const res = await window.saveChatSession(name, email);
+                const res = await window.saveChatSession(name, email, phone);
                 if (res.success) {
                     checkRegistration();
                     if (window.sendChatMessage) {
@@ -225,11 +245,13 @@
                     // Even if Supabase fails, allow local-mode chat
                     localStorage.setItem('psd_chat_user_name', name);
                     localStorage.setItem('psd_chat_user_email', email);
+                    localStorage.setItem('psd_chat_user_phone', phone);
                     checkRegistration();
                 }
             } else {
                 localStorage.setItem('psd_chat_user_name', name);
                 localStorage.setItem('psd_chat_user_email', email);
+                localStorage.setItem('psd_chat_user_phone', phone);
                 checkRegistration();
             }
             

@@ -286,20 +286,20 @@
                     const result = await window.saveFeedbackToDB(name, email, subject, message);
                     if (result.success) {
                         if (result.isSupabase) {
-                            alert('Terima kasih! Pesan Anda telah terkirim dan tercatat di sistem kami.');
+                            window.showModal('Terima kasih!', 'Pesan Anda telah terkirim. Tim kami akan segera menghubungi Anda.', 'success');
                         } else {
-                            alert('Terima kasih! Pesan Anda telah terkirim (Penyimpanan Lokal).');
+                            window.showModal('Terkirim (Lokal)', 'Pesan Anda telah tersimpan secara lokal karena masalah koneksi database.', 'info');
                         }
                         this.reset();
                     } else {
-                        alert('Gagal mengirim pesan: ' + (result.error || 'Kesalahan tidak diketahui'));
+                        window.showModal('Gagal Mengirim', (result.error || 'Kesalahan tidak diketahui'), 'error');
                     }
                 } else {
-                    alert('Sistem pengiriman pesan sedang tidak tersedia.');
+                    window.showModal('Error', 'Sistem pengiriman pesan sedang tidak tersedia.', 'error');
                 }
             } catch (err) {
                 console.error('Submit error:', err);
-                alert('Terjadi kesalahan sistem: ' + err.message);
+                window.showModal('Kesalahan Sistem', err.message, 'error');
             } finally {
                 submitBtn.innerText = originalText;
                 submitBtn.disabled = false;
