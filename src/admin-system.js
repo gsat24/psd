@@ -955,6 +955,12 @@ window.syncCompanyInfo = async function() {
         const playStoreLinks = document.querySelectorAll('[id$="-playstore-link"]');
         playStoreLinks.forEach(el => el.href = info.playstore_url || '#');
 
+        const ctaWaLinks = document.querySelectorAll('#cta-whatsapp-link');
+        if (info.whatsapp) {
+            const waUrl = `https://wa.me/${info.whatsapp.replace(/[^0-9]/g, '')}`;
+            ctaWaLinks.forEach(el => el.href = waUrl);
+        }
+
         // Hero Content Top is now static as per user request
         // Dynamic headline for other sections is handled in index.html loadDynamicContent
 
