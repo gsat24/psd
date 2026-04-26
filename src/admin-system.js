@@ -931,16 +931,20 @@ window.updateCompanyInfoInDB = async function(info) {
 window.syncCompanyInfo = async function() {
     try {
         const info = await window.getCompanyInfo();
-        if (!info) return;
+        console.log('syncCompanyInfo() fetched data:', info);
+        if (!info) {
+            console.warn('syncCompanyInfo() No data found!');
+            return;
+        }
 
         // Footer & Navbar Contact
-        const emailEls = document.querySelectorAll('[id^="footer-email"], [id^="nav-email"]');
-        const phoneEls = document.querySelectorAll('[id^="footer-phone"], [id^="nav-phone"]');
-        const addrEls = document.querySelectorAll('[id^="footer-address"]');
+        const emailEls = document.querySelectorAll('[id^="footer-email"], [id^="nav-email"], #contact-email');
+        const phoneEls = document.querySelectorAll('[id^="footer-phone"], [id^="nav-phone"], #contact-phone');
+        const addrEls = document.querySelectorAll('[id^="footer-address"], #contact-address');
         
-        emailEls.forEach(el => el.innerText = info.email);
-        phoneEls.forEach(el => el.innerText = info.phone);
-        addrEls.forEach(el => el.innerText = info.address);
+        emailEls.forEach(el => el.innerText = info.email || '');
+        phoneEls.forEach(el => el.innerText = info.phone || '');
+        addrEls.forEach(el => el.innerText = info.address || '');
 
         // Social Links (Only target anchors to avoid messing with admin inputs)
         const socialInstas = document.querySelectorAll('a[id$="-social-instagram"]');
