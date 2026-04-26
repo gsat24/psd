@@ -42,7 +42,7 @@
             </div>
 
             <!-- Registration View -->
-            <div id="chat-reg-view" class="p-5 md:p-6 space-y-3 md:space-y-4 bg-white flex-col hidden overflow-y-auto">
+            <div id="chat-reg-view" class="p-5 md:p-6 space-y-3 md:space-y-4 bg-white hidden flex-col overflow-y-auto flex-1">
                 <div class="text-center mb-2">
                     <div class="w-16 h-16 bg-[#0A5C4F]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-user-circle text-[#0A5C4F] text-3xl"></i>
