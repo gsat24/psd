@@ -814,18 +814,30 @@ window.subscribeToMessages = function(callback) {
 
 window.getCompanyInfo = async function() {
     console.log('getCompanyInfo() called');
+    
+    // Wait up to 3 seconds for Supabase to initialize if it hasn't yet
+    let retries = 0;
+    while (!window.supabaseInstance && retries < 6) {
+        console.log('Waiting for Supabase to initialize... (retry ' + (retries + 1) + ')');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        retries++;
+    }
+
     if (window.supabaseInstance && !window.isSupabaseError) {
         try {
             const { data, error } = await window.supabaseInstance.from('company').select('*').eq('id', 1).single();
             if (error) throw error;
             console.log('getCompanyInfo() from Supabase success:', data);
+            
+            // Save to local storage for future fallback
+            localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify(data));
             return data;
         } catch (err) {
             console.error('getCompanyInfo() from Supabase failed:', err);
         }
     }
     const local = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
-    console.log('getCompanyInfo() from LocalStorage:', local);
+    console.log('getCompanyInfo() from LocalStorage (Fallback):', local);
     return local;
 };
 
@@ -1232,49 +1244,49 @@ window.supabaseInstance = null;
 window.isSupabaseError = false;
 
 function initSupabase() {
-    console.log('Initializing Supabase with URL:', SUPABASE_URL);
+    console.log('Initializing Supabase...');
     try {
         const sbClient = window.supabase;
         if (sbClient && SUPABASE_URL && SUPABASE_ANON_KEY) {
             window.supabaseInstance = sbClient.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('Supabase initialized successfully');
-            
-            // Test connection
-            window.supabaseInstance.from('news').select('count', { count: 'exact', head: true })
-                .then(({ error }) => {
-                    if (error) {
-                        console.warn('Supabase connection test failed (possibly table missing or permissions):', error.message);
-                        // We don't set isSupabaseError = true here yet, 
-                        // only if it's a network/hostname error later.
-                    } else {
-                        console.log('Supabase connection test successful');
-                    }
-                });
-                
+            console.log('Supabase instance created.');
             return true;
         }
+        return false;
     } catch (e) {
-        console.error('Supabase initialization error:', e);
+        console.error('Supabase init error:', e);
+        return false;
     }
-    return false;
 }
 
 // 3. EXECUTE INITIALIZATION
-try {
-    initSupabase();
-} catch (e) {
-    console.error('Init call failed:', e);
+async function startApp() {
+    let initialized = initSupabase();
+    let retries = 0;
+    
+    // Retry initialization if it failed (waiting for library to load)
+    while (!initialized && retries < 5) {
+        await new Promise(r => setTimeout(r, 500));
+        initialized = initSupabase();
+        retries++;
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', onAppReady);
+    } else {
+        onAppReady();
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('admin-system.js DOMContentLoaded');
+function onAppReady() {
+    console.log('admin-system.js ready.');
     window.initDB();
     window.syncCompanyInfo();
     window.syncGlobalSEO();
     if (!window.location.pathname.includes('admin.html')) {
         window.trackVisit();
     }
-});
+}
 
 // Sync Local Data to Supabase manually
 window.syncLocalToSupabase = async function() {
@@ -1350,3 +1362,4 @@ window.syncLocalToSupabase = async function() {
 };
 
 console.log('admin-system.js load complete.');
+startApp();
