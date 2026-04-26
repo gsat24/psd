@@ -537,7 +537,12 @@ window.saveFeedbackToDB = async function(name, email, subject, message) {
         console.error('Failed to save feedback to LocalStorage:', e);
     }
 
-    return { success: supabaseSuccess || localSuccess, error: errorMsg, isSupabase: supabaseSuccess };
+    return { 
+        success: supabaseSuccess || localSuccess, 
+        error: errorMsg, 
+        isSupabase: supabaseSuccess,
+        details: errorMsg // Explicitly return the error details
+    };
 };
 
 // --- LIVE CHAT FUNCTIONS ---

@@ -288,7 +288,8 @@
                         if (result.isSupabase) {
                             window.showModal('Terima kasih!', 'Pesan Anda telah terkirim. Tim kami akan segera menghubungi Anda.', 'success');
                         } else {
-                            window.showModal('Terkirim (Lokal)', 'Pesan Anda telah tersimpan secara lokal karena masalah koneksi database.', 'info');
+                            const detailStr = result.details ? `\n\n(Detail Error: ${result.details})` : '';
+                            window.showModal('Terkirim (Lokal)', 'Pesan Anda telah tersimpan secara lokal karena masalah koneksi database.' + detailStr, 'info');
                         }
                         this.reset();
                     } else {

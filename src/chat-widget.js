@@ -21,7 +21,7 @@
         </button>
 
         <!-- Chat Window -->
-        <div id="chat-window" class="absolute bottom-20 right-0 w-[300px] md:w-[360px] bg-white rounded-2xl shadow-2xl border border-gray-100 hidden flex-col overflow-hidden" style="animation: none;">
+        <div id="chat-window" class="absolute bottom-20 right-0 w-[300px] md:w-[360px] max-h-[calc(100vh-120px)] bg-white rounded-2xl shadow-2xl border border-gray-100 hidden flex-col overflow-hidden" style="animation: none;">
             <!-- Header -->
             <div class="bg-gradient-to-r from-[#0A5C4F] to-[#0d7a65] p-4 text-white flex justify-between items-center">
                 <div class="flex items-center">
@@ -42,7 +42,7 @@
             </div>
 
             <!-- Registration View -->
-            <div id="chat-reg-view" class="p-6 space-y-4 bg-white flex-col hidden">
+            <div id="chat-reg-view" class="p-5 md:p-6 space-y-3 md:space-y-4 bg-white flex-col hidden overflow-y-auto">
                 <div class="text-center mb-2">
                     <div class="w-16 h-16 bg-[#0A5C4F]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-user-circle text-[#0A5C4F] text-3xl"></i>
