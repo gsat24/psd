@@ -42,7 +42,7 @@
             </div>
 
             <!-- Registration View -->
-            <div id="chat-reg-view" class="p-5 md:p-6 pt-2 md:pt-4 space-y-3 md:space-y-4 bg-white hidden flex-col overflow-y-auto flex-1 min-h-0">
+            <div id="chat-reg-view" class="p-5 md:p-6 pt-2 md:pt-4 bg-white hidden flex-col overflow-y-auto" style="max-height: 450px;">
                 <div class="text-center mb-2">
                     <div class="w-16 h-16 bg-[#0A5C4F]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-user-circle text-[#0A5C4F] text-3xl"></i>
