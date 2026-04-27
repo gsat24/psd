@@ -113,6 +113,10 @@
                 <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                 Info Perusahaan
             </a>
+            <a href="#" onclick="showSection('gallery')" class="sidebar-item flex items-center px-6 py-3 hover:bg-white/10 transition" id="nav-gallery">
+                <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                Gallery Video
+            </a>
             <a href="#" onclick="showSection('seo')" class="sidebar-item flex items-center px-6 py-3 hover:bg-white/10 transition" id="nav-seo">
                 <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 Pengaturan SEO
@@ -227,6 +231,15 @@
                     </div>
                     <h3 id="stat-faq" class="text-3xl font-bold">0</h3>
                     <p class="text-rose-100 text-xs mt-1 uppercase tracking-wider">Total FAQ</p>
+                </div>
+                <div class="bg-gradient-to-br from-indigo-500 to-blue-600 text-white p-5 rounded-2xl shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-white/20 rounded-xl p-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                    </div>
+                    <h3 id="stat-gallery" class="text-3xl font-bold">0</h3>
+                    <p class="text-indigo-100 text-xs mt-1 uppercase tracking-wider">Gallery Video</p>
                 </div>
             </div>
 
@@ -518,6 +531,24 @@
             </div>
         </section>
 
+        <!-- Gallery Section -->
+        <section id="section-gallery" class="admin-section hidden">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Gallery Video</h1>
+                    <p class="text-gray-500 text-sm mt-1">Kelola link video YouTube yang tampil di website</p>
+                </div>
+                <button onclick="openVideoModal()" class="bg-psd-green text-white px-6 py-3 rounded-xl font-bold hover:bg-opacity-90 transition shadow-lg flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Tambah Video
+                </button>
+            </div>
+
+            <div id="gallery-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Video items will be injected here -->
+            </div>
+        </section>
+
         <!-- SEO Section -->
         <section id="section-seo" class="admin-section hidden">
             <h1 class="text-3xl font-bold text-gray-800 mb-8">Pengaturan SEO Global</h1>
@@ -748,6 +779,7 @@
                 document.getElementById('admin-chat-badge').classList.add('hidden');
                 renderChat();
             }
+            if (sectionId === 'gallery') renderVideos();
 
             // Refresh AOS
             if (typeof AOS !== 'undefined') {
@@ -1825,6 +1857,11 @@
                     const el = document.getElementById('stat-faq');
                     if (el) el.innerText = (f || []).length;
                 }
+                if (window.getVideos) {
+                    const v = await window.getVideos();
+                    const el = document.getElementById('stat-gallery');
+                    if (el) el.innerText = (v || []).length;
+                }
             } catch(e) { console.error(e); }
         }
 
@@ -1964,6 +2001,112 @@
                 await renderUsers();
             } else {
                 alert('Gagal menghapus user.');
+            }
+        }
+
+        // --- YOUTUBE GALLERY ADMIN ---
+        async function renderVideos() {
+            const container = document.getElementById('gallery-list');
+            if (!container) return;
+            
+            container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 italic">Memuat data...</div>`;
+            
+            const videos = window.getVideos ? await window.getVideos() : [];
+            
+            if (videos.length === 0) {
+                container.innerHTML = `
+                <div class="col-span-full bg-white rounded-2xl p-12 text-center border border-dashed border-gray-200">
+                    <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Belum ada video</h3>
+                    <p class="text-gray-500 text-sm mb-6">Tambahkan link video YouTube pertama Anda untuk ditampilkan di gallery.</p>
+                    <button onclick="openVideoModal()" class="text-psd-green font-bold text-sm hover:underline">Tambah Sekarang</button>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = videos.map(v => `
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 group">
+                    <div class="relative aspect-video">
+                        <img src="https://img.youtube.com/vi/${v.video_id}/hqdefault.jpg" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <a href="https://youtube.com/watch?v=${v.video_id}" target="_blank" class="bg-white text-psd-green w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-gray-800 text-sm mb-4 line-clamp-2">${v.title || 'Tanpa Judul'}</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] text-gray-400 font-mono">${v.video_id}</span>
+                            <button onclick="deleteVideoHandler(${v.id})" class="text-red-500 hover:text-red-700 text-xs font-bold transition">Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openVideoModal() {
+            const modal = document.getElementById('genericModal');
+            const title = document.getElementById('genericModalTitle');
+            const container = document.getElementById('genericModalFields');
+            
+            title.innerText = 'Tambah Video YouTube';
+            container.innerHTML = `
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Link YouTube</label>
+                    <input type="text" id="v-url" placeholder="Contoh: https://youtu.be/..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-psd-green outline-none">
+                    <p class="text-[10px] text-gray-400 mt-1">Gunakan link Share dari YouTube</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Judul Video</label>
+                    <input type="text" id="v-title" placeholder="Masukkan judul video" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-psd-green outline-none">
+                </div>
+            `;
+            
+            document.getElementById('genericModalSaveBtn').onclick = saveVideoHandler;
+            modal.classList.remove('hidden');
+        }
+
+        async function saveVideoHandler() {
+            const url = document.getElementById('v-url').value.trim();
+            const title = document.getElementById('v-title').value.trim();
+            
+            if (!url || !title) {
+                alert('Harap isi link dan judul video!');
+                return;
+            }
+
+            try {
+                const btn = document.getElementById('genericModalSaveBtn');
+                btn.disabled = true;
+                btn.innerText = 'Menyimpan...';
+                
+                await window.addVideo(url, title);
+                
+                btn.disabled = false;
+                btn.innerText = 'Simpan';
+                
+                document.getElementById('genericModal').classList.add('hidden');
+                renderVideos();
+                loadAdditionalStats();
+                window.showModal('Berhasil', 'Video telah ditambahkan ke gallery.', 'success');
+            } catch (err) {
+                alert(err.message);
+                document.getElementById('genericModalSaveBtn').disabled = false;
+                document.getElementById('genericModalSaveBtn').innerText = 'Simpan';
+            }
+        }
+
+        async function deleteVideoHandler(id) {
+            if (!confirm('Hapus video ini dari gallery?')) return;
+            try {
+                await window.deleteVideo(id);
+                renderVideos();
+                loadAdditionalStats();
+            } catch (err) {
+                alert('Gagal menghapus video: ' + err.message);
             }
         }
 

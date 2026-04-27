@@ -14,7 +14,8 @@ const DB_KEYS = {
     FEATURES: 'psd_features',
     TESTIMONIALS: 'psd_testimonials',
     FAQ: 'psd_faq',
-    ANALYTICS: 'psd_analytics'
+    ANALYTICS: 'psd_analytics',
+    YOUTUBE: 'psd_youtube'
 };
 
 // 1. ATTACH ALL FUNCTIONS TO WINDOW IMMEDIATELY
@@ -1312,6 +1313,75 @@ function onAppReady() {
         window.trackVisit();
     }
 }
+
+// --- YouTube Gallery Management ---
+
+window.getVideos = async function() {
+    console.log('getVideos() called');
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        try {
+            const { data, error } = await window.supabaseInstance
+                .from('youtube_gallery')
+                .select('*')
+                .order('created_at', { ascending: false });
+            if (error) throw error;
+            localStorage.setItem(DB_KEYS.YOUTUBE, JSON.stringify(data));
+            return data;
+        } catch (err) {
+            console.error('getVideos() from Supabase failed:', err);
+        }
+    }
+    return JSON.parse(localStorage.getItem(DB_KEYS.YOUTUBE)) || [];
+};
+
+window.addVideo = async function(url, title) {
+    console.log('addVideo() called');
+    const videoId = extractYoutubeId(url);
+    if (!videoId) {
+        throw new Error('Link YouTube tidak valid! Harap gunakan link seperti https://youtu.be/xxx atau https://youtube.com/watch?v=xxx');
+    }
+
+    const newVideo = { video_id: videoId, title: title };
+    
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        const { data, error } = await window.supabaseInstance
+            .from('youtube_gallery')
+            .insert([newVideo])
+            .select();
+        if (error) {
+            if (error.code === '23505') throw new Error('Video ini sudah ada di gallery!');
+            throw error;
+        }
+        return data[0];
+    } else {
+        // Local fallback
+        const videos = JSON.parse(localStorage.getItem(DB_KEYS.YOUTUBE)) || [];
+        if (videos.some(v => v.video_id === videoId)) throw new Error('Video ini sudah ada di gallery!');
+        const item = { ...newVideo, id: Date.now(), created_at: new Date().toISOString() };
+        videos.unshift(item);
+        localStorage.setItem(DB_KEYS.YOUTUBE, JSON.stringify(videos));
+        return item;
+    }
+};
+
+window.deleteVideo = async function(id) {
+    console.log('deleteVideo() called for ID:', id);
+    if (window.supabaseInstance && !window.isSupabaseError) {
+        const { error } = await window.supabaseInstance.from('youtube_gallery').delete().eq('id', id);
+        if (error) throw error;
+    }
+    const videos = JSON.parse(localStorage.getItem(DB_KEYS.YOUTUBE)) || [];
+    const filtered = videos.filter(v => v.id !== id);
+    localStorage.setItem(DB_KEYS.YOUTUBE, JSON.stringify(filtered));
+    return true;
+};
+
+function extractYoutubeId(url) {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+    const match = url.match(regex);
+    return (match && match[1]) ? match[1] : null;
+}
+
 
 // Sync Local Data to Supabase manually
 window.syncLocalToSupabase = async function() {

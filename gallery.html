@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Video - Pesantren Smart Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --psd-green: #0A5C4F;
+            --psd-yellow: #FFD23F;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .bg-psd-green { background-color: var(--psd-green); }
+        .text-psd-green { color: var(--psd-green); }
+        .bg-psd-yellow { background-color: var(--psd-yellow); }
+        .border-psd-green { border-color: var(--psd-green); }
+        
+        .video-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .video-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .play-overlay {
+            background: rgba(10, 92, 79, 0.4);
+            backdrop-filter: blur(2px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--psd-yellow);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-psd-green/90 backdrop-blur-md py-4 transition-all duration-300 shadow-lg">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <span class="text-white font-extrabold text-2xl tracking-tighter uppercase italic">PSD</span>
+                </a>
+                
+                <div class="hidden lg:flex items-center space-x-10">
+                    <a href="index.html" class="text-white/90 hover:text-psd-yellow font-medium transition text-sm nav-link">Beranda</a>
+                    <a href="about.html" class="text-white/90 hover:text-psd-yellow font-medium transition text-sm nav-link">Tentang</a>
+                    <a href="features.html" class="text-white/90 hover:text-psd-yellow font-medium transition text-sm nav-link">Fitur</a>
+                    <a href="gallery.html" class="text-psd-yellow font-bold transition text-sm nav-link">Gallery</a>
+                    <a href="berita.html" class="text-white/90 hover:text-psd-yellow font-medium transition text-sm nav-link">Berita</a>
+                    <a href="contact.html" class="bg-psd-yellow text-psd-green font-bold py-2.5 px-6 rounded-full hover:shadow-lg transition transform hover:scale-105 text-sm">Hubungi Kami</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="pt-32 pb-20 bg-psd-green relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-psd-yellow rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <div class="inline-block px-4 py-1.5 bg-psd-yellow/20 rounded-full mb-6" data-aos="fade-up">
+                <span class="text-psd-yellow font-bold text-xs uppercase tracking-widest">Visualisasi Program</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 uppercase tracking-tight" data-aos="fade-up" data-aos-delay="100">
+                Gallery <span class="text-psd-yellow">Video</span>
+            </h1>
+            <p class="text-gray-300 max-w-2xl mx-auto text-sm md:text-lg leading-relaxed" data-aos="fade-up" data-aos-delay="200">
+                Dokumentasi perjalanan, fitur, dan testimoni transformasi digital pesantren di seluruh Indonesia bersama PSD.
+            </p>
+        </div>
+    </header>
+
+    <!-- Gallery Grid -->
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <div id="video-gallery-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Skeleton Loading -->
+                <div class="animate-pulse bg-white rounded-3xl h-[300px]"></div>
+                <div class="animate-pulse bg-white rounded-3xl h-[300px]"></div>
+                <div class="animate-pulse bg-white rounded-3xl h-[300px]"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-psd-green text-white pt-20 pb-10">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6 italic">PSD</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed" id="footer-desc">Platform manajemen pesantren digital terintegrasi untuk modernisasi pendidikan islam di Indonesia.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-6 uppercase">Menu</h4>
+                    <ul class="space-y-4 text-sm text-gray-400">
+                        <li><a href="index.html" class="hover:text-psd-yellow transition">Beranda</a></li>
+                        <li><a href="about.html" class="hover:text-psd-yellow transition">Tentang Kami</a></li>
+                        <li><a href="gallery.html" class="hover:text-psd-yellow transition">Gallery Video</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-6 uppercase">Solusi</h4>
+                    <ul class="space-y-4 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-psd-yellow transition">Manajemen Santri</a></li>
+                        <li><a href="#" class="hover:text-psd-yellow transition">Sistem Keuangan</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-6 uppercase">Kontak</h4>
+                    <p class="text-gray-400 text-sm mb-4" id="footer-address"></p>
+                    <p class="text-gray-400 text-sm" id="footer-email"></p>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 text-center text-sm text-gray-500">
+                &copy; 2024 Pesantren Smart Digital. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-psd-green/95 backdrop-blur-md" onclick="closeVideo()"></div>
+        <div class="relative w-full max-w-4xl aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl z-10">
+            <button onclick="closeVideo()" class="absolute -top-12 right-0 text-white text-2xl hover:text-psd-yellow transition">
+                <i class="fas fa-times"></i>
+            </button>
+            <iframe id="videoFrame" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="src/admin-system.js?v=1.1"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        async function loadGallery() {
+            const container = document.getElementById('video-gallery-container');
+            if (window.getVideos) {
+                const videos = await window.getVideos();
+                if (videos.length === 0) {
+                    container.innerHTML = '<div class="col-span-full text-center py-20 text-gray-500 italic">Belum ada video di gallery.</div>';
+                    return;
+                }
+
+                container.innerHTML = videos.map((v, index) => `
+                    <div class="video-card bg-white rounded-[2.5rem] overflow-hidden shadow-xl shadow-psd-green/5 group cursor-pointer" 
+                         onclick="openVideo('${v.video_id}')"
+                         data-aos="fade-up" data-aos-delay="${index * 100}">
+                        <div class="relative aspect-video">
+                            <img src="https://img.youtube.com/vi/${v.video_id}/maxresdefault.jpg" 
+                                 onerror="this.src='https://img.youtube.com/vi/${v.video_id}/hqdefault.jpg'"
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                 alt="${v.title}">
+                            <div class="play-overlay absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-psd-yellow rounded-full flex items-center justify-center text-psd-green shadow-xl transform scale-90 group-hover:scale-100 transition-transform">
+                                    <i class="fas fa-play ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="font-bold text-gray-800 text-lg leading-tight group-hover:text-psd-green transition-colors">
+                                ${v.title || 'Video PSD'}
+                            </h3>
+                            <div class="flex items-center gap-2 mt-4 text-psd-green font-bold text-[10px] uppercase tracking-widest">
+                                <i class="fab fa-youtube"></i>
+                                <span>Tonton di YouTube</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function openVideo(id) {
+            const modal = document.getElementById('videoModal');
+            const frame = document.getElementById('videoFrame');
+            frame.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVideo() {
+            const modal = document.getElementById('videoModal');
+            const frame = document.getElementById('videoFrame');
+            frame.src = '';
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGallery();
+            if (window.syncCompanyInfo) window.syncCompanyInfo();
+        });
+    </script>
+</body>
+</html>

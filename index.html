@@ -30,6 +30,7 @@
             <div class="hidden md:flex space-x-8 text-sm font-medium">
                 <a href="index.html" class="hover:text-psd-yellow transition">Home</a>
                 <a href="features.html" class="hover:text-psd-yellow transition">Fitur</a>
+                <a href="gallery.html" class="hover:text-psd-yellow transition font-bold">Gallery</a>
                 <a href="berita.html" class="hover:text-psd-yellow transition">Berita</a>
                 <a href="about.html" class="hover:text-psd-yellow transition">Tentang Kami</a>
                 <a href="contact.html" class="hover:text-psd-yellow transition">Hubungi Kami</a>
@@ -74,6 +75,7 @@
             <div class="flex flex-col space-y-6 text-xl font-medium text-white">
                 <a href="index.html" class="hover:text-psd-yellow transition">Home</a>
                 <a href="features.html" class="hover:text-psd-yellow transition">Fitur</a>
+                <a href="gallery.html" class="hover:text-psd-yellow transition font-bold">Gallery</a>
                 <a href="berita.html" class="hover:text-psd-yellow transition">Berita</a>
                 <a href="about.html" class="hover:text-psd-yellow transition">Tentang Kami</a>
                 <a href="contact.html" class="hover:text-psd-yellow transition">Hubungi Kami</a>
@@ -945,6 +947,33 @@
         </div>
     </section>
 
+    <!-- Video Gallery Preview Section -->
+    <section class="py-24 bg-gray-50 overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                <div data-aos="fade-right">
+                    <span class="text-psd-green font-bold text-xs uppercase tracking-[0.2em] mb-3 block">Visualisasi Program</span>
+                    <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 uppercase leading-tight">
+                        Gallery <span class="text-psd-green">Video</span>
+                    </h2>
+                </div>
+                <div data-aos="fade-left">
+                    <a href="gallery.html" class="inline-flex items-center gap-2 text-psd-green font-bold hover:gap-4 transition-all duration-300 group">
+                        LIHAT SEMUA VIDEO
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div id="home-video-gallery" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Skeleton Loading -->
+                <div class="animate-pulse bg-white rounded-3xl h-[250px]"></div>
+                <div class="animate-pulse bg-white rounded-3xl h-[250px]"></div>
+                <div class="animate-pulse bg-white rounded-3xl h-[250px]"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- Berita Terbaru Section -->
     <section class="py-20 bg-white">
         <div class="container mx-auto px-6">
@@ -1034,6 +1063,7 @@
                     <ul class="space-y-4">
                         <li><a href="index.html" class="text-gray-300 hover:text-psd-yellow transition">Beranda</a></li>
                         <li><a href="about.html" class="text-gray-300 hover:text-psd-yellow transition">Tentang Kami</a></li>
+                        <li><a href="gallery.html" class="text-gray-300 hover:text-psd-yellow transition">Gallery Video</a></li>
                         <li><a href="features.html" class="text-gray-300 hover:text-psd-yellow transition">Fitur Unggulan</a></li>
                         <li><a href="berita.html" class="text-gray-300 hover:text-psd-yellow transition">Berita</a></li>
                         <li><a href="contact.html" class="text-gray-300 hover:text-psd-yellow transition">Hubungi Kami</a></li>
@@ -1173,6 +1203,40 @@
                             </div>
                         </div>
                     `).join('');
+                }
+            }
+
+            // Load Latest Videos (Gallery Preview)
+            if (window.getVideos) {
+                const videos = await window.getVideos();
+                const container = document.getElementById('home-video-gallery');
+                if (container) {
+                    const latestVideos = videos.slice(0, 3);
+                    if (latestVideos.length === 0) {
+                        container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500 italic">Belum ada video di gallery.</div>';
+                    } else {
+                        container.innerHTML = latestVideos.map((v, index) => `
+                            <div class="bg-white rounded-3xl overflow-hidden shadow-xl shadow-psd-green/5 group cursor-pointer" 
+                                 onclick="window.location.href='gallery.html'"
+                                 data-aos="fade-up" data-aos-delay="${index * 100}">
+                                <div class="relative aspect-video">
+                                    <img src="https://img.youtube.com/vi/${v.video_id}/hqdefault.jpg" 
+                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                                         alt="${v.title}">
+                                    <div class="absolute inset-0 bg-psd-green/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div class="w-12 h-12 bg-psd-yellow rounded-full flex items-center justify-center text-psd-green">
+                                            <i class="fas fa-play ml-1"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="font-bold text-gray-800 text-sm md:text-base line-clamp-2 leading-tight group-hover:text-psd-green transition-colors">
+                                        ${v.title || 'Video PSD'}
+                                    </h3>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
                 }
             }
 
