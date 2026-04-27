@@ -5,147 +5,226 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery Video - Pesantren Smart Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="src/tw-config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Supabase Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="src/admin-system.js?v=1.1"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        
-        :root {
-            --psd-green: #0A5C4F;
-            --psd-yellow: #FFD23F;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .bg-psd-green { background-color: var(--psd-green); }
-        .text-psd-green { color: var(--psd-green); }
-        .bg-psd-yellow { background-color: var(--psd-yellow); }
-        .border-psd-green { border-color: var(--psd-green); }
-        
         .video-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
         .video-card:hover {
             transform: translateY(-8px);
         }
-
         .play-overlay {
             background: rgba(10, 92, 79, 0.4);
             backdrop-filter: blur(2px);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-
         .video-card:hover .play-overlay {
             opacity: 1;
         }
-
-        .nav-link {
-            position: relative;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--psd-yellow);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="font-sans text-gray-800 bg-white">
+
     <!-- Navbar -->
-    <nav class="fixed w-full z-50 bg-psd-green/90 backdrop-blur-md py-4 transition-all duration-300 shadow-lg">
-        <div class="container mx-auto px-6">
-            <div class="flex items-center justify-between">
-                <a href="index.html" class="flex items-center space-x-3">
-                    <span class="text-white font-extrabold text-2xl tracking-tighter uppercase italic">PSD</span>
+    <nav class="absolute top-0 left-0 w-full z-50 py-6">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="index.html">
+                    <img src="src/logo.png" alt="Pesantren Smart Digital Logo" class="h-16 w-auto"> 
                 </a>
-                
-                <div class="hidden lg:flex items-center space-x-10">
-                    <a href="index.html" class="text-white/90 hover:text-psd-yellow font-medium transition text-sm nav-link">Beranda</a>
-                    <a href="about.html" class="text-white/90 hover:text-psd-yellow font-medium transition text-sm nav-link">Tentang</a>
-                    <a href="features.html" class="text-white/90 hover:text-psd-yellow font-medium transition text-sm nav-link">Fitur</a>
-                    <a href="gallery.html" class="text-psd-yellow font-bold transition text-sm nav-link">Gallery</a>
-                    <a href="berita.html" class="text-white/90 hover:text-psd-yellow font-medium transition text-sm nav-link">Berita</a>
-                    <a href="contact.html" class="bg-psd-yellow text-psd-green font-bold py-2.5 px-6 rounded-full hover:shadow-lg transition transform hover:scale-105 text-sm">Hubungi Kami</a>
-                </div>
+            </div>
+
+            <!-- Links -->
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-white">
+                <a href="index.html" class="hover:text-psd-yellow transition">Home</a>
+                <a href="features.html" class="hover:text-psd-yellow transition">Fitur</a>
+                <a href="gallery.html" class="text-psd-yellow transition font-bold">Gallery</a>
+                <a href="berita.html" class="hover:text-psd-yellow transition">Berita</a>
+                <a href="about.html" class="hover:text-psd-yellow transition">Tentang Kami</a>
+                <a href="contact.html" class="hover:text-psd-yellow transition">Hubungi Kami</a>
+            </div>
+
+            <!-- Hamburger Menu (Mobile) -->
+            <div class="md:hidden flex items-center">
+                <button id="mobileMenuBtn" class="text-white focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="menuIcon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Social Icons -->
+            <div class="hidden md:flex space-x-4 text-white">
+                <a href="#" id="nav-social-instagram" class="hover:text-psd-yellow transition text-xl" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" id="nav-social-facebook" class="hover:text-psd-yellow transition text-xl" target="_blank">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="#" id="nav-social-tiktok" class="hover:text-psd-yellow transition text-xl" target="_blank">
+                    <i class="fab fa-tiktok"></i>
+                </a>
             </div>
         </div>
     </nav>
 
-    <!-- Header Section -->
-    <header class="pt-32 pb-20 bg-psd-green relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-0 right-0 w-96 h-96 bg-psd-yellow rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
-            <div class="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2"></div>
-        </div>
-        
-        <div class="container mx-auto px-6 relative z-10 text-center">
-            <div class="inline-block px-4 py-1.5 bg-psd-yellow/20 rounded-full mb-6" data-aos="fade-up">
-                <span class="text-psd-yellow font-bold text-xs uppercase tracking-widest">Visualisasi Program</span>
+    <!-- Mobile Menu Drawer -->
+    <div id="menuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden opacity-0 transition-opacity duration-300"></div>
+    <div id="mobileMenu" class="fixed top-0 right-0 w-3/4 max-w-[300px] h-full bg-[#0A5C4F] z-50 transform translate-x-full transition-transform duration-300 md:hidden shadow-2xl">
+        <div class="flex flex-col h-full p-6">
+            <div class="flex justify-between items-center mb-10">
+                <img src="src/logo.png" alt="Logo" class="h-10 w-auto">
+                <button id="closeMenuBtn" class="text-white hover:text-psd-yellow p-2 transition-colors duration-200" aria-label="Close Menu">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 uppercase tracking-tight" data-aos="fade-up" data-aos-delay="100">
+            <div class="flex flex-col space-y-6 text-xl font-medium text-white mb-12">
+                <a href="index.html" class="hover:text-psd-yellow transition">Home</a>
+                <a href="features.html" class="hover:text-psd-yellow transition">Fitur</a>
+                <a href="gallery.html" class="text-psd-yellow transition font-bold">Gallery</a>
+                <a href="berita.html" class="hover:text-psd-yellow transition">Berita</a>
+                <a href="about.html" class="hover:text-psd-yellow transition">Tentang Kami</a>
+                <a href="contact.html" class="hover:text-psd-yellow transition">Hubungi Kami</a>
+            </div>
+
+            <!-- Mobile Social Icons -->
+            <div class="mt-auto flex space-x-6">
+                <a href="#" id="mobile-social-instagram" class="text-white hover:text-psd-yellow transition text-2xl" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" id="mobile-social-facebook" class="text-white hover:text-psd-yellow transition text-2xl" target="_blank">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="#" id="mobile-social-tiktok" class="text-white hover:text-psd-yellow transition text-2xl" target="_blank">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-bg pt-40 pb-48 lg:py-32 relative overflow-hidden text-white">
+        <div class="absolute bottom-0 w-full">
+            <svg viewBox="0 0 1440 320" class="w-full h-auto text-white fill-current block">
+                <path fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center" data-aos="fade-up">
+            <h1 class="text-3xl md:text-5xl font-bold mb-6 uppercase leading-tight max-w-4xl mx-auto">
                 Gallery <span class="text-psd-yellow">Video</span>
             </h1>
-            <p class="text-gray-300 max-w-2xl mx-auto text-sm md:text-lg leading-relaxed" data-aos="fade-up" data-aos-delay="200">
+            <p class="text-gray-200 text-base md:text-lg max-w-2xl mx-auto">
                 Dokumentasi perjalanan, fitur, dan testimoni transformasi digital pesantren di seluruh Indonesia bersama PSD.
             </p>
         </div>
-    </header>
+    </section>
 
     <!-- Gallery Grid -->
-    <section class="py-20">
+    <section class="py-20 bg-white relative z-20 -mt-4">
         <div class="container mx-auto px-6">
-            <div id="video-gallery-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div id="video-gallery-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 <!-- Skeleton Loading -->
-                <div class="animate-pulse bg-white rounded-3xl h-[300px]"></div>
-                <div class="animate-pulse bg-white rounded-3xl h-[300px]"></div>
-                <div class="animate-pulse bg-white rounded-3xl h-[300px]"></div>
+                <div class="animate-pulse bg-gray-100 rounded-3xl h-[300px]"></div>
+                <div class="animate-pulse bg-gray-100 rounded-3xl h-[300px]"></div>
+                <div class="animate-pulse bg-gray-100 rounded-3xl h-[300px]"></div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-psd-green text-white pt-20 pb-10">
+    <footer class="bg-[#0A5C4F] text-white pt-20 pb-10">
         <div class="container mx-auto px-6">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-16">
+                
+                <!-- Column 1: Brand -->
                 <div>
-                    <h3 class="text-2xl font-bold mb-6 italic">PSD</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed" id="footer-desc">Platform manajemen pesantren digital terintegrasi untuk modernisasi pendidikan islam di Indonesia.</p>
+                    <div class="flex items-center mb-6">
+                        <h3 class="text-2xl font-bold text-white uppercase tracking-wider">PSD</h3>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed mb-6 text-sm md:text-base">
+                        Platform manajemen pesantren digital terintegrasi untuk modernisasi pendidikan islam di Indonesia.
+                    </p>
+
+                    <!-- Play Store Button -->
+                    <div class="mb-8">
+                        <a href="#" id="footer-playstore-link" class="inline-flex items-center bg-black text-white px-4 py-2 rounded-lg border border-gray-700 hover:bg-gray-900 transition duration-300">
+                            <i class="fab fa-google-play text-xl mr-3"></i>
+                            <div class="text-left">
+                                <div class="text-[8px] uppercase leading-none">Tersedia di</div>
+                                <div class="text-xs font-semibold leading-none mt-1">Google Play</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="flex space-x-4">
+                        <a href="#" id="footer-social-facebook" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-psd-yellow hover:text-psd-green transition duration-300" target="_blank">
+                             <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" id="footer-social-instagram" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-psd-yellow hover:text-psd-green transition duration-300" target="_blank">
+                             <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" id="footer-social-tiktok" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-psd-yellow hover:text-psd-green transition duration-300" target="_blank">
+                             <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
                 </div>
+
+                <!-- Column 2: Quick Links -->
                 <div>
-                    <h4 class="text-lg font-bold mb-6 uppercase">Menu</h4>
-                    <ul class="space-y-4 text-sm text-gray-400">
-                        <li><a href="index.html" class="hover:text-psd-yellow transition">Beranda</a></li>
-                        <li><a href="about.html" class="hover:text-psd-yellow transition">Tentang Kami</a></li>
-                        <li><a href="gallery.html" class="hover:text-psd-yellow transition">Gallery Video</a></li>
+                    <h4 class="text-lg font-bold text-white uppercase mb-6">Menu Pintas</h4>
+                    <ul class="space-y-4">
+                        <li><a href="index.html" class="text-gray-300 hover:text-psd-yellow transition">Beranda</a></li>
+                        <li><a href="about.html" class="text-gray-300 hover:text-psd-yellow transition">Tentang Kami</a></li>
+                        <li><a href="gallery.html" class="text-gray-300 hover:text-psd-yellow transition">Gallery Video</a></li>
+                        <li><a href="features.html" class="text-gray-300 hover:text-psd-yellow transition">Fitur Unggulan</a></li>
+                        <li><a href="berita.html" class="text-gray-300 hover:text-psd-yellow transition">Berita</a></li>
+                        <li><a href="contact.html" class="text-gray-300 hover:text-psd-yellow transition">Hubungi Kami</a></li>
                     </ul>
                 </div>
+
+                <!-- Column 3: Solusi -->
                 <div>
-                    <h4 class="text-lg font-bold mb-6 uppercase">Solusi</h4>
-                    <ul class="space-y-4 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-psd-yellow transition">Manajemen Santri</a></li>
-                        <li><a href="#" class="hover:text-psd-yellow transition">Sistem Keuangan</a></li>
+                     <h4 class="text-lg font-bold text-white uppercase mb-6">Solusi Kami</h4>
+                    <ul class="space-y-4">
+                        <li><a href="features.html" class="text-gray-300 hover:text-psd-yellow transition">Manajemen Santri</a></li>
+                        <li><a href="features.html" class="text-gray-300 hover:text-psd-yellow transition">Sistem Keuangan</a></li>
+                        <li><a href="features.html" class="text-gray-300 hover:text-psd-yellow transition">Aplikasi Wali Santri</a></li>
+                        <li><a href="features.html" class="text-gray-300 hover:text-psd-yellow transition">Donasi Online</a></li>
                     </ul>
                 </div>
+
+                <!-- Column 4: Contact -->
                 <div>
-                    <h4 class="text-lg font-bold mb-6 uppercase">Kontak</h4>
-                    <p class="text-gray-400 text-sm mb-4" id="footer-address"></p>
-                    <p class="text-gray-400 text-sm" id="footer-email"></p>
+                    <h4 class="text-lg font-bold text-white uppercase mb-6">Hubungi Kami</h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-psd-yellow mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <a href="#" class="text-gray-300 hover:text-psd-yellow transition text-sm" id="footer-address"></a>
+                        </li>
+                         <li class="flex items-start">
+                            <svg class="w-6 h-6 text-psd-yellow mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span class="text-gray-300 break-all text-sm" id="footer-email"></span>
+                        </li>
+                         <li class="flex items-center">
+                            <svg class="w-6 h-6 text-psd-yellow mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <a href="#" class="text-gray-300 hover:text-psd-yellow transition text-sm" id="footer-phone"></a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <div class="border-t border-white/10 pt-8 text-center text-sm text-gray-500">
+            <div class="border-t border-white/10 pt-8 text-center text-xs text-gray-500">
                 &copy; 2024 Pesantren Smart Digital. All rights reserved.
             </div>
         </div>
@@ -153,9 +232,9 @@
 
     <!-- Video Modal -->
     <div id="videoModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-psd-green/95 backdrop-blur-md" onclick="closeVideo()"></div>
-        <div class="relative w-full max-w-4xl aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl z-10">
-            <button onclick="closeVideo()" class="absolute -top-12 right-0 text-white text-2xl hover:text-psd-yellow transition">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="closeVideo()"></div>
+        <div class="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl z-10">
+            <button onclick="closeVideo()" class="absolute top-4 right-4 text-white text-3xl hover:text-psd-yellow transition z-20 drop-shadow-lg">
                 <i class="fas fa-times"></i>
             </button>
             <iframe id="videoFrame" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -163,46 +242,67 @@
     </div>
 
     <!-- Scripts -->
-    <script src="src/admin-system.js?v=1.1"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 800, once: true });
 
+        // Mobile Menu Logic
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+            menuOverlay.classList.toggle('hidden');
+            setTimeout(() => menuOverlay.classList.toggle('opacity-0'), 10);
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+        menuOverlay.addEventListener('click', toggleMenu);
+
         async function loadGallery() {
             const container = document.getElementById('video-gallery-container');
             if (window.getVideos) {
-                const videos = await window.getVideos();
-                if (videos.length === 0) {
-                    container.innerHTML = '<div class="col-span-full text-center py-20 text-gray-500 italic">Belum ada video di gallery.</div>';
-                    return;
-                }
+                try {
+                    const videos = await window.getVideos();
+                    if (videos.length === 0) {
+                        container.innerHTML = '<div class="col-span-full text-center py-20 text-gray-500 italic">Belum ada video di gallery.</div>';
+                        return;
+                    }
 
-                container.innerHTML = videos.map((v, index) => `
-                    <div class="video-card bg-white rounded-[2.5rem] overflow-hidden shadow-xl shadow-psd-green/5 group cursor-pointer" 
-                         onclick="openVideo('${v.video_id}')"
-                         data-aos="fade-up" data-aos-delay="${index * 100}">
-                        <div class="relative aspect-video">
-                            <img src="https://img.youtube.com/vi/${v.video_id}/maxresdefault.jpg" 
-                                 onerror="this.src='https://img.youtube.com/vi/${v.video_id}/hqdefault.jpg'"
-                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                                 alt="${v.title}">
-                            <div class="play-overlay absolute inset-0 flex items-center justify-center">
-                                <div class="w-16 h-16 bg-psd-yellow rounded-full flex items-center justify-center text-psd-green shadow-xl transform scale-90 group-hover:scale-100 transition-transform">
-                                    <i class="fas fa-play ml-1"></i>
+                    container.innerHTML = videos.map((v, index) => `
+                        <div class="video-card bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 group cursor-pointer" 
+                             onclick="openVideo('${v.video_id}')"
+                             data-aos="fade-up" data-aos-delay="${index * 100}">
+                            <div class="relative aspect-video overflow-hidden">
+                                <img src="https://img.youtube.com/vi/${v.video_id}/maxresdefault.jpg" 
+                                     onerror="this.src='https://img.youtube.com/vi/${v.video_id}/hqdefault.jpg'"
+                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                     alt="${v.title}">
+                                <div class="play-overlay absolute inset-0 flex items-center justify-center">
+                                    <div class="w-14 h-14 bg-psd-yellow rounded-full flex items-center justify-center text-psd-green shadow-xl transform scale-90 group-hover:scale-100 transition-transform">
+                                        <i class="fas fa-play ml-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="font-bold text-gray-800 text-base md:text-lg leading-tight group-hover:text-psd-green transition-colors line-clamp-2">
+                                    ${v.title || 'Video PSD'}
+                                </h3>
+                                <div class="flex items-center gap-2 mt-4 text-psd-green font-bold text-[10px] uppercase tracking-widest">
+                                    <i class="fab fa-youtube"></i>
+                                    <span>Tonton Video</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-8">
-                            <h3 class="font-bold text-gray-800 text-lg leading-tight group-hover:text-psd-green transition-colors">
-                                ${v.title || 'Video PSD'}
-                            </h3>
-                            <div class="flex items-center gap-2 mt-4 text-psd-green font-bold text-[10px] uppercase tracking-widest">
-                                <i class="fab fa-youtube"></i>
-                                <span>Tonton di YouTube</span>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
+                    `).join('');
+                } catch (err) {
+                    console.error('Gallery loading failed:', err);
+                    container.innerHTML = '<div class="col-span-full text-center py-20 text-red-500">Gagal memuat video.</div>';
+                }
             }
         }
 
