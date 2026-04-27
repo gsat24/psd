@@ -837,8 +837,20 @@ window.getCompanyInfo = async function() {
         }
     }
     const local = JSON.parse(localStorage.getItem(DB_KEYS.COMPANY));
-    console.log('getCompanyInfo() from LocalStorage (Fallback):', local);
-    return local;
+    if (local) {
+        console.log('getCompanyInfo() from LocalStorage (Fallback):', local);
+        return local;
+    }
+    
+    // Ultimate fallback: return empty structure so UI doesn't break
+    return {
+        id: 1,
+        email: '', phone: '', address: '',
+        hero_headline: '', hero_subheadline: '',
+        solusi_headline: '', solusi_subheadline: '',
+        whatsapp_number: '', chat_status: true,
+        social: { instagram: '#', facebook: '#', tiktok: '#' }
+    };
 };
 
 
@@ -858,48 +870,50 @@ window.updateCompanyInfoInDB = async function(info) {
             }
 
             // 2. Build update payload based on what the DB supports
-            // If we have 'existing' data, we only update keys that exist in 'existing'
-            const socialObj = typeof info.social === 'string' ? JSON.parse(info.social) : info.social;
-            
-            const fullPayload = {
-                id: 1,
-                email: info.email,
-                phone: info.phone,
-                address: info.address,
-                playstore_url: info.playstore_url,
-                social: socialObj,
-                hero_headline: info.hero_headline,
-                hero_subheadline: info.hero_subheadline,
-                solusi_headline: info.solusi_headline,
-                solusi_subheadline: info.solusi_subheadline,
-                whatsapp_number: info.whatsapp_number,
-                chat_status: info.chat_status
-            };
-
+            // We only update fields that are explicitly provided in the 'info' object
             const dataToSave = { id: 1 };
             
-            // Only include fields that exist in the database schema (from existing record)
-            if (existing) {
-                Object.keys(fullPayload).forEach(key => {
-                    if (existing.hasOwnProperty(key)) {
-                        dataToSave[key] = fullPayload[key];
+            // Map of keys from info object to database column names
+            const fieldMap = {
+                email: 'email',
+                phone: 'phone',
+                address: 'address',
+                playstore_url: 'playstore_url',
+                hero_headline: 'hero_headline',
+                hero_subheadline: 'hero_subheadline',
+                solusi_headline: 'solusi_headline',
+                solusi_subheadline: 'solusi_subheadline',
+                whatsapp_number: 'whatsapp_number',
+                chat_status: 'chat_status'
+            };
+
+            Object.keys(fieldMap).forEach(infoKey => {
+                const dbKey = fieldMap[infoKey];
+                if (info.hasOwnProperty(infoKey)) {
+                    // Check if the column exists in the database before adding to payload
+                    if (!existing || existing.hasOwnProperty(dbKey)) {
+                        dataToSave[dbKey] = info[infoKey];
                     } else {
-                        console.warn(`Column '${key}' does not exist in Supabase 'company' table. Skipping.`);
+                        console.warn(`Column '${dbKey}' does not exist in Supabase 'company' table. Skipping.`);
                     }
-                });
-            } else {
-                // Fallback: try all known fields if we couldn't fetch to detect
-                ['email', 'phone', 'address', 'social', 'hero_headline', 'hero_subheadline', 'solusi_headline', 'solusi_subheadline', 'whatsapp_number', 'chat_status'].forEach(k => {
-                    if (info[k] !== undefined) {
-                        dataToSave[k] = (k === 'social' && typeof info[k] === 'object' ? socialObj : info[k]);
-                    }
-                });
+                }
+            });
+
+            // Handle social separately because it needs JSON parsing/stringifying
+            if (info.hasOwnProperty('social')) {
+                const socialObj = typeof info.social === 'string' ? JSON.parse(info.social) : info.social;
+                if (!existing || existing.hasOwnProperty('social')) {
+                    dataToSave.social = socialObj;
+                }
             }
 
             console.log('Saving to Supabase with detected columns:', dataToSave);
             const { error } = await window.supabaseInstance.from('company').upsert([dataToSave]);
             if (error) throw error;
-            console.log('Supabase update success');
+            
+            // Sync to local storage immediately on success
+            localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify({ ...dataToSave }));
+            console.log('Supabase update success & local storage synced');
         } catch (err) {
             console.error('Supabase update failed:', err);
             // If it failed with 400, it's likely still a column mismatch
@@ -920,10 +934,13 @@ window.updateCompanyInfoInDB = async function(info) {
                         whatsapp_number: info.whatsapp_number,
                         chat_status: info.chat_status
                     };
-                    await window.supabaseInstance.from('company').upsert([safeData]);
-                    console.log('Safe fallback update success');
-                } catch(e2) {
-                    console.error('Safe fallback failed too:', e2);
+                    const { error: safeError } = await window.supabaseInstance.from('company').upsert([safeData]);
+                    if (safeError) throw safeError;
+                    
+                    localStorage.setItem(DB_KEYS.COMPANY, JSON.stringify({ ...safeData }));
+                    console.log('Safe fallback update success & local storage synced');
+                } catch(fallbackErr) {
+                    console.error('Safe fallback also failed:', fallbackErr);
                 }
             }
         }
@@ -1005,8 +1022,17 @@ window.syncCompanyInfo = async function() {
             ctaWaLinks.forEach(el => el.href = waUrl);
         }
 
-        // Hero Content Top is now static as per user request
-        // Dynamic headline for other sections is handled in index.html loadDynamicContent
+        // Hero Content Sync
+        const heroTitle = document.getElementById('hero-title');
+        const heroSub = document.getElementById('hero-subtitle');
+        if (heroTitle && info.hero_headline) heroTitle.innerHTML = info.hero_headline;
+        if (heroSub && info.hero_subheadline) heroSub.innerHTML = info.hero_subheadline;
+
+        // Solusi Nyata Section Sync
+        const dynHeadline = document.getElementById('hero-dyn-headline');
+        const dynSub = document.getElementById('hero-dyn-subheadline');
+        if (dynHeadline && info.solusi_headline) dynHeadline.innerText = info.solusi_headline;
+        if (dynSub && info.solusi_subheadline) dynSub.innerText = info.solusi_subheadline;
 
         // WhatsApp floating button logic has been removed and replaced with Live Chat
     } catch (e) {

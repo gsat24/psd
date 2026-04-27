@@ -100,20 +100,38 @@ CREATE POLICY "Enable insert for all" ON analytics FOR INSERT WITH CHECK (true);
 DROP POLICY IF EXISTS "Enable select for authenticated" ON analytics;
 CREATE POLICY "Enable select for authenticated" ON analytics FOR SELECT USING (true);
 
--- 7. UPDATE COMPANY TABLE
-ALTER TABLE company 
-ADD COLUMN IF NOT EXISTS hero_headline TEXT,
-ADD COLUMN IF NOT EXISTS hero_subheadline TEXT,
-ADD COLUMN IF NOT EXISTS whatsapp_number TEXT,
-ADD COLUMN IF NOT EXISTS social JSONB;
+-- 7. COMPANY TABLE (Profile & Content)
+CREATE TABLE IF NOT EXISTS company (
+    id INTEGER PRIMARY KEY DEFAULT 1,
+    email TEXT,
+    phone TEXT,
+    address TEXT,
+    playstore_url TEXT,
+    hero_headline TEXT,
+    hero_subheadline TEXT,
+    solusi_headline TEXT,
+    solusi_subheadline TEXT,
+    chat_status BOOLEAN DEFAULT true,
+    whatsapp_number TEXT,
+    social JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
 
--- Initial data for Hero if not exists
-UPDATE company SET 
-    hero_headline = 'Solusi Digital Cerdas Untuk Pesantren Modern',
-    hero_subheadline = 'PSD hadir mentransformasi tata kelola pesantren Anda menjadi lebih efisien, transparan, dan terintegrasi.',
-    whatsapp_number = '6281368946818',
-    social = '{"instagram": "#", "facebook": "#", "tiktok": "#"}'::jsonb
-WHERE id = 1;
+-- Ensure row with ID 1 exists
+INSERT INTO company (id, email, phone, address, hero_headline, hero_subheadline, solusi_headline, solusi_subheadline, whatsapp_number, social)
+VALUES (
+    1, 
+    'info@pesantrensmart.com', 
+    '081234567890', 
+    'Alamat Pesantren', 
+    'Solusi Digital Cerdas Untuk Pesantren Modern', 
+    'PSD hadir mentransformasi tata kelola pesantren Anda menjadi lebih efisien, transparan, dan terintegrasi.',
+    'Sebaran Pesantren di Seluruh Indonesia',
+    'PSD telah dipercaya oleh berbagai yayasan dan pondok pesantren dari Sumatera hingga Papua untuk membantu akselerasi transformasi digital.',
+    '6281368946818',
+    '{"instagram": "#", "facebook": "#", "tiktok": "#"}'::jsonb
+)
+ON CONFLICT (id) DO NOTHING;
 
 -- Seed initial features if table is empty
 INSERT INTO features (title, description, icon) 
