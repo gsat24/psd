@@ -10,7 +10,7 @@ export const metadata = {
 
 export default async function AboutPage() {
   const { data: companyInfo } = await supabase
-    .from('psd_company')
+    .from('company')
     .select('*')
     .single();
 

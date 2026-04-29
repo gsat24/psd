@@ -16,22 +16,22 @@ import AOSInit from "@/components/AOSInit";
 export default async function HomePage() {
   // Fetch data directly from Supabase on the server
   const { data: companyInfo } = await supabase
-    .from('psd_company')
+    .from('company')
     .select('*')
     .single();
 
   const { data: news } = await supabase
-    .from('psd_news')
+    .from('news')
     .select('*')
     .order('created_at', { ascending: false })
     .limit(3);
 
   const { data: testimonials } = await supabase
-    .from('psd_testimonials')
+    .from('testimonials')
     .select('*');
 
   const { data: faqs } = await supabase
-    .from('psd_faq')
+    .from('faq')
     .select('*')
     .order('sort_order', { ascending: true });
 

@@ -15,7 +15,7 @@ export default async function GalleryPage() {
     .order('created_at', { ascending: false });
 
   const { data: companyInfo } = await supabase
-    .from('psd_company')
+    .from('company')
     .select('*')
     .single();
 

@@ -10,12 +10,12 @@ export const metadata = {
 
 export default async function BeritaPage() {
   const { data: news } = await supabase
-    .from('psd_news')
+    .from('news')
     .select('*')
     .order('created_at', { ascending: false });
 
   const { data: companyInfo } = await supabase
-    .from('psd_company')
+    .from('company')
     .select('*')
     .single();
 

@@ -20,7 +20,7 @@ export default function ContactPage() {
 
   useEffect(() => {
     async function fetchData() {
-      const { data } = await supabase.from('psd_company').select('*').single();
+      const { data } = await supabase.from('company').select('*').single();
       setCompanyInfo(data);
     }
     fetchData();
@@ -33,7 +33,7 @@ export default function ContactPage() {
 
     try {
       const { error } = await supabase
-        .from('psd_feedback')
+        .from('feedback')
         .insert([{
           name: formData.name,
           email: formData.email,

@@ -38,8 +38,8 @@ export default function FeaturesPage() {
 
   useEffect(() => {
     async function fetchData() {
-      const { data: feats } = await supabase.from('psd_features').select('*').order('created_at', { ascending: true });
-      const { data: info } = await supabase.from('psd_company').select('*').single();
+      const { data: feats } = await supabase.from('features').select('*').order('created_at', { ascending: true });
+      const { data: info } = await supabase.from('company').select('*').single();
       setAllFeatures(feats || []);
       setCompanyInfo(info);
     }

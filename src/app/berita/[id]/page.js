@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 // Generate dynamic metadata for SEO!
 export async function generateMetadata({ params }) {
   const { data: article } = await supabase
-    .from('psd_news')
+    .from('news')
     .select('*')
     .eq('id', params.id)
     .single();
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
 
 export default async function BeritaDetail({ params }) {
   const { data: article } = await supabase
-    .from('psd_news')
+    .from('news')
     .select('*')
     .eq('id', params.id)
     .single();
@@ -32,7 +32,7 @@ export default async function BeritaDetail({ params }) {
   if (!article) notFound();
 
   const { data: companyInfo } = await supabase
-    .from('psd_company')
+    .from('company')
     .select('*')
     .single();
 
